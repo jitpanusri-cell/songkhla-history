@@ -55,7 +55,6 @@
               <option value="ม.3/16">ม.3/16</option>
               <option value="ม.3/17">ม.3/17</option>
           </select>
-<br>
           <div class="flex justify-center gap-2 mb-6" id="otpContainer">
               <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-12 h-14 text-center text-2xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
               <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-12 h-14 text-center text-2xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
@@ -63,14 +62,12 @@
               <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-12 h-14 text-center text-2xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
               <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-12 h-14 text-center text-2xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
           </div>
-<br>
           <button id="loginBtn" onclick="loginUser()" class="w-full bg-[#E85D5D] text-white py-3 rounded-lg font-bold hover:bg-[#d04a4a] transition shadow-md flex justify-center items-center gap-2">
               <span id="loginBtnText">เข้าสู่บทเรียน</span>
           </button>
           <p id="loginError" class="text-red-500 text-sm mt-3 hidden font-medium"></p>
       </div>
   </div>
-<br>
   <!-- โครงสร้างเว็บหลัก -->
   <div id="app" class="w-full h-full flex flex-col overflow-auto hidden">
    <header class="bg-white shadow-sm sticky top-0 z-50 shrink-0">
@@ -93,7 +90,6 @@
          <a href="https://jitpanusri-cell.github.io/songkhla-history/boyang-lesson/" target="_blank" class="hidden lg:flex shrink-0 whitespace-nowrap items-center bg-blue-100 text-blue-800 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-200 transition">
              <i data-lucide="building-2" class="w-3.5 h-3.5 mr-1"></i> ฝั่งบ่อยาง
          </a>
-<br>
          <div class="hidden sm:block text-right text-xs bg-gray-50 px-3 py-1 rounded-lg border ml-1">
              <div class="text-gray-500" id="displayClass">ห้องเรียน</div>
              <div id="displayName" class="font-bold text-[#E85D5D]"></div>
@@ -125,7 +121,6 @@
          <a href="#" onclick="logoutUser()" class="block py-2 text-red-500 font-bold pt-3">ออกจากระบบ</a>
     </div>
    </header>
-<br>
    <main class="flex-grow">
        <!-- หน้าแรก (ภาพรวม) -->
        <div id="section-home" class="page-section block">
@@ -144,13 +139,11 @@
                      <span><i data-lucide="users" class="inline w-4 h-4 mr-1 opacity-70"></i> <span id="homeStudentClass">-</span></span>
                  </div>
              </div>
-             <br>
              <a href="#eras-section" class="inline-block bg-white text-[#E85D5D] px-8 py-3 rounded-full font-bold shadow-lg hover:bg-gray-100 transition transform hover:-translate-y-1 cursor-pointer">
                  เริ่มต้นเรียนรู้
              </a>
             </div>
            </section>
-<br>
            <section id="eras-section" class="max-w-5xl mx-auto px-4 py-12">
             <div class="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100 text-center relative overflow-hidden mb-8">
                 <i data-lucide="compass" class="w-32 h-32 absolute -top-6 -left-6 text-gray-50 opacity-50 rotate-[-15deg]"></i>
@@ -167,7 +160,6 @@
                     เมืองสงขลามีประวัติศาสตร์ยาวนานกว่า 400 ปี โดยมีการย้ายศูนย์กลางเมืองถึง 3 ครั้ง 
                     กรุณาเลือกยุคสมัยที่คุณต้องการศึกษาจากเมนูด้านล่างนี้
                 </p>
-<br>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-5 relative z-10">
                     <div onclick="showSection('era1-hub')" class="bg-gradient-to-br from-red-500 to-rose-600 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all cursor-pointer text-white flex flex-col items-center justify-center relative overflow-hidden group transform hover:-translate-y-1">
                         <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition"><i data-lucide="landmark" class="w-7 h-7 text-white"></i></div>
@@ -190,7 +182,6 @@
             </div>
            </section>
        </div>
-<br>
        <!-- หน้า Hub ยุค 1 -->
        <div id="section-era1-hub" class="page-section hidden max-w-5xl mx-auto px-4 py-12">
             <div class="text-center mb-10">
@@ -225,7 +216,6 @@
                </button>
            </div>
        </div>
-<br>
        <!-- ใบความรู้ -->
        <div id="section-knowledge" class="page-section hidden max-w-5xl mx-auto px-4 py-12">
            <div class="text-center mb-10">
@@ -258,7 +248,6 @@
                <button onclick="showSection('era1-hub')" class="text-gray-500 hover:text-[#E85D5D] font-bold transition inline-flex items-center gap-1"><i data-lucide="corner-up-left" class="w-4 h-4"></i> กลับไปเมนูเขาแดง</button>
            </div>
        </div>
-<br>
        <!-- แบบทดสอบ -->
        <div id="section-quiz" class="page-section hidden max-w-3xl mx-auto px-4 py-12">
            <div class="bg-white rounded-2xl shadow-lg overflow-hidden text-center border border-gray-100">
@@ -274,7 +263,6 @@
                        </button>
                    </div>
                </div>
-<br>
                <div id="quizContainer" class="p-8 hidden text-left">
                    <div class="flex justify-between items-center mb-6 border-b pb-4">
                        <div class="font-bold text-green-600 bg-green-50 px-4 py-1 rounded-full text-sm" id="quizProgress">ข้อที่ 1/10</div>
@@ -285,7 +273,6 @@
                        <button id="nextQuizBtn" disabled onclick="nextQuizQuestion()" class="bg-gray-300 text-gray-500 px-8 py-3 rounded-lg font-bold transition cursor-not-allowed">ถัดไป <i data-lucide="arrow-right" class="inline w-4 h-4 ml-1"></i></button>
                    </div>
                </div>
-<br>
                <div id="quizResult" class="hidden pb-8">
                     <div class="bg-green-600 py-10 text-white relative overflow-hidden">
                         <div class="relative z-10">
@@ -303,7 +290,6 @@
                <button onclick="showSection('era1-hub')" class="text-gray-500 hover:text-[#E85D5D] font-bold transition inline-flex items-center gap-1"><i data-lucide="corner-up-left" class="w-4 h-4"></i> กลับไปเมนูเขาแดง</button>
            </div>
        </div>
-<br>
        <!-- สื่อวิดีทัศน์ -->
        <div id="section-video" class="page-section hidden max-w-5xl mx-auto px-4 py-12">
            <div class="flex items-center gap-3 mb-8 border-b pb-4">
@@ -335,7 +321,6 @@
            </div>
        </div>
    </main>
-<br>
    <!-- Modal อ่านเนื้อหาบทเรียน -->
    <div id="lessonModal" class="hidden fixed inset-0 bg-black/70 z-[100] flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
     <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
@@ -357,13 +342,11 @@
      </div>
     </div>
    </div>
-<br>
    <footer class="bg-gray-800 text-white/70 text-center py-6 px-4 text-sm mt-auto shrink-0 border-t-4 border-[#E85D5D]">
     <p class="font-bold text-white/90 mb-1">Copyright © 2026 ประวัติศาสตร์เมืองสงขลา</p>
     <p class="text-white/50 text-xs">ครูผู้สอน/ผู้พัฒนา : นายจิตรภาณุ ศรีหวัง</p>
    </footer>
   </div>
-<br>
   <script>
   let studentName = "";
   let studentIdStr = "";
