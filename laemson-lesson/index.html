@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="th" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>บทเรียนออนไลน์ประวัติศาสตร์เมืองสงขลาฝั่งแหลมสน</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Noto Sans Thai', sans-serif; }
+    .font-nunito { font-family: 'Nunito', sans-serif; }
+
+    /* Modern 2026 UI Animations */
+    .page-section { animation: smoothFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes smoothFadeIn { from { opacity: 0; transform: translateY(20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes springBounce { 0% { transform: scale(0.8); opacity: 0; } 50% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
+    .animate-spring { animation: springBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+    /* Custom Modern Scrollbar */
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.02); border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #fcd34d; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #fbbf24; }
+
+    /* Navbar Active State */
+    .active-nav { color: #f59e0b !important; font-weight: 800; border-bottom: 3px solid #f59e0b; padding-bottom: 6px; }
+
+    /* Modern Quiz Button */
+    .quiz-btn.selected { border-color: #f59e0b !important; background-color: #fffbeb !important; color: #b45309 !important; font-weight: 700; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15); transform: translateY(-2px); }
+
+    /* Glassmorphism Classes */
+    .glass-panel { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.5); }
+  </style>
+ </head>
+ <body class="h-full flex flex-col bg-[#fffbeb] overflow-x-hidden selection:bg-yellow-200 selection:text-yellow-900">
+
+  <!-- Login Screen -->
+  <div id="loginScreen" class="fixed inset-0 bg-gradient-to-br from-yellow-300 via-amber-400 to-orange-500 z-[200] flex items-center justify-center p-4 transition-opacity duration-700">
+      <div class="absolute top-0 left-0 w-64 h-64 bg-white/20 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-0 right-0 w-80 h-80 bg-orange-600/20 rounded-full blur-3xl"></div>
+
+      <div class="glass-panel rounded-[3rem] shadow-2xl p-10 w-full max-w-md text-center animate-spring relative z-10">
+          <div class="w-28 h-28 bg-gradient-to-tr from-yellow-100 to-orange-100 rounded-[2rem] mx-auto flex items-center justify-center mb-8 shadow-inner border border-white/60">
+              <i data-lucide="graduation-cap" class="w-14 h-14 text-orange-500 drop-shadow-sm"></i>
+          </div>
+          <h2 class="text-3xl font-black text-gray-800 mb-2 tracking-tight">บทเรียนเมืองสงขลา</h2>
+          <p class="text-orange-600 mb-8 font-bold text-sm bg-orange-100/50 inline-block px-4 py-1.5 rounded-full border border-orange-200/50">( ตอน ฝั่งแหลมสน )</p>
+
+          <div class="relative mb-5">
+              <select id="studentClassInput" class="w-full px-6 py-4 rounded-2xl border-2 border-transparent bg-white/80 focus:bg-white focus:border-orange-400 outline-none transition text-center font-bold text-gray-700 shadow-sm appearance-none cursor-pointer">
+                  <option value="">-- เลือกระดับชั้น --</option>
+                  <option value="ม.3/1">ม.3/1</option>
+                  <option value="ม.3/5">ม.3/5</option>
+                  <option value="ม.3/7">ม.3/7</option>
+                  <option value="ม.3/10">ม.3/10</option>
+                  <option value="ม.3/12">ม.3/12</option>
+                  <option value="ม.3/13">ม.3/13</option>
+                  <option value="ม.3/14">ม.3/14</option>
+                  <option value="ม.3/15">ม.3/15</option>
+                  <option value="ม.3/16">ม.3/16</option>
+                  <option value="ม.3/17">ม.3/17</option>
+              </select>
+              <i data-lucide="chevron-down" class="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none"></i>
+          </div>
+
+          <div class="flex justify-center gap-2 mb-10" id="otpContainer">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-14 h-16 text-center text-3xl font-black rounded-2xl border-2 border-transparent bg-white/80 focus:bg-white focus:border-orange-400 outline-none transition shadow-sm text-orange-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-14 h-16 text-center text-3xl font-black rounded-2xl border-2 border-transparent bg-white/80 focus:bg-white focus:border-orange-400 outline-none transition shadow-sm text-orange-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-14 h-16 text-center text-3xl font-black rounded-2xl border-2 border-transparent bg-white/80 focus:bg-white focus:border-orange-400 outline-none transition shadow-sm text-orange-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-14 h-16 text-center text-3xl font-black rounded-2xl border-2 border-transparent bg-white/80 focus:bg-white focus:border-orange-400 outline-none transition shadow-sm text-orange-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-14 h-16 text-center text-3xl font-black rounded-2xl border-2 border-transparent bg-white/80 focus:bg-white focus:border-orange-400 outline-none transition shadow-sm text-orange-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+          </div>
+
+          <button id="loginBtn" onclick="loginUser()" class="w-full bg-gradient-to-r from-orange-400 to-orange-500 text-white py-4 rounded-2xl font-black text-xl hover:from-orange-500 hover:to-orange-600 transition-all shadow-[0_8px_20px_rgba(249,115,22,0.3)] hover:shadow-[0_12px_25px_rgba(249,115,22,0.4)] hover:-translate-y-1 flex justify-center items-center gap-3">
+              <span id="loginBtnText">เข้าสู่บทเรียน</span> <i data-lucide="arrow-right" class="w-5 h-5"></i>
+          </button>
+          <p id="loginError" class="text-red-500 text-sm mt-5 hidden font-bold bg-red-50/80 py-3 rounded-xl border border-red-100"></p>
+      </div>
+  </div>
+
+  <div id="app" class="w-full h-full flex flex-col overflow-auto hidden bg-[#fafaf9]">
+   <!-- Header 2026 Style -->
+   <header class="glass-panel sticky top-0 z-50 shrink-0 border-b border-white/40 shadow-[0_4px_30px_rgba(0,0,0,0.03)]">
+    <div class="max-w-7xl mx-auto px-5 py-3 flex items-center justify-between">
+     <div class="flex items-center gap-4 cursor-pointer group" onclick="showSection('home')">
+      <div class="w-11 h-11 bg-gradient-to-tr from-yellow-400 to-orange-400 rounded-[1.2rem] flex items-center justify-center shadow-md group-hover:scale-110 transition-transform"><i data-lucide="map" class="w-5 h-5 text-white"></i></div>
+      <span class="font-black text-gray-800 text-base hidden sm:block tracking-wide">แหลมสน <span class="text-orange-500">บทเรียนออนไลน์</span></span>
+     </div>
+     <nav class="hidden lg:flex gap-8 text-sm text-gray-500 font-bold tracking-wide">
+         <a href="#" onclick="showSection('home')" class="hover:text-orange-500 transition menu-link active-nav py-2" data-target="home">หน้าแรก</a>
+         <a href="#" onclick="showSection('knowledge')" class="hover:text-orange-500 transition menu-link py-2" data-target="knowledge">ใบความรู้</a>
+         <a href="#" onclick="showSection('activity')" class="hover:text-orange-500 transition menu-link py-2 flex items-center gap-1.5" data-target="activity"><i data-lucide="crosshair" class="w-4 h-4 text-orange-400"></i> เล็งยิงตอบคำถาม</a>
+         <a href="#" onclick="showSection('quiz')" class="hover:text-orange-500 transition menu-link py-2" data-target="quiz">แบบทดสอบ</a>
+     </nav>
+     <div class="flex items-center gap-4">
+         <a href="https://jitpanusri-cell.github.io/songkhla-history/kaodaeng-lesson/" class="hidden lg:flex bg-orange-50/50 text-orange-600 px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-orange-100 transition items-center gap-2 border border-orange-100 shadow-sm">
+             <i data-lucide="home" class="w-4 h-4"></i> กลับเขาแดง
+         </a>
+
+         <div class="hidden sm:flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border border-gray-100 shadow-sm">
+             <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center text-orange-500 font-black text-xs" id="displayClass"></div>
+             <div id="displayName" class="font-black text-gray-700 text-sm"></div>
+         </div>
+         <button onclick="logoutUser()" title="เปลี่ยนผู้ใช้" class="hidden sm:flex bg-red-50 p-3 rounded-2xl hover:bg-red-100 transition text-red-500 hover:shadow-md">
+             <i data-lucide="log-out" class="w-5 h-5"></i>
+         </button>
+         <button id="menuBtn" class="lg:hidden p-2.5 text-gray-600 bg-gray-100 rounded-xl"><i data-lucide="menu" class="w-6 h-6"></i></button>
+     </div>
+    </div>
+
+    <div id="mobileMenu" class="hidden lg:hidden border-t border-gray-100 bg-white/95 backdrop-blur-xl px-5 pb-5 pt-3 space-y-2 text-sm text-gray-600 font-bold absolute w-full shadow-2xl z-40 rounded-b-3xl">
+         <a href="#" onclick="showSection('home')" class="block py-3.5 hover:text-orange-500 border-b border-gray-50 flex items-center gap-3"><i data-lucide="home" class="w-5 h-5"></i> หน้าแรก</a>
+         <a href="#" onclick="showSection('knowledge')" class="block py-3.5 hover:text-orange-500 border-b border-gray-50 flex items-center gap-3"><i data-lucide="book-open-check" class="w-5 h-5"></i> ใบความรู้</a>
+         <a href="#" onclick="showSection('activity')" class="block py-3.5 text-orange-500 hover:text-orange-600 border-b border-gray-50 flex items-center gap-3 bg-orange-50/50 rounded-xl px-3"><i data-lucide="crosshair" class="w-5 h-5"></i> เล่นเกมปืนใหญ่เล็งตอบ</a>
+         <a href="#" onclick="showSection('quiz')" class="block py-3.5 hover:text-orange-500 border-b border-gray-50 flex items-center gap-3"><i data-lucide="file-check-2" class="w-5 h-5"></i> แบบทดสอบ</a>
+         <a href="#" onclick="logoutUser()" class="block py-3.5 text-red-500 flex items-center gap-3 mt-2"><i data-lucide="log-out" class="w-5 h-5"></i> ออกจากระบบ</a>
+    </div>
+   </header>
+
+   <main class="flex-grow flex flex-col">
+       <!-- Section Home -->
+       <div id="section-home" class="page-section block">
+           <section class="bg-gradient-to-br from-yellow-300 via-amber-400 to-orange-500 py-20 md:py-32 text-center text-white relative overflow-hidden">
+            <div class="absolute top-10 left-10 w-64 h-64 bg-white/20 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-10 right-20 w-80 h-80 bg-orange-600/20 rounded-full blur-3xl"></div>
+
+            <div class="relative z-10 max-w-4xl mx-auto px-5">
+             <div class="flex justify-center mb-8">
+                 <div class="w-24 h-24 glass-panel rounded-[2rem] flex items-center justify-center shadow-xl transform rotate-3 hover:rotate-6 transition duration-300">
+                     <i data-lucide="anchor" class="w-12 h-12 text-white drop-shadow-md"></i>
+                 </div>
+             </div>
+             <h1 id="welcomeText" class="text-5xl md:text-7xl font-black mb-6 leading-tight drop-shadow-lg tracking-tight">ประวัติศาสตร์เมืองสงขลา<br><span class="text-yellow-100 inline-block mt-2 bg-white/10 px-6 py-2 rounded-3xl backdrop-blur-sm border border-white/20">ฝั่งแหลมสน</span></h1>
+             <p class="text-orange-50 text-xl md:text-2xl mb-12 font-medium tracking-wide">บทเรียนออนไลน์ รายวิชา มหาวชิราวุธ 1</p>
+             <button onclick="showSection('knowledge')" class="bg-white text-orange-500 px-12 py-5 rounded-full font-black text-xl shadow-[0_15px_30px_rgba(0,0,0,0.15)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.2)] hover:-translate-y-2 transition-all transform flex items-center gap-3 mx-auto">
+                 เริ่มเรียนกันเลย <i data-lucide="arrow-right" class="w-6 h-6"></i>
+             </button>
+            </div>
+           </section>
+
+           <section class="max-w-6xl mx-auto px-5 py-16">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div onclick="showSection('knowledge')" class="bg-white p-10 rounded-[3rem] shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgba(245,158,11,0.1)] transition-all duration-300 cursor-pointer text-center group border border-gray-50 hover:-translate-y-3">
+                    <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-tr from-yellow-100 to-orange-100 rounded-[2rem] flex items-center justify-center group-hover:from-yellow-400 group-hover:to-orange-400 transition-colors duration-300 shadow-inner"><i data-lucide="book-open-check" class="w-12 h-12 text-orange-500 group-hover:text-white transition"></i></div>
+                    <h3 class="font-black text-gray-800 text-2xl mb-3">ใบความรู้</h3>
+                    <p class="text-base text-gray-500 font-medium leading-relaxed">ศึกษาการตั้งเมืองและการพัฒนาในยุคแหลมสน</p>
+                </div>
+                <div onclick="showSection('activity')" class="bg-white p-10 rounded-[3rem] shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgba(245,158,11,0.1)] transition-all duration-300 cursor-pointer text-center group border border-gray-50 hover:-translate-y-3 relative overflow-hidden">
+                    <div class="absolute -right-10 -top-10 w-40 h-40 bg-orange-50 rounded-full blur-2xl group-hover:bg-orange-100 transition"></div>
+                    <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-tr from-orange-100 to-amber-200 rounded-[2rem] flex items-center justify-center group-hover:from-orange-400 group-hover:to-amber-500 transition-colors duration-300 shadow-inner relative z-10"><i data-lucide="crosshair" class="w-12 h-12 text-orange-600 group-hover:text-white transition"></i></div>
+                    <h3 class="font-black text-gray-800 text-2xl mb-3 relative z-10">เกมปืนใหญ่เล็งตอบ</h3>
+                    <p class="text-base text-gray-500 font-medium leading-relaxed relative z-10">เล็งยิงตอบคำถามประวัติศาสตร์ สนุกเต็มจอ!</p>
+                </div>
+                <div onclick="showSection('quiz')" class="bg-white p-10 rounded-[3rem] shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgba(16,185,129,0.1)] transition-all duration-300 cursor-pointer text-center group border border-gray-50 hover:-translate-y-3">
+                    <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-tr from-emerald-100 to-teal-100 rounded-[2rem] flex items-center justify-center group-hover:from-emerald-400 group-hover:to-teal-400 transition-colors duration-300 shadow-inner"><i data-lucide="file-check-2" class="w-12 h-12 text-emerald-600 group-hover:text-white transition"></i></div>
+                    <h3 class="font-black text-gray-800 text-2xl mb-3">แบบทดสอบ</h3>
+                    <p class="text-base text-gray-500 font-medium leading-relaxed">วัดผลสัมฤทธิ์ทางการเรียน 10 ข้อ 10 คะแนน</p>
+                </div>
+            </div>
+           </section>
+       </div>
+
+       <!-- Section Knowledge -->
+       <div id="section-knowledge" class="page-section hidden max-w-6xl mx-auto px-5 py-16">
+           <div class="text-center mb-16">
+               <h2 class="text-4xl md:text-5xl font-black text-gray-800 mb-4 tracking-tight">ใบความรู้ประวัติศาสตร์</h2>
+               <p class="text-gray-500 font-bold text-xl">เลือกหัวข้อเพื่อศึกษาความเป็นมาของยุคแหลมสน</p>
+           </div>
+           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+               <div class="bg-white rounded-[3rem] shadow-[0_10px_30px_rgba(0,0,0,0.03)] p-10 text-center flex flex-col group border-2 border-transparent hover:border-yellow-400 transition-all hover:-translate-y-3 relative overflow-hidden">
+                   <div class="w-16 h-16 bg-yellow-100 rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 text-yellow-600 font-black text-2xl shadow-sm">1</div>
+                   <h3 class="font-black text-gray-800 mb-4 text-xl">การกำเนิดเมืองและการเริ่มต้นสายสกุล</h3>
+                   <p class="text-base text-gray-500 mb-10 flex-grow leading-relaxed font-medium">ณ บ้านแหลมสน และตำนานหลวงสุวรรณคีรีสมบัติ</p>
+                   <button class="w-full bg-yellow-50 text-yellow-700 text-base px-6 py-4 rounded-full hover:bg-yellow-400 hover:text-white transition-all font-black shadow-sm" onclick="viewLesson(1)">อ่านบทเรียน</button>
+               </div>
+               <div class="bg-white rounded-[3rem] shadow-[0_10px_30px_rgba(0,0,0,0.03)] p-10 text-center flex flex-col group border-2 border-transparent hover:border-orange-400 transition-all hover:-translate-y-3">
+                   <div class="w-16 h-16 bg-orange-100 rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 text-orange-600 font-black text-2xl shadow-sm">2</div>
+                   <h3 class="font-black text-gray-800 mb-4 text-xl">ความเจริญเศรษฐกิจและการย้ายเมือง</h3>
+                   <p class="text-base text-gray-500 mb-10 flex-grow leading-relaxed font-medium">การผูกขาดการค้า และการขยับขยายสู่บ่อยาง</p>
+                   <button class="w-full bg-orange-50 text-orange-700 text-base px-6 py-4 rounded-full hover:bg-orange-400 hover:text-white transition-all font-black shadow-sm" onclick="viewLesson(2)">อ่านบทเรียน</button>
+               </div>
+               <div class="bg-white rounded-[3rem] shadow-[0_10px_30px_rgba(0,0,0,0.03)] p-10 text-center flex flex-col group border-2 border-transparent hover:border-amber-600 transition-all hover:-translate-y-3">
+                   <div class="w-16 h-16 bg-amber-100 rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 text-amber-700 font-black text-2xl shadow-sm">3</div>
+                   <h3 class="font-black text-gray-800 mb-4 text-xl">หลักฐานทางโบราณคดีที่สำคัญ</h3>
+                   <p class="text-base text-gray-500 mb-10 flex-grow leading-relaxed font-medium">ซุ้มประตูบ่อเก๋ง วัดออก วัดบ่อทรัพย์ และสุสาน</p>
+                   <button class="w-full bg-amber-50 text-amber-800 text-base px-6 py-4 rounded-full hover:bg-amber-500 hover:text-white transition-all font-black shadow-sm" onclick="viewLesson(3)">อ่านบทเรียน</button>
+               </div>
+           </div>
+       </div>
+
+       <!-- Section Activity (LINK TO GITHUB GAME) -->
+       <div id="section-activity" class="page-section hidden max-w-5xl mx-auto px-5 py-20 text-center flex-grow flex items-center justify-center">
+           <div class="bg-slate-900 rounded-[3rem] p-10 md:p-20 shadow-2xl relative overflow-hidden border border-slate-700 w-full">
+
+               <div class="absolute top-0 right-0 w-80 h-80 bg-orange-500/20 rounded-full blur-3xl"></div>
+               <div class="absolute bottom-0 left-0 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl"></div>
+
+               <div class="relative z-10">
+                   <div class="w-32 h-32 bg-gradient-to-tr from-yellow-400 to-orange-500 rounded-[2.5rem] mx-auto flex items-center justify-center mb-8 shadow-lg transform rotate-3 hover:rotate-6 transition duration-300">
+                       <i data-lucide="crosshair" class="w-16 h-16 text-white drop-shadow-md"></i>
+                   </div>
+
+                   <h2 class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight drop-shadow-lg">
+                       พร้อมเล็งปืนใหญ่ลุยเมืองสงขลา<br class="hidden md:block">แล้วหรือยัง?
+                   </h2>
+
+                   <p class="text-slate-300 text-lg md:text-xl font-bold mb-12 max-w-2xl mx-auto leading-relaxed">
+                       ลากเพื่อเล็ง ปล่อยเพื่อยิงป้ายคำตอบที่ถูกต้อง ลุ้นเซียมซี เก็บคะแนนให้ครบ 10 ข้อ <br class="hidden md:block">
+                       ระบบได้แยกตัวเกมไปเปิดในหน้าจอใหม่ (Full Screen) เพื่อประสบการณ์การเล่นที่ลื่นไหลและเต็มตา
+                   </p>
+
+                   <button onclick="openGame()" class="inline-flex bg-gradient-to-r from-orange-400 to-orange-500 text-white px-10 py-5 rounded-full font-black text-2xl hover:scale-105 hover:from-orange-500 hover:to-orange-600 transition-all shadow-[0_15px_30px_rgba(249,115,22,0.4)] items-center gap-3 animate-spring border-2 border-white/20">
+                       <i data-lucide="external-link" class="w-6 h-6"></i> ไปเล่นเกมกันเลย!
+                   </button>
+
+                   <p class="text-slate-500 text-sm font-bold mt-8 flex items-center justify-center gap-2">
+                       <i data-lucide="info" class="w-4 h-4"></i> ระบบจะเปิดแท็บใหม่เพื่อเข้าสู่เว็บ GitHub Pages พร้อมส่งชื่อ-ห้องของคุณไปด้วย เพื่อบันทึกคะแนนอัตโนมัติ
+                   </p>
+               </div>
+           </div>
+       </div>
+
+       <!-- Section Quiz -->
+       <div id="section-quiz" class="page-section hidden max-w-4xl mx-auto px-5 py-16">
+           <div class="bg-white rounded-[3.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] overflow-hidden text-center border border-gray-50">
+               <div id="quizIntro">
+                   <div class="bg-gradient-to-br from-emerald-400 to-teal-500 py-24 px-5 text-white relative">
+                       <i data-lucide="clipboard-check" class="w-40 h-40 absolute top-10 right-10 opacity-10 transform rotate-12"></i>
+                       <h2 class="text-5xl font-black mb-4 drop-shadow-md tracking-tight">แบบทดสอบเมืองแหลมสน</h2>
+                       <p class="text-emerald-50 font-bold text-xl">แบบปรนัย 4 ตัวเลือก จำนวน 10 ข้อ 10 คะแนน</p>
+                   </div>
+                   <div class="p-16 bg-white">
+                       <button onclick="startQuiz()" class="bg-emerald-500 text-white px-14 py-5 rounded-full font-black text-2xl hover:bg-emerald-600 hover:scale-105 transition-all shadow-[0_10px_25px_rgba(16,185,129,0.3)] w-full sm:w-auto flex items-center justify-center gap-3 mx-auto">
+                           <i data-lucide="play-circle" class="w-8 h-8"></i> เข้าสู่แบบทดสอบ
+                       </button>
+                   </div>
+               </div>
+
+               <div id="quizContainer" class="p-10 md:p-16 hidden text-left bg-gray-50/30">
+                   <div class="flex justify-between items-center mb-10 border-b-2 border-gray-100 pb-5">
+                       <div class="font-black text-emerald-600 bg-emerald-100 px-6 py-2.5 rounded-full text-base tracking-wide" id="quizProgress">ข้อที่ 1/10</div>
+                   </div>
+                   <h3 id="quizQuestionText" class="text-2xl md:text-3xl font-black text-gray-800 mb-10 leading-relaxed"></h3>
+                   <div id="quizOptions" class="space-y-4"></div>
+                   <div class="mt-12 pt-8 border-t-2 border-gray-100 text-right">
+                       <button id="nextQuizBtn" disabled onclick="nextQuizQuestion()" class="bg-gray-200 text-gray-400 px-12 py-4 rounded-full font-black transition-all cursor-not-allowed text-xl flex items-center justify-end ml-auto gap-2">ถัดไป <i data-lucide="arrow-right" class="w-6 h-6"></i></button>
+                   </div>
+               </div>
+
+               <div id="quizResult" class="hidden pb-12">
+                   <div class="bg-gradient-to-br from-emerald-500 to-teal-600 py-24 text-white relative overflow-hidden">
+                       <div class="relative z-10">
+                           <h2 class="text-3xl font-black mb-6 text-emerald-50 tracking-wide">ผลการทดสอบของคุณ</h2>
+                           <p class="text-8xl font-nunito font-black drop-shadow-xl"><span id="finalQuizScore"></span><span class="text-5xl text-emerald-200/80">/10</span></p>
+                       </div>
+                   </div>
+                   <div class="p-12 max-w-2xl mx-auto bg-white rounded-b-[3.5rem]">
+                       <h3 class="text-2xl font-black text-gray-800 border-b-2 border-gray-100 pb-4 mb-8 text-left flex items-center gap-3"><i data-lucide="medal" class="w-8 h-8 text-yellow-500"></i> Leaderboard (ห้อง <span class="board-class-name"></span>)</h3>
+                       <ul id="quizLeaderboardList" class="text-left space-y-4"></ul>
+                   </div>
+               </div>
+           </div>
+       </div>
+   </main>
+
+   <!-- Modal บทเรียน -->
+   <div id="lessonModal" class="hidden fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-5 backdrop-blur-xl transition-opacity">
+    <div class="bg-white rounded-[3rem] max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl animate-spring border border-white">
+     <div class="bg-[#f59e0b] text-white p-8 md:p-10 flex items-center justify-between shrink-0 transition-colors" id="modalHeader">
+      <div>
+       <span id="lessonBadge" class="bg-white/25 backdrop-blur-md px-5 py-2 rounded-full text-sm font-black tracking-widest mb-4 inline-block shadow-sm uppercase">บทที่ 1</span>
+       <h2 id="lessonSubtitle" class="text-3xl md:text-4xl font-black leading-tight mt-1 drop-shadow-md tracking-tight">การตั้งเมืองและการเริ่มต้นสายสกุล</h2>
+      </div>
+      <button onclick="closeLesson()" class="w-12 h-12 bg-black/10 hover:bg-black/20 rounded-full flex items-center justify-center transition-all hover:scale-110"> <i data-lucide="x" class="w-6 h-6"></i> </button>
+     </div>
+     <div id="lessonContent" class="p-8 md:p-12 overflow-y-auto grow custom-scrollbar text-gray-700 leading-relaxed text-lg md:text-xl font-medium"></div>
+     <div class="border-t border-gray-100 p-6 sm:p-8 flex gap-5 bg-gray-50 shrink-0 justify-between items-center">
+         <button id="prevBtn" onclick="previousLesson()" class="flex-1 max-w-[250px] bg-white border-2 border-gray-200 text-gray-600 py-4 px-6 rounded-full hover:bg-gray-100 transition-all font-black flex items-center justify-center gap-3 shadow-sm text-lg">
+             <i data-lucide="chevron-left" class="w-6 h-6"></i> <span class="hidden sm:inline">บทก่อนหน้า</span>
+         </button>
+         <button id="nextBtn" onclick="nextLesson()" class="flex-1 max-w-[250px] bg-[#f59e0b] text-white py-4 px-6 rounded-full hover:bg-[#d97706] shadow-[0_8px_20px_rgba(245,158,11,0.3)] hover:-translate-y-1 transition-all font-black flex items-center justify-center gap-3 text-lg">
+             <span id="nextBtnText">บทถัดไป</span> <i id="nextBtnIcon" data-lucide="chevron-right" class="w-6 h-6"></i>
+         </button>
+     </div>
+    </div>
+   </div>
+
+   <footer class="bg-slate-900 text-slate-400 text-center py-8 px-5 text-sm mt-auto shrink-0 border-t-8 border-[#f59e0b]">
+    <p class="font-black text-white mb-2 text-base">Copyright © 2026 ประวัติศาสตร์เมืองสงขลาฝั่งแหลมสน</p>
+    <p class="text-xs font-bold">ครูผู้สอน/ผู้พัฒนา : นายจิตรภาณุ ศรีหวัง</p>
+   </footer>
+  </div>
+
+  <script>
+  let studentName = ""; let studentIdStr = ""; let studentClass = "";
+  let currentLessonId = 1;
+  lucide.createIcons();
+
+  // ===== เชื่อมต่อกับ Google Apps Script backend ผ่าน JSONP =====
+  // ใช้แทน google.script.run เพื่อให้หน้านี้เป็นไฟล์ static ล้วนๆ โฮสต์บน GitHub Pages (หรือที่ไหนก็ได้) ได้
+  // เหตุผลที่ต้องใช้ JSONP แทน fetch() ธรรมดา: Apps Script ContentService ไม่มีทางตั้งค่า
+  // Access-Control-Allow-Origin ให้เบราว์เซอร์อ่าน response ข้ามโดเมนได้ (แม้คำขอจะสำเร็จฝั่งเซิร์ฟเวอร์ก็ตาม)
+  // การโหลดผ่าน <script src="..."> ไม่ติดข้อจำกัด CORS แบบเดียวกับ fetch/XHR
+  const API_BASE_URL = "https://script.google.com/macros/s/AKfycbwAfmqJTXPhRP1WSV2_EyYoqSs0b_4C3rL5_EwW8EryTpIDkmBU6Sx4UM8TJ9ndYrGX/exec";
+  let jsonpCounter = 0;
+  function jsonpRequest(baseUrl, params, onSuccess, onError) {
+      const callbackName = 'jsonp_cb_' + (jsonpCounter++) + '_' + Date.now();
+      const query = new URLSearchParams(Object.assign({}, params, { callback: callbackName })).toString();
+      const script = document.createElement('script');
+      let settled = false;
+      let timeoutId;
+      const cleanup = () => {
+          delete window[callbackName];
+          if (script.parentNode) script.parentNode.removeChild(script);
+          clearTimeout(timeoutId);
+      };
+      window[callbackName] = function (data) {
+          if (settled) return; settled = true;
+          cleanup();
+          onSuccess(data);
+      };
+      timeoutId = setTimeout(() => {
+          if (settled) return; settled = true;
+          cleanup();
+          if (onError) onError(new Error('หมดเวลาเชื่อมต่อเซิร์ฟเวอร์ กรุณาลองใหม่'));
+      }, 15000);
+      script.src = baseUrl + '?' + query;
+      script.onerror = function () {
+          if (settled) return; settled = true;
+          cleanup();
+          if (onError) onError(new Error('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ'));
+      };
+      document.body.appendChild(script);
+  }
+
+  window.onload = function() {
+      let savedName = localStorage.getItem('studentName'); let savedId = localStorage.getItem('studentIdStr'); let savedClass = localStorage.getItem('studentClass');
+      if (savedName && savedId && savedClass) {
+          studentName = savedName; studentIdStr = savedId; studentClass = savedClass;
+          document.getElementById('displayClass').innerText = studentClass;
+          document.getElementById('displayName').innerText = studentName;
+          document.querySelectorAll('.board-class-name').forEach(el => el.innerText = studentClass);
+          document.getElementById('loginScreen').classList.add('hidden');
+          document.getElementById('app').classList.remove('hidden');
+          showSection('home');
+      }
+  }
+
+  function moveToNext(current) {
+      current.value = current.value.replace(/[^0-9]/g, '');
+      if (current.value.length >= 1) { current.value = current.value.slice(0,1); let next = current.nextElementSibling; if (next && next.tagName === "INPUT") next.focus(); }
+  }
+
+  function handleBackspace(event, current) {
+      if (event.key === "Backspace" && current.value === "") { let prev = current.previousElementSibling; if (prev && prev.tagName === "INPUT") { prev.focus(); prev.value = ""; } }
+  }
+
+  function loginUser() {
+      const cls = document.getElementById('studentClassInput').value;
+      const errorMsg = document.getElementById('loginError');
+      const inputs = document.querySelectorAll('.otp-input');
+      let idInput = ""; inputs.forEach(input => idInput += input.value);
+
+      if (cls === "") { errorMsg.innerText = "กรุณาเลือกระดับชั้นเรียนก่อนครับ"; errorMsg.classList.remove('hidden'); return; }
+      if (idInput.length < 5) { errorMsg.innerText = "กรุณากรอกรหัสนักเรียน 5 หลักให้ครบถ้วน"; errorMsg.classList.remove('hidden'); return; }
+
+      document.getElementById('loginBtnText').innerText = "กำลังตรวจสอบ..."; document.getElementById('loginBtn').disabled = true;
+
+      jsonpRequest(API_BASE_URL, { api: 'verifyStudent', className: cls, studentId: idInput }, function (response) {
+          if (response && response.status === "success") {
+              studentName = response.name; studentIdStr = idInput; studentClass = cls;
+              localStorage.setItem('studentName', studentName); localStorage.setItem('studentIdStr', studentIdStr); localStorage.setItem('studentClass', studentClass);
+              document.getElementById('displayClass').innerText = studentClass; document.getElementById('displayName').innerText = studentName;
+              document.querySelectorAll('.board-class-name').forEach(el => el.innerText = studentClass);
+              document.getElementById('loginScreen').classList.add('opacity-0');
+              saveToSheet("เข้าสู่ระบบแหลมสน", "-", null);
+              setTimeout(() => {
+                  document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('app').classList.remove('hidden'); showSection('home');
+              }, 700);
+          } else {
+              errorMsg.innerText = (response && response.message) || "รหัสนักเรียนไม่ถูกต้อง"; errorMsg.classList.remove('hidden');
+              document.getElementById('loginBtnText').innerText = "เข้าสู่บทเรียน"; document.getElementById('loginBtn').disabled = false;
+          }
+      }, function (err) {
+          errorMsg.innerText = "เซิร์ฟเวอร์ไม่ตอบสนอง กรุณาลองใหม่"; errorMsg.classList.remove('hidden');
+          document.getElementById('loginBtnText').innerText = "เข้าสู่บทเรียน"; document.getElementById('loginBtn').disabled = false;
+      });
+  }
+
+  function logoutUser() { localStorage.removeItem('studentName'); localStorage.removeItem('studentIdStr'); localStorage.removeItem('studentClass'); location.reload(); }
+
+  // เปิดเกม "ปืนใหญ่เล็งตอบ" ในแท็บใหม่ พร้อมแนบข้อมูลนักเรียนไปกับ URL
+  // เพื่อให้ตัวเกม (โฮสต์บน GitHub Pages) ส่งคะแนนกลับมาบันทึกที่ Google Sheet ผ่าน API ?api=saveScore ได้เอง
+  function openGame() {
+      const base = "https://jitpanusri-cell.github.io/songkhla-history/laemson-game/";
+      const params = new URLSearchParams({
+          studentId: studentIdStr || '',
+          name: studentName || '',
+          className: studentClass || ''
+      });
+      window.open(base + "?" + params.toString(), "_blank");
+  }
+
+  function saveToSheet(actionType, scoreVal, leaderboardElementId) {
+      if (leaderboardElementId) {
+          document.getElementById(leaderboardElementId).innerHTML = "<li class='text-center text-emerald-600 font-bold py-6 animate-pulse text-lg'>กำลังบันทึกคะแนนเข้าสู่ระบบ...</li>";
+      }
+      jsonpRequest(API_BASE_URL, {
+          api: 'saveScore', studentId: studentIdStr, name: studentName, className: studentClass, action: actionType, score: scoreVal
+      }, function (response) {
+          if (response && response.status === "success" && response.leaderboard && leaderboardElementId) {
+              renderRealLeaderboard(leaderboardElementId, response.leaderboard);
+          } else if (leaderboardElementId) {
+              document.getElementById(leaderboardElementId).innerHTML = `<li class='text-center text-red-500 py-4 font-bold'>${(response && response.message) || 'บันทึกคะแนนไม่สำเร็จ'}</li>`;
+          }
+      }, function (err) {
+          if (leaderboardElementId) {
+              document.getElementById(leaderboardElementId).innerHTML = "<li class='text-center text-red-500 py-4 font-bold'>เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต</li>";
+          }
+      });
+  }
+
+  function renderRealLeaderboard(elementId, boardData) {
+      if(!boardData || boardData.length === 0) { document.getElementById(elementId).innerHTML = "<li class='text-center text-gray-500 py-4 font-bold'>ยังไม่มีข้อมูลในห้องนี้</li>"; return; }
+      let html = boardData.map((u, i) => {
+          let medal = i===0 ? '🏆' : i===1 ? '🥈' : i===2 ? '🥉' : `<span class="w-8 inline-block text-center text-gray-400 font-black">${i+1}</span>`;
+          let isMe = (u.name === studentName);
+          let bg = isMe ? 'bg-orange-50 border-orange-300 shadow-md transform scale-[1.02]' : 'bg-white border-gray-100 hover:bg-gray-50 transition';
+          let textColor = isMe ? 'text-orange-700 font-black' : 'text-gray-700 font-bold';
+
+          return `<li class="flex justify-between items-center p-4 border-2 rounded-2xl ${bg}">
+              <div class="flex items-center gap-4"><span class="text-2xl drop-shadow-sm">${medal}</span> <span class="${textColor} text-lg">${u.name}</span></div>
+              <span class="bg-slate-800 text-white px-4 py-1.5 rounded-xl text-sm font-black font-nunito shadow-sm">${u.score}/10</span>
+          </li>`;
+      }).join('');
+      document.getElementById(elementId).innerHTML = html;
+  }
+
+  function showSection(sectionId) {
+      document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
+      document.getElementById('section-' + sectionId).classList.remove('hidden');
+
+      document.querySelectorAll('.menu-link').forEach(link => {
+          link.classList.remove('active-nav'); if(link.getAttribute('data-target') === sectionId) link.classList.add('active-nav');
+      });
+      document.getElementById('mobileMenu').classList.add('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  document.getElementById('menuBtn').addEventListener('click', () => { document.getElementById('mobileMenu').classList.toggle('hidden'); });
+
+  const lessons = {
+    1: { title: 'บทที่ 1', subtitle: 'การตั้งเมืองและการเริ่มต้นสายสกุล', color: '#f59e0b',
+        content: `
+            <div class="bg-yellow-50/80 p-8 rounded-[2rem] border border-yellow-200 mb-8">
+                <h3 class="text-2xl font-black text-yellow-700 mb-4 flex items-center gap-3"><i data-lucide="map-pin" class="w-6 h-6"></i> การตั้งเมืองสงขลาฝั่งแหลมสน</h3>
+                <p class="text-left leading-relaxed text-gray-700">หลังจากเมืองสงขลาเชิงเขาแดงถูกกองทัพของสมเด็จพระนารายณ์โจมตีและทำลายเมืองไปอย่างราบคาบแล้วนั้น เมื่อ พ.ศ 2223 ชาวเมืองสงขลาส่วนหนึ่งได้โยกย้ายไปตั้งชุมชนแห่งใหม่ <strong>"ณ บ้านแหลมสน"</strong> ซึ่งตั้งอยู่ปลายสุดของคาบสมุทรสทิงพระ ตรงข้ามกับทางใต้ของเมืองสงขลาเชิงเขาแดง<br><br>จึงนิยมเรียกเมืองสงขลาใหม่นี้ว่า <strong class="text-yellow-800 bg-yellow-100 px-2 py-1 rounded">"เมืองสงขลาฝั่งแหลมสน"</strong></p>
+            </div>
+
+            <h3 class="text-2xl font-black text-yellow-700 mb-5 px-2 flex items-center gap-3"><i data-lucide="users" class="w-6 h-6"></i> การเริ่มต้นสายสกุล ณ สงขลา</h3>
+            <div class="bg-white p-8 rounded-[2rem] border-2 border-yellow-100 shadow-sm">
+                <ul class="space-y-6 text-gray-700">
+                    <li class="flex gap-5 items-start"><div class="bg-gradient-to-br from-yellow-100 to-orange-100 p-3 rounded-2xl text-yellow-600 mt-1 shadow-sm"><i data-lucide="history" class="w-6 h-6"></i></div><div><strong>พ.ศ. 2317 (สมัยกรุงธนบุรี):</strong> พระเจ้าตากสินทรงโปรดเกล้าให้ <strong>นายเหยี่ยง แซ่เฮา</strong> เลื่อนยศเป็น <strong class="text-orange-600">"หลวงสุวรรณคีรีสมบัติ"</strong> ปกครองเมืองสงขลาแหลมสนแทน</div></li>
+                    <li class="flex gap-5 items-start"><div class="bg-gradient-to-br from-yellow-100 to-orange-100 p-3 rounded-2xl text-yellow-600 mt-1 shadow-sm"><i data-lucide="git-branch" class="w-6 h-6"></i></div><div>เหตุการณ์นี้นับว่าเป็นการเริ่มต้น <strong class="text-orange-600">สายสกุล ณ สงขลา</strong> ซึ่งต่อมาได้ปกครองเมืองสงขลา มาถึง 18 รุ่น</div></li>
+                </ul>
+            </div>`
+    },
+    2: { title: 'บทที่ 2', subtitle: 'ความเจริญทางเศรษฐกิจ และการย้ายเมือง', color: '#f97316',
+        content: `
+            <div class="bg-orange-50/80 p-8 rounded-[2rem] border border-orange-200 mb-8">
+                <h3 class="text-2xl font-black text-orange-700 mb-4 flex items-center gap-3"><i data-lucide="trending-up" class="w-6 h-6"></i> การเติบโตและการผูกขาดเศรษฐกิจ</h3>
+                <p class="leading-relaxed text-gray-700">สมัย <strong>พระยาวิเชียรคีรี (เกี้ยนเส้ง)</strong> ตระกูล ณ สงขลา ขยายฐานอำนาจทางเศรษฐกิจจากการส่งเสริมชาวจีนอพยพ และเริ่มมีผลประโยชน์จากภาษี โดยการผูกขาดโดยคนในตระกูล ตั้งแต่อากรรังนก สุรา บ่อนเบี้ย</p>
+            </div>
+            <div class="bg-white p-8 rounded-[2rem] border-2 border-orange-100 shadow-sm">
+                <h3 class="text-2xl font-black text-orange-700 mb-4 flex items-center gap-3"><i data-lucide="arrow-right-left" class="w-6 h-6"></i> การย้ายเมืองสู่บ่อยาง</h3>
+                <p class="leading-relaxed text-gray-700">เมื่อเมืองเจริญขึ้น พื้นที่ที่แหลมสนคับแคบ <strong>พระบาทสมเด็จพระนั่งเกล้าเจ้าอยู่หัว (ร.3)</strong> จึงโปรดเกล้าฯ ให้ย้ายเมืองสงขลา ไปตั้งบนสันทรายฝั่งตรงข้าม เรียกว่า <strong class="text-orange-600 bg-orange-100 px-2 py-1 rounded">"บ่อยาง"</strong></p>
+            </div>`
+    },
+    3: { title: 'บทที่ 3', subtitle: 'หลักฐานทางโบราณคดีที่สำคัญ', color: '#d97706',
+        content: `
+            <h3 class="text-2xl font-black text-amber-800 mb-6 px-2 flex items-center gap-3"><i data-lucide="landmark" class="w-6 h-6"></i> แหล่งโบราณคดีฝั่งแหลมสน</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-2">
+                <div class="bg-amber-50/60 p-8 rounded-[2rem] border border-amber-100 hover:shadow-md transition-all">
+                    <div class="w-16 h-16 bg-white rounded-[1.5rem] flex items-center justify-center text-amber-600 mb-4 shadow-sm"><i data-lucide="torii-gate" class="w-8 h-8"></i></div>
+                    <h4 class="font-black text-amber-900 text-xl mb-3">ซุ้มประตูบ่อเก๋ง</h4><p class="text-gray-600 text-base leading-relaxed">สถาปัตยกรรมหมิ่นหนาน (จีน) และมีบ่อน้ำจืดที่ชาวบ้านใช้อุปโภคบริโภค</p>
+                </div>
+                <div class="bg-amber-50/60 p-8 rounded-[2rem] border border-amber-100 hover:shadow-md transition-all">
+                    <div class="w-16 h-16 bg-white rounded-[1.5rem] flex items-center justify-center text-amber-600 mb-4 shadow-sm"><i data-lucide="droplet" class="w-8 h-8"></i></div>
+                    <h4 class="font-black text-amber-900 text-xl mb-3">วัดสุวรรณคีรี (วัดออก)</h4><p class="text-gray-600 text-base leading-relaxed">ใช้ทำพิธีถือน้ำสาบาน (น้ำพิพัฒน์สัตยาอธิษฐาน) ในปี พ.ศ. 2379</p>
+                </div>
+                <div class="bg-amber-50/60 p-8 rounded-[2rem] border border-amber-100 hover:shadow-md transition-all">
+                    <div class="w-16 h-16 bg-white rounded-[1.5rem] flex items-center justify-center text-amber-600 mb-4 shadow-sm"><i data-lucide="database" class="w-8 h-8"></i></div>
+                    <h4 class="font-black text-amber-900 text-xl mb-3">วัดบ่อทรัพย์</h4><p class="text-gray-600 text-base leading-relaxed">มีกรุอิฐขนาดใหญ่หน้าวัด เรียกว่า "บ่อซับ"</p>
+                </div>
+                <div class="bg-amber-50/60 p-8 rounded-[2rem] border border-amber-100 hover:shadow-md transition-all">
+                    <div class="w-16 h-16 bg-white rounded-[1.5rem] flex items-center justify-center text-amber-600 mb-4 shadow-sm"><i data-lucide="monument" class="w-8 h-8"></i></div>
+                    <h4 class="font-black text-amber-900 text-xl mb-3">สุสานตระกูล ณ สงขลา</h4><p class="text-gray-600 text-base leading-relaxed">ตั้งอยู่ในบริเวณเดียวกับวัดภูผาเบิก</p>
+                </div>
+            </div>`
+    }
+  };
+
+  function viewLesson(id) {
+    currentLessonId = id; const l = lessons[id];
+    document.getElementById('lessonBadge').textContent = l.title; document.getElementById('lessonBadge').style.backgroundColor = 'rgba(255,255,255,0.3)'; document.getElementById('lessonBadge').style.color = 'white';
+    document.getElementById('lessonSubtitle').textContent = l.subtitle; document.getElementById('lessonContent').innerHTML = l.content; document.getElementById('modalHeader').style.backgroundColor = l.color;
+    updateNavButtons(); document.getElementById('lessonModal').classList.remove('hidden'); lucide.createIcons();
+  }
+  function closeLesson() { document.getElementById('lessonModal').classList.add('hidden'); }
+  function nextLesson() { if (currentLessonId < 3) viewLesson(currentLessonId + 1); else closeLesson(); }
+  function previousLesson() { if (currentLessonId > 1) viewLesson(currentLessonId - 1); }
+  function updateNavButtons() {
+    const prevBtn = document.getElementById('prevBtn'); const nextBtn = document.getElementById('nextBtn');
+    prevBtn.disabled = currentLessonId === 1; prevBtn.style.opacity = currentLessonId === 1 ? '0.4' : '1';
+    if (currentLessonId === 3) { nextBtn.innerHTML = `<span>ศึกษาจบแล้ว</span> <i data-lucide="check-circle" class="w-6 h-6"></i>`; nextBtn.className = "flex-1 max-w-[250px] bg-green-500 text-white py-4 px-6 rounded-full hover:bg-green-600 shadow-md transition-all font-black flex items-center justify-center gap-3 text-lg"; }
+    else { nextBtn.innerHTML = `<span>บทถัดไป</span> <i data-lucide="chevron-right" class="w-6 h-6"></i>`; nextBtn.className = "flex-1 max-w-[250px] bg-[#f59e0b] text-white py-4 px-6 rounded-full hover:bg-[#d97706] shadow-[0_8px_20px_rgba(245,158,11,0.3)] hover:-translate-y-1 transition-all font-black flex items-center justify-center gap-3 text-lg"; }
+    lucide.createIcons();
+  }
+
+  // =====================================
+  // แบบทดสอบแหลมสน (Quiz Section) 10 ข้อ ท้ายบท
+  // =====================================
+  const quizData = [
+      { q: "1. การตั้งเมืองสงขลาฝั่งแหลมสน เกิดขึ้นหลังจากเหตุการณ์ใด?", options: ["สงครามโลกครั้งที่ 2", "กองทัพอยุธยาตีกรุงธนบุรี", "สมเด็จพระนารายณ์ตีเมืองสงขลาเขาแดงแตก", "โรคระบาดครั้งใหญ่ในภาคใต้"], ans: 2 },
+      { q: "2. เมืองสงขลาฝั่งแหลมสนมีสภาพภูมิประเทศเป็นอย่างไร?", options: ["เป็นภูเขาสูงชัน", "เป็นที่ราบแคบๆ บริเวณปลายคาบสมุทร", "เป็นเกาะกลางทะเลสาบ", "เป็นที่ราบลุ่มแม่น้ำขนาดใหญ่"], ans: 1 },
+      { q: "3. ข้อใดคือผู้ที่พระเจ้าตากสินทรงแต่งตั้งให้เป็น 'หลวงสุวรรณคีรีสมบัติ'?", options: ["พระสงขลา (โยม)", "นายวิเถียน", "นายบุญหุ้ย", "นายเหยี่ยง แซ่เฮา"], ans: 3 },
+      { q: "4. ตระกูล ณ สงขลา ปกครองเมืองสงขลาสืบต่อกันมากี่รุ่น?", options: ["9 รุ่น", "12 รุ่น", "15 รุ่น", "18 รุ่น"], ans: 3 },
+      { q: "5. 'ซุ้มประตูบ่อเก๋ง' สะท้อนให้เห็นถึงการอพยพเข้ามาของชนกลุ่มใด?", options: ["ชาวอาหรับ", "ชาวมลายู", "ชาวจีนฮกเกี้ยน", "ชาวยุโรป"], ans: 2 },
+      { q: "6. วัดใดที่มีการค้นพบสถาปัตยกรรมแบบพื้นเมืองภาคใต้และปัจจุบันเป็นวัดร้าง?", options: ["วัดบ่อทรัพย์", "วัดศิริวรรณาวาส", "วัดภูผาเบิก", "วัดสุวรรณคีรี"], ans: 1 },
+      { q: "7. ในยุคของพระยาวิเชียรคีรี (เกี้ยนเส้ง) เมืองสงขลามีรายได้หลักจากการผูกขาดสิ่งใด?", options: ["การประมง", "อากรรังนก สุรา และบ่อนเบี้ย", "การเก็บค่าเทียบท่าเรือ", "การทำนาข้าว"], ans: 1 },
+      { q: "8. พิธีน้ำพิพัฒน์สัตยาอธิษฐาน ของข้าราชการสงขลา จัดขึ้นที่ใด?", options: ["ศาลหลักเมือง", "หน้าซุ้มประตูบ่อเก๋ง", "วัดสุวรรณคีรี (วัดออก)", "วัดบ่อทรัพย์"], ans: 2 },
+      { q: "9. ทำไมเมืองสงขลาจึงเกิดนโยบายแบ่งแยกและปกครองเมืองปัตตานีในยุคแหลมสน?", options: ["เพราะปัตตานียกทัพมารุกราน", "เพราะสงขลาเข้มแข็งจนเป็นศูนย์กลางการเมืองใหม่แทนปัตตานี", "เพราะต้องการทรัพยากรจากปัตตานี", "เพราะได้รับคำสั่งจากชาติตะวันตก"], ans: 1 },
+      { q: "10. ที่ตั้งเมืองสงขลาแห่งใหม่ (แห่งที่ 3) ที่ถูกย้ายไปจากแหลมสน คือพื้นที่ใด?", options: ["เขาแดง", "บ่อยาง", "เกาะยอ", "สิงหนคร"], ans: 1 }
+  ];
+  let currentQuizIndex = 0; let quizScore = 0; let selectedQuizOption = -1;
+
+  function startQuiz() {
+      quizScore = 0; currentQuizIndex = 0;
+      document.getElementById('quizIntro').classList.add('hidden'); document.getElementById('quizResult').classList.add('hidden'); document.getElementById('quizContainer').classList.remove('hidden'); loadQuizQuestion();
+  }
+  function loadQuizQuestion() {
+      selectedQuizOption = -1; let nextBtn = document.getElementById('nextQuizBtn'); nextBtn.disabled = true; nextBtn.className = "bg-gray-200 text-gray-400 px-12 py-4 rounded-full font-black transition-all cursor-not-allowed text-xl flex items-center justify-end ml-auto gap-2";
+      const q = quizData[currentQuizIndex]; document.getElementById('quizProgress').innerText = `ข้อที่ ${currentQuizIndex + 1}/${quizData.length}`; document.getElementById('quizQuestionText').innerText = q.q;
+      document.getElementById('quizOptions').innerHTML = q.options.map((opt, i) => `<button id="quizOpt-${i}" onclick="selectQuizOption(${i})" class="quiz-btn w-full text-left p-6 rounded-2xl border-2 border-gray-200 text-gray-700 hover:border-emerald-400 hover:bg-emerald-50 hover:-translate-y-1 transition-all text-lg md:text-xl bg-white shadow-sm font-bold">${opt}</button>`).join('');
+  }
+  function selectQuizOption(idx) {
+      selectedQuizOption = idx; for(let i=0; i<4; i++) { let btn = document.getElementById(`quizOpt-${i}`); btn.classList.remove('selected'); if(i === idx) btn.classList.add('selected'); }
+      let nextBtn = document.getElementById('nextQuizBtn'); nextBtn.disabled = false; nextBtn.className = "bg-emerald-500 text-white px-12 py-4 rounded-full font-black hover:bg-emerald-600 hover:-translate-y-1 transition-all shadow-[0_8px_20px_rgba(16,185,129,0.3)] text-xl flex items-center justify-end ml-auto gap-2";
+  }
+  function nextQuizQuestion() { if(selectedQuizOption === quizData[currentQuizIndex].ans) quizScore++; currentQuizIndex++; if(currentQuizIndex < quizData.length) loadQuizQuestion(); else finishQuiz(); }
+  function finishQuiz() {
+      document.getElementById('quizContainer').classList.add('hidden'); document.getElementById('quizResult').classList.remove('hidden'); document.getElementById('finalQuizScore').innerText = quizScore;
+      saveToSheet("แบบทดสอบแหลมสน", quizScore, 'quizLeaderboardList');
+  }
+  </script>
+ </body>
+</html>

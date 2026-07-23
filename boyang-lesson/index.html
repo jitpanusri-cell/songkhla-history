@@ -1,0 +1,1049 @@
+﻿<!doctype html>
+<html lang="th" class="h-full">
+ <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>บทเรียนออนไลน์ประวัติศาสตร์เมืองสงขลาฝั่งบ่อยาง</title>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Noto Sans Thai', sans-serif; }
+        .font-nunito { font-family: 'Nunito', sans-serif; }
+        .page-section { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes bounceIn { 0% { transform: scale(0.8); opacity: 0; } 60% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+        .animate-bounce-in { animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+        .active-nav { color: #6366f1 !important; font-weight: 700; border-bottom: 3px solid #6366f1; padding-bottom: 4px;}
+        .quiz-btn.selected { border-color: #6366f1 !important; background-color: #eef2ff !important; color: #4338ca !important; font-weight: 600;}
+
+        /* ===== เกม 67 Motion Challenge (กล้อง + ตรวจจับมือ) ===== */
+        .cam-stage{ position:relative; width:100%; aspect-ratio:4/3; border-radius:28px; overflow:hidden; background:#0b1020; }
+        .cam-stage video, .cam-stage canvas.mirror{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scaleX(-1); }
+        .cam-stage canvas.mirror{ pointer-events:none; }
+        .cam-fx{ position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+        .cam-zone{ position:absolute; inset:0; display:flex; opacity:0; transition:opacity 0.3s ease; pointer-events:none; }
+        .cam-zone.show{ opacity:1; }
+        .cam-zone .half{ flex:1; display:flex; align-items:center; justify-content:center; }
+        .cam-zone .half.a{ background:linear-gradient(90deg, rgba(99,102,241,0.28), transparent); }
+        .cam-zone .half.b{ background:linear-gradient(-90deg, rgba(16,185,129,0.28), transparent); }
+        .cam-zone .tag{ font-family:'Nunito', sans-serif; font-weight:900; font-size:54px; color:rgba(255,255,255,0.35); text-shadow:0 2px 10px rgba(0,0,0,0.3); }
+
+        .float-score{ position:absolute; z-index:15; font-family:'Nunito', sans-serif; font-weight:900; font-size:26px; pointer-events:none; animation:floatUpScore 0.75s ease-out forwards; text-shadow:0 0 10px rgba(0,0,0,0.35); transform:translate(-50%,-50%); }
+        @keyframes floatUpScore{ 0%{ transform:translate(-50%,-50%) scale(0.8); opacity:1;} 100%{ transform:translate(-50%,-160%) scale(1.3); opacity:0;} }
+        .pulse-ring{ position:absolute; width:26px; height:26px; margin:-13px 0 0 -13px; border-radius:50%; border:3px solid #a5b4fc; pointer-events:none; animation:pulseOutRing 0.5s ease-out forwards; }
+        @keyframes pulseOutRing{ to{ width:120px; height:120px; margin:-60px 0 0 -60px; opacity:0; } }
+
+        .hold-fill{ position:absolute; inset:0; width:calc(var(--hold,0)*100%); background:linear-gradient(90deg, rgba(99,102,241,0.25), rgba(16,185,129,0.25)); transition:width 0.05s linear; border-radius:inherit; z-index:0; }
+    </style>
+ </head>
+ <body class="h-full flex flex-col bg-[#eef2ff] overflow-x-hidden">
+          
+    <div id="loginScreen" class="fixed inset-0 bg-gradient-to-br from-indigo-500 to-purple-600 z-[200] flex items-center justify-center p-4 transition-opacity duration-500">
+            <div class="bg-white/95 backdrop-blur-md rounded-[2rem] shadow-2xl p-8 w-full max-w-md text-center border-4 border-white/50 animate-bounce-in">
+                    <div class="w-24 h-24 bg-gradient-to-tr from-indigo-100 to-purple-100 rounded-[1.5rem] mx-auto flex items-center justify-center mb-6 shadow-inner">
+                            <i data-lucide="graduation-cap" class="w-12 h-12 text-indigo-500"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">บทเรียนเมืองสงขลา</h2>
+                    <p class="text-gray-500 mb-6 font-medium">( ตอน ฝั่งบ่อยาง )</p>
+                    
+                    <select id="studentClassInput" class="w-full px-5 py-4 rounded-2xl border-2 border-indigo-100 focus:border-indigo-400 outline-none mb-4 transition text-center font-bold text-gray-700 bg-white shadow-sm appearance-none">
+                            <option value="">-- เลือกระดับชั้นเรียน --</option>
+                            <option value="ม.3/12">ม.3/12</option>
+                            <option value="ม.3/13">ม.3/13</option>
+                            <option value="ม.3/14">ม.3/14</option>
+                            <option value="ม.3/15">ม.3/15</option>
+                            <option value="ม.3/16">ม.3/16</option>
+                    </select>
+
+                    <div class="flex justify-center gap-2 mb-8" id="otpContainer">
+                            <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-14 h-16 text-center text-3xl font-black rounded-2xl border-2 border-indigo-100 focus:border-indigo-400 outline-none transition bg-white shadow-sm text-indigo-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+                            <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-14 h-16 text-center text-3xl font-black rounded-2xl border-2 border-indigo-100 focus:border-indigo-400 outline-none transition bg-white shadow-sm text-indigo-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+                            <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-14 h-16 text-center text-3xl font-black rounded-2xl border-2 border-indigo-100 focus:border-indigo-400 outline-none transition bg-white shadow-sm text-indigo-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+                            <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-14 h-16 text-center text-3xl font-black rounded-2xl border-2 border-indigo-100 focus:border-indigo-400 outline-none transition bg-white shadow-sm text-indigo-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+                            <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-14 h-16 text-center text-3xl font-black rounded-2xl border-2 border-indigo-100 focus:border-indigo-400 outline-none transition bg-white shadow-sm text-indigo-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+                    </div>
+
+                    <button id="loginBtn" onclick="loginUser()" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-4 rounded-2xl font-bold text-lg hover:from-indigo-600 hover:to-purple-700 transition shadow-[0_4px_15px_rgba(99,102,241,0.4)] flex justify-center items-center gap-2">
+                            <span id="loginBtnText">เข้าสู่บทเรียน</span>
+                    </button>
+                    <p id="loginError" class="text-red-500 text-sm mt-4 hidden font-bold bg-red-50 py-2 rounded-lg"></p>
+            </div>
+    </div>
+
+    <div id="app" class="w-full h-full flex flex-col overflow-auto hidden bg-slate-50">
+      <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50 shrink-0 border-b border-gray-100">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div class="flex items-center gap-3 cursor-pointer" onclick="showSection('home')">
+            <div class="w-10 h-10 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center shadow-sm"><i data-lucide="map" class="w-5 h-5 text-white"></i></div>
+            <span class="font-bold text-gray-800 text-sm md:text-base hidden sm:block tracking-wide">เมืองสงขลาฝั่งบ่อยาง</span>
+          </div>
+          <nav class="hidden lg:flex gap-6 text-sm text-gray-500 font-bold tracking-wide">
+                  <a href="#" onclick="showSection('home')" class="hover:text-indigo-500 transition menu-link active-nav py-1" data-target="home">หน้าแรก</a>
+                  <a href="#" onclick="showSection('knowledge')" class="hover:text-indigo-500 transition menu-link py-1" data-target="knowledge">ใบความรู้</a>
+                  <a href="#" onclick="showSection('activity')" class="hover:text-indigo-500 transition menu-link py-1 flex items-center gap-1" data-target="activity"><i data-lucide="camera" class="w-4 h-4 text-indigo-400"></i> เกมขยับมือ 67</a>
+                  <a href="#" onclick="showSection('quiz')" class="hover:text-indigo-500 transition menu-link py-1" data-target="quiz">แบบทดสอบ</a>
+          </nav>
+          <div class="flex items-center gap-3">
+                  <a href="https://jitpanusri-cell.github.io/songkhla-history/kaodaeng-lesson/" class="hidden lg:flex bg-gray-100 text-gray-600 px-4 py-2 rounded-xl text-sm font-bold hover:bg-gray-200 transition items-center gap-1 shadow-sm">
+                          <i data-lucide="home" class="w-4 h-4"></i> กลับเขาแดง
+                  </a>
+                  
+                  <div class="hidden sm:block text-right text-xs bg-indigo-50 px-4 py-1.5 rounded-xl border border-indigo-100">
+                          <div class="text-indigo-400 font-bold" id="displayClass">ห้องเรียน</div>
+                          <div id="displayName" class="font-black text-indigo-600 text-sm"></div>
+                  </div>
+                  <button onclick="logoutUser()" title="เปลี่ยนผู้ใช้" class="hidden sm:flex bg-red-50 p-2.5 rounded-xl hover:bg-red-100 transition text-red-500 border border-red-100">
+                          <i data-lucide="log-out" class="w-5 h-5"></i>
+                  </button>
+                  <button id="menuBtn" class="lg:hidden p-2 text-gray-600 bg-gray-100 rounded-xl"><i data-lucide="menu" class="w-6 h-6"></i></button>
+          </div>
+        </div>
+        
+        <div id="mobileMenu" class="hidden lg:hidden border-t bg-white px-4 pb-4 pt-2 space-y-2 text-sm text-gray-600 font-bold absolute w-full shadow-2xl z-40 rounded-b-3xl">
+                  <a href="#" onclick="showSection('home')" class="block py-3 hover:text-indigo-500 border-b border-gray-50 flex items-center gap-2"><i data-lucide="home" class="w-4 h-4"></i> หน้าแรก</a>
+                  <a href="#" onclick="showSection('knowledge')" class="block py-3 hover:text-indigo-500 border-b border-gray-50 flex items-center gap-2"><i data-lucide="book-open-check" class="w-4 h-4"></i> ใบความรู้</a>
+                  <a href="#" onclick="showSection('activity')" class="block py-3 text-indigo-500 hover:text-indigo-600 border-b border-gray-50 flex items-center gap-2 bg-indigo-50/50 rounded-lg px-2"><i data-lucide="camera" class="w-5 h-5"></i> เกมขยับมือ 67</a>
+                  <a href="#" onclick="showSection('quiz')" class="block py-3 hover:text-indigo-500 border-b border-gray-50 flex items-center gap-2"><i data-lucide="file-check-2" class="w-4 h-4"></i> แบบทดสอบ</a>
+                  <a href="https://jitpanusri-cell.github.io/songkhla-history/kaodaeng-lesson/" class="block py-3 text-gray-500 border-b border-gray-50 flex items-center gap-2"><i data-lucide="arrow-left-circle" class="w-4 h-4"></i> กลับเมนูเขาแดง</a>
+                  <a href="#" onclick="logoutUser()" class="block py-3 text-red-500 flex items-center gap-2"><i data-lucide="log-out" class="w-4 h-4"></i> ออกจากระบบ</a>
+        </div>
+      </header>
+
+      <main class="flex-grow flex flex-col">
+              <!-- Section Home -->
+              <div id="section-home" class="page-section block">
+                      <section class="bg-gradient-to-br from-indigo-500 to-purple-600 py-16 md:py-24 text-center text-white relative overflow-hidden">
+                        <div class="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                        <div class="absolute bottom-10 right-10 w-40 h-40 bg-purple-700/20 rounded-full blur-2xl"></div>
+                        
+                        <div class="relative z-10 max-w-3xl mx-auto px-4">
+                          <div class="flex justify-center mb-6">
+                                  <div class="w-20 h-20 bg-white/20 backdrop-blur-md rounded-3xl flex items-center justify-center border border-white/30 shadow-lg transform rotate-3">
+                                          <i data-lucide="landmark" class="w-10 h-10 text-white"></i> 
+                                  </div>
+                          </div>
+                          <h1 id="welcomeText" class="text-4xl md:text-6xl font-black mb-4 leading-tight drop-shadow-md tracking-tight">เมืองสงขลา<br><span class="text-indigo-100">ฝั่งบ่อยาง</span></h1>
+                          <p class="text-indigo-50 text-lg md:text-xl mb-10 font-medium">บทเรียนออนไลน์ รายวิชา มหาวชิราวุธ 1</p>
+                          <button onclick="showSection('knowledge')" class="bg-white text-indigo-600 px-10 py-4 rounded-[2rem] font-black text-lg shadow-[0_8px_20px_rgba(0,0,0,0.15)] hover:shadow-[0_10px_25px_rgba(0,0,0,0.2)] hover:-translate-y-1 transition transform flex items-center gap-2 mx-auto">
+                                  เริ่มเรียนกันเลย <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                          </button>
+                        </div>
+                      </section>
+
+                      <section class="max-w-5xl mx-auto px-4 py-12">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8">
+                                <div onclick="showSection('knowledge')" class="bg-white p-8 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer text-center group border border-gray-100 hover:-translate-y-2">
+                                        <div class="w-20 h-20 mx-auto mb-5 bg-gradient-to-tr from-yellow-100 to-orange-100 rounded-[1.5rem] flex items-center justify-center group-hover:from-yellow-400 group-hover:to-orange-400 transition-colors duration-300 shadow-inner"><i data-lucide="book-open-check" class="w-10 h-10 text-orange-500 group-hover:text-white transition"></i></div>
+                                        <h3 class="font-black text-gray-800 text-xl mb-2">ใบความรู้</h3>
+                                        <p class="text-sm text-gray-500 font-medium leading-relaxed">ศึกษาการย้ายเมืองและความเจริญในยุคบ่อยาง</p>
+                                </div>
+                                <div onclick="showSection('activity')" class="bg-white p-8 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer text-center group border border-gray-100 hover:-translate-y-2 relative overflow-hidden">
+                                        <div class="absolute -right-4 -top-4 w-24 h-24 bg-indigo-50 rounded-full blur-xl group-hover:bg-indigo-100 transition"></div>
+                                        <div class="w-20 h-20 mx-auto mb-5 bg-gradient-to-tr from-indigo-100 to-purple-100 rounded-[1.5rem] flex items-center justify-center group-hover:from-indigo-400 group-hover:to-purple-400 transition-colors duration-300 shadow-inner relative z-10"><i data-lucide="camera" class="w-10 h-10 text-indigo-500 group-hover:text-white transition"></i></div>
+                                        <h3 class="font-black text-gray-800 text-xl mb-2 relative z-10">เกมขยับมือ 67</h3>
+                                        <p class="text-sm text-gray-500 font-medium leading-relaxed relative z-10">เปิดกล้อง ขยับมือขึ้น-ลงสะสมคะแนนให้ครบ 67</p>
+                                </div>
+                                <div onclick="showSection('quiz')" class="bg-white p-8 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer text-center group border border-gray-100 hover:-translate-y-2">
+                                        <div class="w-20 h-20 mx-auto mb-5 bg-gradient-to-tr from-green-100 to-emerald-100 rounded-[1.5rem] flex items-center justify-center group-hover:from-green-400 group-hover:to-emerald-400 transition-colors duration-300 shadow-inner"><i data-lucide="file-check-2" class="w-10 h-10 text-green-600 group-hover:text-white transition"></i></div>
+                                        <h3 class="font-black text-gray-800 text-xl mb-2">แบบทดสอบ</h3>
+                                        <p class="text-sm text-gray-500 font-medium leading-relaxed">วัดผลสัมฤทธิ์ทางการเรียน 10 ข้อ 10 คะแนน</p>
+                                </div>
+                        </div>
+                      </section>
+              </div>
+
+              <!-- Section Knowledge -->
+              <div id="section-knowledge" class="page-section hidden max-w-5xl mx-auto px-4 py-12">
+                      <div class="text-center mb-12">
+                              <h2 class="text-3xl md:text-4xl font-black text-gray-800 mb-3 tracking-tight">ใบความรู้ประวัติศาสตร์</h2>
+                              <p class="text-gray-500 font-medium text-lg">เลือกหัวข้อเพื่อศึกษาความเป็นมาของยุคบ่อยาง</p>
+                      </div>
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                              <div class="bg-white rounded-[2rem] shadow-lg p-8 text-center flex flex-col group border-2 border-transparent hover:border-yellow-400 transition-all hover:-translate-y-2">
+                                      <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4 text-yellow-600 font-black text-xl">1</div>
+                                      <h3 class="font-bold text-gray-800 mb-3 text-lg">สาเหตุการย้ายเมืองสู่บ่อยาง</h3>
+                                      <p class="text-sm text-gray-500 mb-8 flex-grow leading-relaxed">ข้อจำกัดของแหลมสน และข้อได้เปรียบของบ่อยาง</p>
+                                      <button class="w-full bg-yellow-50 text-yellow-700 text-sm px-4 py-3.5 rounded-xl hover:bg-yellow-400 hover:text-white transition font-bold shadow-sm" onclick="viewLesson(1)">อ่านบทเรียน</button>
+                              </div>
+                              <div class="bg-white rounded-[2rem] shadow-lg p-8 text-center flex flex-col group border-2 border-transparent hover:border-orange-400 transition-all hover:-translate-y-2">
+                                      <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 text-orange-600 font-black text-xl">2</div>
+                                      <h3 class="font-bold text-gray-800 mb-3 text-lg">การสร้างเมืองและทำเนียบเจ้าเมือง</h3>
+                                      <p class="text-sm text-gray-500 mb-8 flex-grow leading-relaxed">กำแพงเมือง เสาหลักเมือง และผู้ปกครองแต่ละยุค</p>
+                                      <button class="w-full bg-orange-50 text-orange-700 text-sm px-4 py-3.5 rounded-xl hover:bg-orange-400 hover:text-white transition font-bold shadow-sm" onclick="viewLesson(2)">อ่านบทเรียน</button>
+                              </div>
+                              <div class="bg-white rounded-[2rem] shadow-lg p-8 text-center flex flex-col group border-2 border-transparent hover:border-amber-700 transition-all hover:-translate-y-2">
+                                      <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 text-amber-700 font-black text-xl">3</div>
+                                      <h3 class="font-bold text-gray-800 mb-3 text-lg">การปฏิรูปการปกครองและร่องรอยประวัติศาสตร์</h3>
+                                      <p class="text-sm text-gray-500 mb-8 flex-grow leading-relaxed">มณฑลเทศาภิบาล และสถานที่สำคัญเมืองเก่าบ่อยาง</p>
+                                      <button class="w-full bg-amber-50 text-amber-800 text-sm px-4 py-3.5 rounded-xl hover:bg-amber-600 hover:text-white transition font-bold shadow-sm" onclick="viewLesson(3)">อ่านบทเรียน</button>
+                              </div>
+                      </div>
+              </div>
+
+              <!-- Section Activity (67 Motion Challenge - กล้อง + ตรวจจับมือ) -->
+              <div id="section-activity" class="page-section hidden w-full h-full flex flex-col flex-grow bg-gradient-to-b from-indigo-100 to-white">
+                      <div class="bg-white/50 backdrop-blur-md py-3 px-4 text-center shrink-0 border-b border-indigo-100 flex justify-center items-center gap-3">
+                              <i data-lucide="camera" class="w-6 h-6 text-indigo-500"></i>
+                              <h2 class="text-xl font-black text-indigo-800">67 Motion Challenge</h2>
+                              <i data-lucide="camera" class="w-6 h-6 text-indigo-500"></i>
+                      </div>
+
+                      <!-- หน้าจอแนะนำเกม -->
+                      <div id="motionIntro" class="flex-grow flex items-center justify-center p-4">
+                              <div class="bg-white/90 backdrop-blur-md p-8 md:p-10 rounded-[2.5rem] shadow-2xl border-4 border-white max-w-lg w-full text-center animate-bounce-in">
+                                      <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-tr from-indigo-100 to-purple-100 rounded-[1.5rem] flex items-center justify-center shadow-inner">
+                                              <i data-lucide="camera" class="w-10 h-10 text-indigo-500"></i>
+                                      </div>
+                                      <h3 class="text-2xl font-black text-gray-800 mb-4">เปิดกล้อง แล้วขยับมือขึ้น-ลง!</h3>
+                                      <div class="bg-indigo-50 p-5 rounded-2xl text-left text-sm text-gray-600 font-medium space-y-3 mb-8 border border-indigo-100">
+                                              <p class="flex items-start gap-2"><span class="text-xl">✋</span> <span>ขยับมือ<b>ขึ้น-ลง</b>ตรงหน้ากล้องให้ไวที่สุด ยิ่งขยับแรง/ไกล ยิ่งได้คะแนนเยอะ (<b class="text-indigo-600">+1</b> หรือ <b class="text-emerald-600">+2</b>)</span></p>
+                                              <p class="flex items-start gap-2"><span class="text-xl">🎯</span> <span>ทำคะแนนให้ถึง <b>67 คะแนน</b> ก่อนเวลาหมด เพื่อปลดล็อกด่านคำถาม 10 ข้อ (เลือก 2 ตัวเลือก)</span></p>
+                                              <p class="flex items-start gap-2"><span class="text-xl">🤚</span> <span>ตอบคำถามได้ทั้งกดปุ่ม หรือ <b>ยกมือค้างไว้ฝั่งซ้ายจอ = A / ขวาจอ = B</b></span></p>
+                                              <p class="flex items-start gap-2"><span class="text-xl">🏁</span> <span>ตอบผิดหรือเวลาหมด = จบเกม / ตอบถูกครบ 10 ข้อ = ชนะ!</span></p>
+                                      </div>
+                                      <button id="startMotionBtn" onclick="startMotionCamera()" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-10 py-4 rounded-[2rem] font-black text-xl hover:from-indigo-600 hover:to-purple-700 transition shadow-[0_6px_15px_rgba(99,102,241,0.4)] hover:shadow-[0_8px_20px_rgba(99,102,241,0.5)] hover:-translate-y-1 flex items-center justify-center gap-2">
+                                              <i data-lucide="video" class="w-6 h-6"></i> เปิดกล้อง & เริ่มเกม
+                                      </button>
+                                      <button onclick="startMotionFallback()" class="w-full mt-3 text-sm text-gray-400 font-bold hover:text-indigo-500 transition py-2">เล่นแบบแตะปุ่มแทน (ไม่ใช้กล้อง)</button>
+                              </div>
+                      </div>
+
+                      <!-- หน้าจอแจ้งเตือนเมื่อเปิดกล้องไม่ได้ (ข้อจำกัดของ Google Apps Script) -->
+                      <div id="motionCameraBlocked" class="hidden flex-grow flex items-center justify-center p-4">
+                              <div class="bg-white/90 backdrop-blur-md p-8 md:p-10 rounded-[2.5rem] shadow-2xl border-4 border-white max-w-lg w-full text-center animate-bounce-in">
+                                      <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-tr from-orange-100 to-red-100 rounded-[1.5rem] flex items-center justify-center shadow-inner">
+                                              <i data-lucide="camera-off" class="w-10 h-10 text-orange-500"></i>
+                                      </div>
+                                      <h3 class="text-xl font-black text-gray-800 mb-3">เปิดกล้องในหน้านี้ไม่ได้ชั่วคราว</h3>
+                                      <p class="text-sm text-gray-500 leading-relaxed mb-6">
+                                              เบราว์เซอร์หรืออุปกรณ์นี้ไม่อนุญาตให้เว็บไซต์ใช้กล้อง ทำให้ขึ้น <span class="font-mono text-xs bg-gray-100 px-1.5 py-0.5 rounded">Permission denied</span> แม้จะกดอนุญาตแล้วก็ตาม
+                                      </p>
+                                      <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 text-left text-xs text-gray-600 mb-6">
+                                              <p id="cameraBlockedDetail" class="font-mono break-words"></p>
+                                      </div>
+                                      <button onclick="startMotionFallback()" class="w-full bg-gray-100 text-gray-600 px-8 py-3.5 rounded-[2rem] font-bold text-sm hover:bg-gray-200 transition mb-2">เล่นแบบแตะปุ่มแทนในหน้านี้เลย</button>
+                                      <button onclick="startMotionCamera()" class="w-full text-xs text-gray-400 font-bold hover:text-indigo-500 transition py-2">ลองเปิดกล้องอีกครั้ง</button>
+                              </div>
+                      </div>
+
+                      <!-- พื้นที่เล่นเกม (กล้อง) -->
+                      <div id="motionGameWrapper" class="hidden flex-grow flex flex-col p-4 gap-3 max-w-2xl mx-auto w-full">
+                              <!-- HUD -->
+                              <div class="flex justify-between items-center gap-3">
+                                      <div class="bg-white/90 backdrop-blur-md px-5 py-2.5 rounded-[1.5rem] shadow-md border-2 border-white">
+                                              <div class="text-xs text-gray-400 font-bold">คะแนน</div>
+                                              <div id="motionScoreValue" class="text-3xl font-nunito font-black text-indigo-600 leading-none">0</div>
+                                      </div>
+                                      <div class="bg-white/90 backdrop-blur-md px-5 py-2.5 rounded-[1.5rem] shadow-md border-2 border-white text-right">
+                                              <div class="text-xs text-gray-400 font-bold">เวลา</div>
+                                              <div id="motionTimerValue" class="text-2xl font-nunito font-black text-gray-700 leading-none">60.0s</div>
+                                      </div>
+                              </div>
+                              <div>
+                                      <div class="flex justify-between items-center mb-1 px-1">
+                                              <span class="text-xs font-bold text-indigo-500">เป้าหมาย 67 คะแนน</span>
+                                              <span class="text-xs font-bold text-gray-400" id="motionPct">0%</span>
+                                      </div>
+                                      <div class="w-full h-3 bg-white/70 rounded-full overflow-hidden border border-indigo-100 shadow-sm">
+                                              <div id="motionProgressBar" class="h-full bg-gradient-to-r from-indigo-400 to-purple-500 transition-all duration-200" style="width:0%"></div>
+                                      </div>
+                              </div>
+
+                              <!-- กล้อง -->
+                              <div class="cam-stage shadow-2xl border-4 border-white">
+                                      <video id="motionVideo" playsinline muted autoplay></video>
+                                      <canvas id="motionCanvas" class="mirror"></canvas>
+                                      <div id="motionFx" class="cam-fx"></div>
+                                      <div id="motionZone" class="cam-zone">
+                                              <div class="half a"><span class="tag">A</span></div>
+                                              <div class="half b"><span class="tag">B</span></div>
+                                      </div>
+                              </div>
+                              <p class="text-center text-xs text-gray-400 font-medium">ขยับมือให้อยู่ในกรอบกล้อง แล้วโบกขึ้น-ลงต่อเนื่อง 🙌</p>
+                      </div>
+
+                      <!-- ผลลัพธ์เกม -->
+                      <div id="motionResult" class="hidden bg-white pb-8 flex-grow overflow-y-auto">
+                              <div class="p-10 text-center pt-16 relative bg-gradient-to-b from-indigo-50 to-white">
+                                      <div class="relative z-10">
+                                              <div id="motionResultIconWrap" class="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner border-4 border-white">
+                                                      <i id="motionResultIcon" data-lucide="party-popper" class="w-12 h-12 text-indigo-500"></i>
+                                              </div>
+                                              <h3 id="motionResultTitle" class="text-4xl md:text-5xl font-black text-gray-800 mb-3 tracking-tight">เยี่ยมมาก!</h3>
+                                              <p id="motionResultMsg" class="text-xl text-gray-500 mb-8 font-medium">พิชิตความท้าทายสำเร็จ!</p>
+
+                                              <div class="flex justify-center gap-4 md:gap-8 mb-10 max-w-sm mx-auto">
+                                                      <div class="bg-indigo-50/80 px-6 py-5 rounded-[2rem] border-2 border-indigo-100 flex-1 shadow-sm">
+                                                              <div class="text-indigo-400 font-bold mb-1 text-sm">คะแนนที่ทำได้</div>
+                                                              <div id="motionResultScore" class="text-3xl font-nunito font-black text-indigo-500">0</div>
+                                                      </div>
+                                                      <div class="bg-emerald-50/80 px-6 py-5 rounded-[2rem] border-2 border-emerald-100 flex-1 shadow-sm">
+                                                              <div class="text-emerald-600 font-bold mb-1 text-sm">ตอบถูก</div>
+                                                              <div class="text-3xl font-nunito font-black text-emerald-500"><span id="motionResultCorrect">0</span>/10</div>
+                                                      </div>
+                                              </div>
+                                              <button onclick="restartMotionGame()" class="bg-gray-800 text-white px-10 py-4 rounded-[2rem] font-bold hover:bg-gray-900 transition shadow-lg">เล่นอีกครั้ง</button>
+                                      </div>
+                              </div>
+
+                              <div class="px-6 md:px-8 max-w-lg mx-auto relative z-10">
+                                      <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 md:p-8">
+                                              <h4 class="font-black text-center text-gray-800 mb-6 flex items-center justify-center gap-2 text-lg"><i data-lucide="medal" class="w-6 h-6 text-yellow-500"></i> ทำเนียบคนเก่ง (ห้อง <span class="board-class-name"></span>)</h4>
+                                              <ul id="motionLeaderboardList" class="space-y-3"></ul>
+                                      </div>
+                              </div>
+                      </div>
+
+                      <!-- โหมดไม่ใช้กล้อง -->
+                      <div id="motionFallbackWrapper" class="hidden flex-grow flex flex-col items-center justify-center p-6 gap-4 max-w-md mx-auto w-full text-center">
+                              <div class="flex justify-between items-center gap-3 w-full">
+                                      <div class="bg-white px-5 py-2.5 rounded-[1.5rem] shadow-md border-2 border-indigo-100">
+                                              <div class="text-xs text-gray-400 font-bold">คะแนน</div>
+                                              <div id="fallbackScoreValue" class="text-3xl font-nunito font-black text-indigo-600 leading-none">0</div>
+                                      </div>
+                                      <div class="bg-white px-5 py-2.5 rounded-[1.5rem] shadow-md border-2 border-indigo-100 text-right">
+                                              <div class="text-xs text-gray-400 font-bold">เวลา</div>
+                                              <div id="fallbackTimerValue" class="text-2xl font-nunito font-black text-gray-700 leading-none">60.0s</div>
+                                      </div>
+                              </div>
+                              <p class="text-gray-500 text-sm font-medium">ไม่มีกล้อง? แตะปุ่มด้านล่างแทนการขยับมือ (แตะละ +1 คะแนน) ให้ครบ 67 คะแนน</p>
+                              <button id="pumpBtn" onclick="pumpFallback()" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-10 rounded-[2rem] font-black text-2xl shadow-xl active:scale-95 transition flex items-center justify-center gap-3">
+                                      <i data-lucide="zap" class="w-8 h-8"></i> แตะตรงนี้!
+                              </button>
+                      </div>
+              </div>
+
+              <!-- Modal คำถามเกม Motion (2 ตัวเลือก) -->
+              <div id="motionQuizModal" class="hidden fixed inset-0 bg-slate-900/70 z-[300] flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+                      <div class="bg-white rounded-[2.5rem] max-w-xl w-full overflow-hidden shadow-2xl transform scale-100 transition-transform animate-bounce-in border-4 border-white">
+                              <div class="bg-gradient-to-r from-indigo-500 to-purple-600 p-8 text-center relative border-b border-indigo-200">
+                                      <div class="w-20 h-20 bg-white rounded-2xl mx-auto flex items-center justify-center text-4xl font-nunito font-black text-indigo-500 shadow-lg mb-4 transform -rotate-3">?</div>
+                                      <h3 class="text-2xl font-black text-white drop-shadow-md">🔓 ปลดล็อกแล้ว! ตอบคำถามข้อที่ <span id="motionQCurrent">1</span>/10</h3>
+                              </div>
+                              <div class="p-6 sm:p-8">
+                                      <h4 id="motionQuestionText" class="text-lg sm:text-xl font-bold text-gray-800 mb-6 leading-relaxed text-center"></h4>
+                                      <div id="motionQuestionOptions" class="space-y-3 mb-4"></div>
+                                      <p class="text-xs text-center text-gray-400 font-medium">💡 กดปุ่มเลือกคำตอบ หรือยกมือค้างไว้ฝั่งซ้ายจอ = A / ขวาจอ = B ประมาณ 1 วินาที</p>
+                              </div>
+                      </div>
+              </div>
+
+              <!-- Section Quiz -->
+              <div id="section-quiz" class="page-section hidden max-w-3xl mx-auto px-4 py-12">
+                      <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden text-center border border-gray-100">
+                              <div id="quizIntro">
+                                      <div class="bg-gradient-to-br from-emerald-400 to-teal-500 py-16 px-4 text-white relative">
+                                              <i data-lucide="clipboard-check" class="w-32 h-32 absolute top-4 right-4 opacity-10"></i>
+                                              <h2 class="text-4xl font-black mb-3 drop-shadow-sm">แบบทดสอบเมืองบ่อยาง</h2>
+                                              <p class="text-emerald-50 font-medium text-lg">แบบปรนัย 4 ตัวเลือก จำนวน 10 ข้อ 10 คะแนน</p>
+                                      </div>
+                                      <div class="p-12 bg-white">
+                                              <button onclick="startQuiz()" class="bg-emerald-500 text-white px-12 py-4 rounded-[2rem] font-black text-xl hover:bg-emerald-600 transition shadow-[0_6px_20px_rgba(16,185,129,0.3)] hover:shadow-[0_8px_25px_rgba(16,185,129,0.4)] hover:-translate-y-1 w-full sm:w-auto flex items-center justify-center gap-3 mx-auto">
+                                                      <i data-lucide="play-circle" class="w-6 h-6"></i> เข้าสู่แบบทดสอบ
+                                              </button>
+                                      </div>
+                              </div>
+
+                              <div id="quizContainer" class="p-8 md:p-10 hidden text-left bg-gray-50/50">
+                                      <div class="flex justify-between items-center mb-8 border-b-2 border-gray-100 pb-4">
+                                              <div class="font-black text-emerald-600 bg-emerald-100 px-5 py-2 rounded-xl text-sm" id="quizProgress">ข้อที่ 1/10</div>
+                                      </div>
+                                      <h3 id="quizQuestionText" class="text-xl md:text-2xl font-bold text-gray-800 mb-8 leading-relaxed"></h3>
+                                      <div id="quizOptions" class="space-y-4"></div>
+                                      <div class="mt-10 pt-6 border-t-2 border-gray-100 text-right">
+                                              <button id="nextQuizBtn" disabled onclick="nextQuizQuestion()" class="bg-gray-200 text-gray-400 px-10 py-4 rounded-2xl font-bold transition cursor-not-allowed text-lg">ถัดไป <i data-lucide="arrow-right" class="inline w-5 h-5 ml-1"></i></button>
+                                      </div>
+                              </div>
+
+                              <div id="quizResult" class="hidden pb-8">
+                                        <div class="bg-gradient-to-br from-emerald-500 to-teal-600 py-16 text-white relative overflow-hidden">
+                                                <div class="relative z-10">
+                                                        <h2 class="text-2xl font-bold mb-4 text-emerald-50">ผลการทดสอบของคุณ</h2>
+                                                        <p class="text-7xl font-nunito font-black drop-shadow-md"><span id="finalQuizScore"></span><span class="text-4xl text-emerald-200/80">/10</span></p>
+                                                </div>
+                                        </div>
+                                        <div class="p-10 max-w-md mx-auto bg-white rounded-b-3xl">
+                                                <h3 class="text-lg font-black text-gray-800 border-b-2 border-gray-100 pb-3 mb-6 text-left flex items-center gap-2"><i data-lucide="medal" class="w-5 h-5 text-yellow-500"></i> Leaderboard (ห้อง <span class="board-class-name"></span>)</h3>
+                                                <ul id="quizLeaderboardList" class="text-left space-y-3"></ul>
+                                        </div>
+                              </div>
+                      </div>
+              </div>
+
+      </main>
+
+      <!-- Modal บทเรียน -->
+      <div id="lessonModal" class="hidden fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-[2rem] max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl animate-bounce-in border border-white">
+          <div class="bg-[#eab308] text-white p-6 md:p-8 flex items-center justify-between shrink-0 transition-colors" id="modalHeader">
+            <div>
+              <span id="lessonBadge" class="bg-white/20 backdrop-blur-sm px-4 py-1.5 rounded-full text-xs font-bold tracking-wider mb-3 inline-block shadow-sm">บทที่ 1</span>
+              <h2 id="lessonSubtitle" class="text-2xl md:text-3xl font-black leading-tight mt-1 drop-shadow-sm tracking-tight">การตั้งเมืองและการเริ่มต้นสายสกุล</h2>
+            </div>
+            <button onclick="closeLesson()" class="w-10 h-10 bg-black/10 hover:bg-black/20 rounded-full flex items-center justify-center transition"> <i data-lucide="x" class="w-5 h-5"></i> </button>
+          </div>
+          <div id="lessonContent" class="p-6 md:p-10 overflow-y-auto grow custom-scrollbar text-gray-700 leading-relaxed text-base md:text-lg"></div>
+          <div class="border-t border-gray-100 p-4 sm:p-6 flex gap-4 bg-gray-50 shrink-0 justify-between items-center">
+                  <button id="prevBtn" onclick="previousLesson()" class="flex-1 max-w-[200px] bg-white border-2 border-gray-200 text-gray-600 py-3.5 px-4 rounded-2xl hover:bg-gray-100 hover:border-gray-300 transition font-bold flex items-center justify-center gap-2 shadow-sm">
+                          <i data-lucide="chevron-left" class="w-5 h-5"></i> <span class="hidden sm:inline">บทก่อนหน้า</span>
+                  </button> 
+                  <button id="nextBtn" onclick="nextLesson()" class="flex-1 max-w-[200px] bg-[#eab308] text-white py-3.5 px-4 rounded-2xl hover:bg-[#ca8a04] shadow-[0_4px_10px_rgba(234,179,8,0.3)] hover:-translate-y-0.5 transition font-bold flex items-center justify-center gap-2">
+                          <span id="nextBtnText">บทถัดไป</span> <i id="nextBtnIcon" data-lucide="chevron-right" class="w-5 h-5"></i>
+                  </button>
+          </div>
+        </div>
+      </div>
+
+      <footer class="bg-slate-900 text-slate-400 text-center py-6 px-4 text-sm mt-auto shrink-0 border-t-4 border-indigo-500">
+        <p class="font-bold text-white mb-1">Copyright © 2026 ประวัติศาสตร์เมืองสงขลาฝั่งบ่อยาง</p>
+        <p class="text-xs">ครูผู้สอน/ผู้พัฒนา : นายจิตรภาณุ ศรีหวัง</p>
+      </footer>
+    </div>
+
+    <script>
+    let studentName = ""; let studentIdStr = ""; let studentClass = "";
+    lucide.createIcons();
+
+    // ===== เชื่อมต่อกับ Google Apps Script backend ผ่าน JSONP =====
+    // ใช้แทน google.script.run เพื่อให้หน้านี้เป็นไฟล์ static ล้วนๆ โฮสต์บน GitHub Pages (หรือที่ไหนก็ได้) ได้
+    // เหตุผลที่ต้องใช้ JSONP แทน fetch() ธรรมดา: Apps Script ContentService ไม่มีทางตั้งค่า
+    // Access-Control-Allow-Origin ให้เบราว์เซอร์อ่าน response ข้ามโดเมนได้ (แม้คำขอจะสำเร็จฝั่งเซิร์ฟเวอร์ก็ตาม)
+    // การโหลดผ่าน <script src="..."> ไม่ติดข้อจำกัด CORS แบบเดียวกับ fetch/XHR
+    const API_BASE_URL = "https://script.google.com/macros/s/AKfycbwAfmqJTXPhRP1WSV2_EyYoqSs0b_4C3rL5_EwW8EryTpIDkmBU6Sx4UM8TJ9ndYrGX/exec";
+    let jsonpCounter = 0;
+    function jsonpRequest(baseUrl, params, onSuccess, onError) {
+        const callbackName = 'jsonp_cb_' + (jsonpCounter++) + '_' + Date.now();
+        const query = new URLSearchParams(Object.assign({}, params, { callback: callbackName })).toString();
+        const script = document.createElement('script');
+        let settled = false;
+        let timeoutId;
+        const cleanup = () => {
+            delete window[callbackName];
+            if (script.parentNode) script.parentNode.removeChild(script);
+            clearTimeout(timeoutId);
+        };
+        window[callbackName] = function (data) {
+            if (settled) return; settled = true;
+            cleanup();
+            onSuccess(data);
+        };
+        timeoutId = setTimeout(() => {
+            if (settled) return; settled = true;
+            cleanup();
+            if (onError) onError(new Error('หมดเวลาเชื่อมต่อเซิร์ฟเวอร์ กรุณาลองใหม่'));
+        }, 15000);
+        script.src = baseUrl + '?' + query;
+        script.onerror = function () {
+            if (settled) return; settled = true;
+            cleanup();
+            if (onError) onError(new Error('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ'));
+        };
+        document.body.appendChild(script);
+    }
+
+    window.onload = function() {
+            let savedName = localStorage.getItem('studentName'); let savedId = localStorage.getItem('studentIdStr'); let savedClass = localStorage.getItem('studentClass');
+            if (savedName && savedId && savedClass) {
+                    studentName = savedName; studentIdStr = savedId; studentClass = savedClass;
+                    document.getElementById('displayClass').innerText = studentClass;
+                    document.getElementById('displayName').innerText = studentName;
+                    document.querySelectorAll('.board-class-name').forEach(el => el.innerText = studentClass);
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('app').classList.remove('hidden');
+                    showSection('home');
+            }
+    }
+
+    function moveToNext(current) {
+            current.value = current.value.replace(/[^0-9]/g, '');
+            if (current.value.length >= 1) { current.value = current.value.slice(0,1); let next = current.nextElementSibling; if (next && next.tagName === "INPUT") next.focus(); }
+    }
+
+    function handleBackspace(event, current) {
+            if (event.key === "Backspace" && current.value === "") { let prev = current.previousElementSibling; if (prev && prev.tagName === "INPUT") { prev.focus(); prev.value = ""; } }
+    }
+
+    function loginUser() {
+            const cls = document.getElementById('studentClassInput').value;
+            const errorMsg = document.getElementById('loginError');
+            const inputs = document.querySelectorAll('.otp-input');
+            let idInput = ""; inputs.forEach(input => idInput += input.value);
+
+            if (cls === "") { errorMsg.innerText = "กรุณาเลือกระดับชั้นเรียนก่อนครับ"; errorMsg.classList.remove('hidden'); return; }
+            if (idInput.length < 5) { errorMsg.innerText = "กรุณากรอกรหัสนักเรียน 5 หลักให้ครบถ้วน"; errorMsg.classList.remove('hidden'); return; }
+
+            document.getElementById('loginBtnText').innerText = "กำลังตรวจสอบ..."; document.getElementById('loginBtn').disabled = true;
+
+            jsonpRequest(API_BASE_URL, { api: 'verifyStudent', className: cls, studentId: idInput }, function(response) {
+                    if (response && response.status === "success") {
+                            studentName = response.name; studentIdStr = idInput; studentClass = cls;
+                            localStorage.setItem('studentName', studentName); localStorage.setItem('studentIdStr', studentIdStr); localStorage.setItem('studentClass', studentClass);
+                            document.getElementById('displayClass').innerText = studentClass; document.getElementById('displayName').innerText = studentName;
+                            document.querySelectorAll('.board-class-name').forEach(el => el.innerText = studentClass);
+
+                            document.getElementById('loginScreen').classList.add('opacity-0');
+                            saveToSheet("เข้าสู่ระบบบ่อยาง", "-", null);
+                            setTimeout(() => {
+                                    document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('app').classList.remove('hidden'); showSection('home');
+                            }, 500);
+                    } else {
+                            errorMsg.innerText = (response && response.message) || "รหัสนักเรียนไม่ถูกต้อง"; errorMsg.classList.remove('hidden');
+                            document.getElementById('loginBtnText').innerText = "เข้าสู่บทเรียน"; document.getElementById('loginBtn').disabled = false;
+                    }
+            }, function(err) {
+                    errorMsg.innerText = "เซิร์ฟเวอร์ไม่ตอบสนอง กรุณาลองใหม่"; errorMsg.classList.remove('hidden');
+                    document.getElementById('loginBtnText').innerText = "เข้าสู่บทเรียน"; document.getElementById('loginBtn').disabled = false;
+            });
+    }
+
+    function logoutUser() { localStorage.removeItem('studentName'); localStorage.removeItem('studentIdStr'); localStorage.removeItem('studentClass'); location.reload(); }
+
+    function saveToSheet(actionType, scoreVal, leaderboardElementId) {
+            if (leaderboardElementId) {
+                    document.getElementById(leaderboardElementId).innerHTML = "<li class='text-center text-emerald-600 font-bold py-6 animate-pulse text-lg'>กำลังบันทึกคะแนนเข้าสู่ระบบ...</li>";
+            }
+            jsonpRequest(API_BASE_URL, {
+                    api: 'saveScore', studentId: studentIdStr, name: studentName, className: studentClass, action: actionType, score: scoreVal
+            }, function(response) {
+                    if(response && response.status === "success" && response.leaderboard && leaderboardElementId) renderRealLeaderboard(leaderboardElementId, response.leaderboard);
+                    else if (leaderboardElementId) {
+                            document.getElementById(leaderboardElementId).innerHTML = `<li class='text-center text-red-500 py-4 font-bold'>${(response && response.message) || 'บันทึกคะแนนไม่สำเร็จ'}</li>`;
+                    }
+            }, function(err) {
+                    if (leaderboardElementId) {
+                            document.getElementById(leaderboardElementId).innerHTML = "<li class='text-center text-red-500 py-4 font-bold'>เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต</li>";
+                    }
+            });
+    }
+
+    function renderRealLeaderboard(elementId, boardData) {
+            if(boardData.length === 0) { document.getElementById(elementId).innerHTML = "<li class='text-center text-gray-500 py-4 font-medium'>ยังไม่มีข้อมูลในห้องนี้</li>"; return; }
+            let html = boardData.map((u, i) => {
+                    let medal = i===0 ? '🏆' : i===1 ? '🥈' : i===2 ? '🥉' : `<span class="w-7 inline-block text-center text-gray-400 font-black">${i+1}</span>`;
+                    let isMe = (u.name === studentName);
+                    let bg = isMe ? 'bg-indigo-50 border-indigo-300 shadow-md transform scale-[1.02]' : 'bg-white border-gray-100 hover:bg-gray-50 transition';
+                    let textColor = isMe ? 'text-indigo-700 font-black' : 'text-gray-700 font-bold';
+                    
+                    return `<li class="flex justify-between items-center p-4 border-2 rounded-2xl ${bg}">
+                            <div class="flex items-center gap-3"><span class="text-2xl drop-shadow-sm">${medal}</span> <span class="${textColor} ml-1">${u.name}</span></div> 
+                            <span class="bg-slate-800 text-white px-4 py-1.5 rounded-xl text-sm font-black font-nunito shadow-sm">${u.score}/10</span>
+                    </li>`;
+            }).join('');
+            document.getElementById(elementId).innerHTML = html;
+    }
+
+    function showSection(sectionId) {
+            document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
+            document.getElementById('section-' + sectionId).classList.remove('hidden');
+            if (sectionId !== 'activity') { stopMotionGame(); }
+
+            document.querySelectorAll('.menu-link').forEach(link => {
+                    link.classList.remove('active-nav'); if(link.getAttribute('data-target') === sectionId) link.classList.add('active-nav');
+            });
+            document.getElementById('mobileMenu').classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    document.getElementById('menuBtn').addEventListener('click', () => { document.getElementById('mobileMenu').classList.toggle('hidden'); });
+
+    const lessons = {
+        1: { title: 'บทที่ 1', subtitle: 'สาเหตุการย้ายเมืองสู่บ่อยาง', color: '#eab308',
+                content: `
+                        <div class="bg-yellow-50/50 p-6 rounded-3xl border border-yellow-100 mb-8">
+                                <h3 class="text-xl font-bold text-yellow-700 mb-3 flex items-center gap-2"><i data-lucide="map-pin"></i> ความเจริญที่นำไปสู่การย้ายเมือง</h3>
+                                <p class="text-left leading-relaxed text-gray-700">ในช่วงปลายพุทธศตวรรษที่ 24 เมืองสงขลามีความเจริญรุ่งเรืองขึ้นเป็นอย่างมาก ส่งผลให้พื้นที่บริเวณเมืองเดิม (แหลมสน) คับแคบและไม่สามารถรองรับการเติบโตได้ นำไปสู่จุดเปลี่ยนสำคัญคือการย้ายเมืองเพื่อสร้างศูนย์กลางแห่งใหม่</p>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="bg-white p-6 rounded-3xl border-2 border-red-100 shadow-sm">
+                                        <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i data-lucide="minus-circle" class="w-5 h-5"></i> ข้อจำกัดของฝั่งแหลมสน</h3>
+                                        <ul class="space-y-4 text-gray-700 text-sm">
+                                                <li class="flex gap-3 items-start"><div class="bg-red-100 p-1.5 rounded-lg text-red-600 mt-0.5"><i data-lucide="move-horizontal" class="w-4 h-4"></i></div><div><strong>พื้นที่คับแคบ:</strong> เป็นที่ราบแคบๆ ระหว่างเชิงเขากับปากน้ำ ทำให้ไม่สามารถขยายเป็นเมืองขนาดใหญ่ได้</div></li>
+                                                <li class="flex gap-3 items-start"><div class="bg-red-100 p-1.5 rounded-lg text-red-600 mt-0.5"><i data-lucide="droplet-off" class="w-4 h-4"></i></div><div><strong>ขาดแคลนน้ำจืด:</strong> บริเวณที่ตั้งเมืองส่วนใหญ่เป็นน้ำกร่อย มีน้ำจืดเฉพาะบริเวณเชิงเขาเท่านั้น</div></li>
+                                        </ul>
+                                </div>
+                                <div class="bg-white p-6 rounded-3xl border-2 border-green-100 shadow-sm">
+                                        <h3 class="text-lg font-bold text-green-600 mb-4 flex items-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5"></i> ข้อได้เปรียบของฝั่งบ่อยาง</h3>
+                                        <ul class="space-y-4 text-gray-700 text-sm">
+                                                <li class="flex gap-3 items-start"><div class="bg-green-100 p-1.5 rounded-lg text-green-600 mt-0.5"><i data-lucide="maximize" class="w-4 h-4"></i></div><div><strong>พื้นที่กว้างขวาง:</strong> ตั้งอยู่บนสันทราย มีที่ราบเรียบและมีอาณาบริเวณกว้างกว่าเมืองเก่ามาก</div></li>
+                                                <li class="flex gap-3 items-start"><div class="bg-green-100 p-1.5 rounded-lg text-green-600 mt-0.5"><i data-lucide="anchor" class="w-4 h-4"></i></div><div><strong>มีท่าเรือธรรมชาติ:</strong> มีบริเวณที่เหมาะสำหรับการทำท่าเทียบเรือตามธรรมชาติอยู่หลายแห่ง</div></li>
+                                                <li class="flex gap-3 items-start"><div class="bg-green-100 p-1.5 rounded-lg text-green-600 mt-0.5"><i data-lucide="users" class="w-4 h-4"></i></div><div><strong>ความเป็นปึกแผ่น:</strong> พื้นที่มีความเป็นอันหนึ่งอันเดียวกัน ราษฎรอาศัยรวมกันเป็นกลุ่มก้อนได้</div></li>
+                                        </ul>
+                                </div>
+                        </div>`
+        },
+        2: { title: 'บทที่ 2', subtitle: 'การสร้างเมืองและทำเนียบเจ้าเมืองสงขลาฝั่งบ่อยาง', color: '#f97316',
+                content: `
+                        <div class="bg-orange-50/50 p-6 rounded-3xl border border-orange-100 mb-8">
+                                <h3 class="text-xl font-bold text-orange-700 mb-3 flex items-center gap-2"><i data-lucide="hammer"></i> การสร้างเมืองและกำแพงเมืองสงขลาใหม่</h3>
+                                <ul class="space-y-4 text-gray-700 text-sm text-left">
+                                        <li class="flex gap-3 items-start"><div class="bg-orange-100 p-1.5 rounded-lg text-orange-600 mt-0.5"><i data-lucide="calendar" class="w-4 h-4"></i></div><div><strong>พ.ศ. 2379:</strong> พระยาวิเชียรคีรี (เถี้ยนเส้ง) เจ้าเมืองสงขลาลำดับที่ 4 ได้ทำการย้ายเมืองสงขลาจากแหลมสนมายังบ่อยาง</div></li>
+                                        <li class="flex gap-3 items-start"><div class="bg-orange-100 p-1.5 rounded-lg text-orange-600 mt-0.5"><i data-lucide="coins" class="w-4 h-4"></i></div><div>รัชกาลที่ 3 โปรดเกล้าฯ ให้ตั้งเมืองสงขลาใหม่ที่ตำบลบ่อยางตั้งแต่ปี พ.ศ. 2385 และพระราชทานเงินส่วยอากร 200 ชั่ง เพื่อสร้างกำแพงเมือง</div></li>
+                                        <li class="flex gap-3 items-start"><div class="bg-orange-100 p-1.5 rounded-lg text-orange-600 mt-0.5"><i data-lucide="alert-triangle" class="w-4 h-4"></i></div><div><strong>อุปสรรค:</strong> การก่อสร้างกำแพงเมืองหยุดชะงัก เนื่องจากเกิดกบฏที่เมืองไทรบุรี โดยหลานพระยาไทรบุรียกทัพเข้าตีเมืองสงขลา</div></li>
+                                        <li class="flex gap-3 items-start"><div class="bg-orange-100 p-1.5 rounded-lg text-orange-600 mt-0.5"><i data-lucide="flag" class="w-4 h-4"></i></div><div><strong>พ.ศ. 2385:</strong> พระยาวิเชียรคีรี (เถี้ยนเส้ง) สร้างกำแพงเมืองฝั่งบ่อยางแล้วเสร็จ และย้ายเมืองอย่างเป็นทางการ</div></li>
+                                        <li class="flex gap-3 items-start"><div class="bg-orange-100 p-1.5 rounded-lg text-orange-600 mt-0.5"><i data-lucide="landmark" class="w-4 h-4"></i></div><div><strong>10 มีนาคม พ.ศ. 2385:</strong> รัชกาลที่ 3 พระราชทานไม้ชัยพฤกษ์และเทียนชัย ฝังเป็นเสาหลักเมือง (ปัจจุบันคือศาลเจ้าพ่อหลักเมืองสงขลา ถนนนางงาม)</div></li>
+                                </ul>
+                        </div>
+
+                        <h3 class="text-xl font-bold text-orange-700 mb-4 px-2 flex items-center gap-2"><i data-lucide="crown"></i> ทำเนียบเจ้าเมืองสงขลาฝั่งบ่อยาง</h3>
+                        <div class="overflow-x-auto rounded-2xl border-2 border-orange-100">
+                                <table class="w-full text-sm text-left">
+                                        <thead class="bg-orange-100 text-orange-800 font-bold">
+                                                <tr><th class="p-3">ลำดับ</th><th class="p-3">นามเจ้าเมือง</th><th class="p-3">เหตุการณ์สำคัญ / ยุคสมัย</th></tr>
+                                        </thead>
+                                        <tbody class="text-gray-700 bg-white">
+                                                <tr class="border-t border-orange-50"><td class="p-3 font-black text-orange-600">4</td><td class="p-3 font-bold">พระยาวิเชียรคีรี (เถี้ยนเส้ง)</td><td class="p-3">ผู้ย้ายเมืองสงขลามายังฝั่งบ่อยาง (พ.ศ. 2379)</td></tr>
+                                                <tr class="border-t border-orange-50 bg-orange-50/30"><td class="p-3 font-black text-orange-600">5</td><td class="p-3 font-bold">เจ้าพระยาวิเชียรคีรี (บุญสังข์/บุญสัง)</td><td class="p-3">ปกครองช่วง พ.ศ. 2390 บูรณะวัดมัชฌิมาวาส (ตรงกับรัชกาลที่ 4 เสด็จประพาส)</td></tr>
+                                                <tr class="border-t border-orange-50"><td class="p-3 font-black text-orange-600">6</td><td class="p-3 font-bold">พระยาวิเชียรคีรี (เม่น)</td><td class="p-3">ตรงกับสมัยรัชกาลที่ 5 (พ.ศ. 2407)</td></tr>
+                                                <tr class="border-t border-orange-50 bg-orange-50/30"><td class="p-3 font-black text-orange-600">7</td><td class="p-3 font-bold">พระยาวิเชียรคีรี (ชุ่ม)</td><td class="p-3">ตรงกับสมัยรัชกาลที่ 5 (พ.ศ. 2424)</td></tr>
+                                                <tr class="border-t border-orange-50"><td class="p-3 font-black text-orange-600">8</td><td class="p-3 font-bold">พระยาวิเชียรคีรี (ชม)</td><td class="p-3">เจ้าเมืองลำดับสุดท้าย ตรงกับสมัยปฏิรูปการปกครองของรัชกาลที่ 5 (พ.ศ. 2431-2444)</td></tr>
+                                        </tbody>
+                                </table>
+                        </div>` 
+        },
+        3: { title: 'บทที่ 3', subtitle: 'การปฏิรูปการปกครองและร่องรอยประวัติศาสตร์', color: '#b45309',
+                content: `
+                        <div class="bg-amber-50/50 p-6 rounded-3xl border border-amber-100 mb-8">
+                                <h3 class="text-xl font-bold text-amber-800 mb-4 flex items-center gap-2"><i data-lucide="scroll-text"></i> เมืองสงขลากับการปฏิรูปการปกครอง</h3>
+                                <ul class="space-y-4 text-gray-700 text-sm text-left">
+                                        <li class="flex gap-3 items-start"><div class="bg-amber-100 p-1.5 rounded-lg text-amber-700 mt-0.5"><i data-lucide="map" class="w-4 h-4"></i></div><div><strong>สมัยรัชกาลที่ 5:</strong> ทรงปฏิรูปการปกครอง จัดตั้ง "มณฑลเทศาภิบาล" 18 มณฑลทั่วประเทศ ภาคใต้รวมนครศรีธรรมราช พัทลุง สงขลา และหัวเมืองมลายู 7 หัวเมือง เป็น "มณฑลนครศรีธรรมราช" โดยมีเจ้าพระยายมราช (ปั้น สุขุม) เป็นข้าหลวงเทศาภิบาล ณ เมืองสงขลา</div></li>
+                                        <li class="flex gap-3 items-start"><div class="bg-amber-100 p-1.5 rounded-lg text-amber-700 mt-0.5"><i data-lucide="badge" class="w-4 h-4"></i></div><div><strong>สมัยรัชกาลที่ 6 (พ.ศ. 2458):</strong> ยกเลิกตำแหน่งข้าหลวงเทศาภิบาล ตั้ง "สมุหเทศาภิบาล" ขึ้นตรงต่อพระมหากษัตริย์ (ภายหลังโอนสังกัดกระทรวงมหาดไทย พ.ศ. 2464) และรวมมณฑลเป็นภาค โดยภาคปักษ์ใต้มีเจ้าฟ้ากรมหลวงลพบุรีราเมศวร์ ดำรงตำแหน่งอุปราช</div></li>
+                                        <li class="flex gap-3 items-start"><div class="bg-amber-100 p-1.5 rounded-lg text-amber-700 mt-0.5"><i data-lucide="building-2" class="w-4 h-4"></i></div><div><strong>สมัยรัชกาลที่ 7:</strong> หลังการปฏิวัติเปลี่ยนแปลงการปกครอง พระราชบัญญัติบริหารราชการแผ่นดิน พ.ศ. 2476 ได้ยุบมณฑลทั้งหมดให้เหลือเพียงรูปแบบ "จังหวัด"</div></li>
+                                </ul>
+                        </div>
+
+                        <h3 class="text-xl font-bold text-amber-800 mb-5 px-2 flex items-center gap-2"><i data-lucide="landmark"></i> สถานที่สำคัญ (เมืองเก่าบ่อยาง)</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                                <div class="bg-amber-50/40 p-6 rounded-3xl border border-amber-100 hover:shadow-md transition">
+                                        <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-amber-600 mb-3 shadow-sm"><i data-lucide="door-open"></i></div>
+                                        <h4 class="font-black text-amber-900 text-lg mb-2">ประตูเมืองสงขลา</h4><p class="text-gray-600 text-sm leading-relaxed">สร้างขึ้นตั้งแต่สมัยรัชกาลที่ 3 พร้อมกับการสร้างเมืองบ่อยาง</p>
+                                </div>
+                                <div class="bg-amber-50/40 p-6 rounded-3xl border border-amber-100 hover:shadow-md transition">
+                                        <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-amber-600 mb-3 shadow-sm"><i data-lucide="brick-wall"></i></div>
+                                        <h4 class="font-black text-amber-900 text-lg mb-2">กำแพงเมืองสงขลา</h4><p class="text-gray-600 text-sm leading-relaxed">ปรากฏร่องรอยอยู่บริเวณถนนนครนอก</p>
+                                </div>
+                                <div class="bg-amber-50/40 p-6 rounded-3xl border border-amber-100 hover:shadow-md transition">
+                                        <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-amber-600 mb-3 shadow-sm"><i data-lucide="waves"></i></div>
+                                        <h4 class="font-black text-amber-900 text-lg mb-2">ป้อมปากน้ำแหลมทราย</h4><p class="text-gray-600 text-sm leading-relaxed">ป้อมปราการรักษาปากน้ำเมืองสงขลาฝั่งบ่อยาง</p>
+                                </div>
+                                <div class="bg-amber-50/40 p-6 rounded-3xl border border-amber-100 hover:shadow-md transition">
+                                        <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-amber-600 mb-3 shadow-sm"><i data-lucide="moon-star"></i></div>
+                                        <h4 class="font-black text-amber-900 text-lg mb-2">มัสยิดบ้านบน</h4><p class="text-gray-600 text-sm leading-relaxed">ศาสนสถานสำคัญของชุมชนมุสลิมในเมืองเก่าบ่อยาง</p>
+                                </div>
+                                <div class="bg-amber-50/40 p-6 rounded-3xl border border-amber-100 hover:shadow-md transition">
+                                        <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-amber-600 mb-3 shadow-sm"><i data-lucide="shield"></i></div>
+                                        <h4 class="font-black text-amber-900 text-lg mb-2">ศาลเจ้าพ่อหลักเมือง</h4><p class="text-gray-600 text-sm leading-relaxed">ศูนย์รวมใจชาวสงขลา อายุกว่า 200 ปี ตั้งอยู่ที่ถนนนางงาม</p>
+                                </div>
+                                <div class="bg-amber-50/40 p-6 rounded-3xl border border-amber-100 hover:shadow-md transition">
+                                        <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-amber-600 mb-3 shadow-sm"><i data-lucide="church"></i></div>
+                                        <h4 class="font-black text-amber-900 text-lg mb-2">วัดมัชฌิมาวาส</h4><p class="text-gray-600 text-sm leading-relaxed">วัดสำคัญที่ได้รับการบูรณะโดยเจ้าพระยาวิเชียรคีรี (บุญสัง)</p>
+                                </div>
+                        </div>` 
+        }
+    };
+
+    function viewLesson(id) {
+        currentLessonId = id; const l = lessons[id];
+        document.getElementById('lessonBadge').textContent = l.title; document.getElementById('lessonBadge').style.backgroundColor = 'rgba(255,255,255,0.3)'; document.getElementById('lessonBadge').style.color = 'white';
+        document.getElementById('lessonSubtitle').textContent = l.subtitle; document.getElementById('lessonContent').innerHTML = l.content; document.getElementById('modalHeader').style.backgroundColor = l.color;
+        updateNavButtons(); document.getElementById('lessonModal').classList.remove('hidden'); lucide.createIcons();
+    }
+    function closeLesson() { document.getElementById('lessonModal').classList.add('hidden'); }
+    function nextLesson() { if (currentLessonId < 3) viewLesson(currentLessonId + 1); else closeLesson(); }
+    function previousLesson() { if (currentLessonId > 1) viewLesson(currentLessonId - 1); }
+    function updateNavButtons() {
+        const prevBtn = document.getElementById('prevBtn'); const nextBtn = document.getElementById('nextBtn');
+        prevBtn.disabled = currentLessonId === 1; prevBtn.style.opacity = currentLessonId === 1 ? '0.3' : '1';
+        if (currentLessonId === 3) { nextBtn.innerHTML = `<span>ศึกษาจบแล้ว</span> <i data-lucide="check-circle" class="w-5 h-5"></i>`; nextBtn.className = "flex-1 max-w-[200px] bg-green-500 text-white py-3.5 px-4 rounded-2xl hover:bg-green-600 shadow-[0_4px_10px_rgba(34,197,94,0.3)] transition font-bold flex items-center justify-center gap-2"; } 
+        else { nextBtn.innerHTML = `<span>บทถัดไป</span> <i data-lucide="chevron-right" class="w-5 h-5"></i>`; nextBtn.className = "flex-1 max-w-[200px] bg-[#eab308] text-white py-3.5 px-4 rounded-2xl hover:bg-[#ca8a04] shadow-[0_4px_10px_rgba(234,179,8,0.3)] transition font-bold flex items-center justify-center gap-2"; }
+        lucide.createIcons();
+    }
+
+    // =====================================================================
+    // ENGINE เกม 67 Motion Challenge (กล้อง + MediaPipe Hands)
+    // =====================================================================
+    const MOTION_STARTING_TIME = 60;        // เวลาทั้งหมด (วินาที) รวมช่วงขยับมือและตอบคำถาม
+    const MOTION_TARGET = 67;                      // คะแนนที่ต้องทำให้ถึงเพื่อปลดล็อกคำถาม
+    const REP_THRESHOLD = 0.09;                  // ระยะขยับขั้นต่ำ (สัดส่วนความสูงเฟรม) ที่นับเป็น +1
+    const BIG_REP_THRESHOLD = 0.18;          // ระยะขยับที่แรง/ไกลกว่านี้ = +2
+    const DIR_NOISE = 0.008;                        // กันสัญญาณรบกวนตอนตรวจทิศทาง
+    const HOLD_MS = 750;                                // เวลายกมือค้างเพื่อยืนยันคำตอบ (มิลลิวินาที)
+    const RAISED_Y_LIMIT = 0.62;                // มือต้องอยู่สูงกว่านี้ของเฟรมถึงนับว่า "ยกมือ"
+
+    // คำถาม 2 ตัวเลือก 10 ข้อ แก้ไข/สลับได้ที่นี่
+    const motionQuestions = [
+        { q: "ฝั่งบ่อยางมีข้อได้เปรียบสำคัญคือข้อใด?", options: ["มีท่าเรือธรรมชาติ", "มีเหมืองทองคำ"], answer: 0 },
+        { q: "ผู้ย้ายเมืองสงขลามาฝั่งบ่อยางคือใคร?", options: ["พระยาวิเชียรคีรี (เถี้ยนเส้ง)", "พระยาวิเชียรคีรี (ชม)"], answer: 0 },
+        { q: "รัชกาลใดโปรดเกล้าฯ ให้ตั้งเมืองที่บ่อยาง?", options: ["รัชกาลที่ 5", "รัชกาลที่ 3"], answer: 1 },
+        { q: "เงินสร้างกำแพงเมืองบ่อยางมีจำนวนกี่ชั่ง?", options: ["500 ชั่ง", "200 ชั่ง"], answer: 1 },
+        { q: "สาเหตุที่การสร้างกำแพงเมืองหยุดชะงักคือ?", options: ["กบฏเมืองไทรบุรี", "แผ่นดินไหว"], answer: 0 },
+        { q: "เสาหลักเมืองสงขลาปัจจุบันอยู่ถนนใด?", options: ["ถนนนครนอก", "ถนนนางงาม"], answer: 1 },
+        { q: "เจ้าเมืองลำดับสุดท้ายฝั่งบ่อยางคือใคร?", options: ["พระยาวิเชียรคีรี (ชม)", "พระยาวิเชียรคีรี (เม่น)"], answer: 0 },
+        { q: "รัชกาลที่ 5 จัดสงขลาไว้ในมณฑลใด?", options: ["มณฑลปัตตานี", "มณฑลนครศรีธรรมราช"], answer: 1 },
+        { q: "ตำแหน่งที่รัชกาลที่ 6 ตั้งขึ้นปกครองภาคคือ?", options: ["สมุหเทศาภิบาล", "ข้าหลวงเทศาภิบาล"], answer: 0 },
+        { q: "หลัง พ.ศ. 2476 มณฑลถูกยุบเหลือรูปแบบใด?", options: ["อำเภอ", "จังหวัด"], answer: 1 }
+    ];
+
+    // phase: 'idle' | 'gesture' | 'transition' | 'quiz' | 'ended'
+    let motionPhase = 'idle';
+    let motionScore = 0, motionCorrect = 0, motionQIndex = 0;
+    let motionTimeLeft = MOTION_STARTING_TIME;
+    let motionTick = null, motionLastTick = 0;
+    let motionHoldSide = null, motionHoldStart = 0;
+    const motionGestureState = {};
+    let motionCameraReady = false, motionLoopStarted = false, motionUsingFallback = false;
+    let fallbackTick = null, fallbackLastTick = 0;
+
+    const mVideo = document.getElementById('motionVideo');
+    const mCanvas = document.getElementById('motionCanvas');
+    const mCtx = mCanvas.getContext('2d');
+    const mFx = document.getElementById('motionFx');
+    const mZone = document.getElementById('motionZone');
+
+    const hands = new Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
+    hands.setOptions({ maxNumHands: 2, modelComplexity: 1, minDetectionConfidence: 0.65, minTrackingConfidence: 0.5 });
+    hands.onResults(onMotionResults);
+
+    async function motionFrameLoop(){
+            if (mVideo.readyState >= 2 && motionCameraReady) {
+                    try { await hands.send({ image: mVideo }); } catch(e) { /* ข้ามเฟรมที่ประมวลผลไม่ทัน */ }
+            }
+            requestAnimationFrame(motionFrameLoop);
+    }
+
+    async function startMotionCamera(){
+            const btn = document.getElementById('startMotionBtn');
+            btn.disabled = true; btn.innerHTML = '<i data-lucide="loader" class="w-6 h-6"></i> กำลังเปิดกล้อง...'; lucide.createIcons();
+            try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }, audio: false });
+                    mVideo.srcObject = stream;
+                    await new Promise((resolve) => { mVideo.onloadedmetadata = () => { mVideo.play(); resolve(); }; });
+                    mCanvas.width = mVideo.videoWidth || 640; mCanvas.height = mVideo.videoHeight || 480;
+                    motionCameraReady = true;
+                    if (!motionLoopStarted) { motionLoopStarted = true; motionFrameLoop(); }
+                    beginMotionGesturePhase();
+            } catch (err) {
+                    document.getElementById('motionIntro').classList.add('hidden');
+                    document.getElementById('cameraBlockedDetail').textContent = 'รายละเอียดข้อผิดพลาด: ' + (err && err.message ? err.message : 'ไม่ทราบสาเหตุ');
+                    document.getElementById('motionCameraBlocked').classList.remove('hidden');
+                    lucide.createIcons();
+            } finally {
+                    btn.disabled = false; btn.innerHTML = '<i data-lucide="video" class="w-6 h-6"></i> เปิดกล้อง & เริ่มเกม'; lucide.createIcons();
+            }
+    }
+
+    function palmCenter(landmarks){
+            const idxs = [0,5,9,13,17]; let sx=0, sy=0;
+            idxs.forEach(i => { sx += landmarks[i].x; sy += landmarks[i].y; });
+            return { x: sx/idxs.length, y: sy/idxs.length };
+    }
+
+    function onMotionResults(results){
+            mCtx.save();
+            mCtx.clearRect(0, 0, mCanvas.width, mCanvas.height);
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length) {
+                    results.multiHandLandmarks.forEach((landmarks, slot) => {
+                            if (typeof drawConnectors === 'function' && typeof HAND_CONNECTIONS !== 'undefined') {
+                                    drawConnectors(mCtx, landmarks, HAND_CONNECTIONS, { color: 'rgba(99,102,241,0.55)', lineWidth: 2 });
+                            }
+                            if (typeof drawLandmarks === 'function') {
+                                    drawLandmarks(mCtx, landmarks, { color: '#818cf8', fillColor:'#eef2ff', lineWidth: 1, radius: 3 });
+                            }
+                            const palm = palmCenter(landmarks);
+                            const px = palm.x * mCanvas.width, py = palm.y * mCanvas.height;
+                            const glow = mCtx.createRadialGradient(px, py, 2, px, py, 26);
+                            glow.addColorStop(0, 'rgba(129,140,248,0.9)'); glow.addColorStop(1, 'rgba(129,140,248,0)');
+                            mCtx.fillStyle = glow; mCtx.beginPath(); mCtx.arc(px, py, 26, 0, Math.PI*2); mCtx.fill();
+
+                            if (motionPhase === 'gesture') trackVerticalGesture(slot, palm);
+                            else if (motionPhase === 'quiz') trackHandChoice(palm);
+                    });
+            }
+            mCtx.restore();
+    }
+
+    function trackVerticalGesture(slot, palm){
+            let s = motionGestureState[slot];
+            if (!s) { motionGestureState[slot] = { lastY: palm.y, dir: 0, extremeY: palm.y }; return; }
+            const dy = palm.y - s.lastY;
+            let newDir = s.dir;
+            if (dy > DIR_NOISE) newDir = 1; else if (dy < -DIR_NOISE) newDir = -1;
+            if (newDir !== 0 && newDir !== s.dir) {
+                    const amplitude = Math.abs(s.extremeY - s.lastY);
+                    if (amplitude > REP_THRESHOLD) registerMotionRep(amplitude, palm);
+                    s.extremeY = s.lastY; s.dir = newDir;
+            }
+            s.lastY = palm.y;
+    }
+
+    function registerMotionRep(amplitude, palm){
+            const value = amplitude >= BIG_REP_THRESHOLD ? 2 : 1;
+            motionScore += value;
+            const px = (1 - palm.x) * mCanvas.clientWidth;
+            const py = palm.y * mCanvas.clientHeight;
+            spawnFloatScore(px, py, '+' + value, value === 2 ? '#10b981' : '#6366f1');
+            spawnPulseRing(px, py);
+            updateMotionHUD();
+            if (motionScore >= MOTION_TARGET) unlockMotionQuestions();
+    }
+
+    function spawnFloatScore(x, y, text, color){
+            const fx = document.createElement('div');
+            fx.className = 'float-score'; fx.style.left = x + 'px'; fx.style.top = y + 'px'; fx.style.color = color; fx.textContent = text;
+            mFx.appendChild(fx); setTimeout(() => fx.remove(), 780);
+    }
+    function spawnPulseRing(x, y){
+            const r = document.createElement('div');
+            r.className = 'pulse-ring'; r.style.left = x + 'px'; r.style.top = y + 'px';
+            mFx.appendChild(r); setTimeout(() => r.remove(), 520);
+    }
+
+    function updateMotionHUD(){
+            document.getElementById('motionScoreValue').textContent = motionScore;
+            document.getElementById('motionTimerValue').textContent = motionTimeLeft.toFixed(1) + 's';
+            const pct = Math.max(0, Math.min(100, (motionScore / MOTION_TARGET) * 100));
+            document.getElementById('motionProgressBar').style.width = pct + '%';
+            document.getElementById('motionPct').textContent = Math.round(pct) + '%';
+    }
+
+    function startMotionTimer(){
+            motionLastTick = performance.now();
+            clearInterval(motionTick);
+            motionTick = setInterval(() => {
+                    if (motionPhase !== 'gesture' && motionPhase !== 'quiz') { motionLastTick = performance.now(); return; }
+                    const now = performance.now(); const delta = (now - motionLastTick) / 1000; motionLastTick = now;
+                    motionTimeLeft -= delta;
+                    if (motionTimeLeft <= 0) { motionTimeLeft = 0; updateMotionHUD(); endMotionGame(false, 'หมดเวลา!'); return; }
+                    updateMotionHUD();
+            }, 50);
+    }
+
+    function beginMotionGesturePhase(){
+            motionScore = 0; motionCorrect = 0; motionQIndex = 0; motionTimeLeft = MOTION_STARTING_TIME;
+            for (const k in motionGestureState) delete motionGestureState[k];
+            document.getElementById('motionIntro').classList.add('hidden');
+            document.getElementById('motionCameraBlocked').classList.add('hidden');
+            document.getElementById('motionFallbackWrapper').classList.add('hidden');
+            document.getElementById('motionResult').classList.add('hidden');
+            document.getElementById('motionQuizModal').classList.add('hidden');
+            document.getElementById('motionGameWrapper').classList.remove('hidden');
+            mZone.classList.remove('show');
+            updateMotionHUD();
+            motionPhase = 'gesture';
+            startMotionTimer();
+    }
+
+    function unlockMotionQuestions(){
+            if (motionPhase !== 'gesture') return;
+            motionPhase = 'transition';
+            showMotionToast('ปลดล็อกคำถามแล้ว! 🔓');
+            setTimeout(() => { motionQIndex = 0; openMotionQuestion(); }, 900);
+    }
+
+    function showMotionToast(text){
+            const t = document.createElement('div');
+            t.className = 'fixed top-[45%] left-1/2 -translate-x-1/2 z-[310] bg-white px-8 py-4 rounded-[2rem] shadow-2xl border-4 border-indigo-200 text-center font-black text-2xl text-indigo-600 pointer-events-none';
+            t.style.animation = 'bounceIn 0.4s ease forwards';
+            t.textContent = text;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 1100);
+    }
+    function showMiniMotionToast(text){
+            const t = document.createElement('div');
+            t.className = 'fixed top-[110px] left-1/2 -translate-x-1/2 z-[310] bg-emerald-50 text-emerald-600 border border-emerald-200 px-5 py-2 rounded-full font-bold text-sm shadow-lg pointer-events-none';
+            t.textContent = text;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 1200);
+    }
+
+    function openMotionQuestion(){
+            motionPhase = 'quiz';
+            mZone.classList.add('show');
+            const q = motionQuestions[motionQIndex];
+            document.getElementById('motionQCurrent').textContent = motionQIndex + 1;
+            document.getElementById('motionQuestionText').textContent = q.q;
+            const wrap = document.getElementById('motionQuestionOptions');
+            wrap.innerHTML = '';
+            q.options.forEach((opt, i) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'relative overflow-hidden w-full bg-white border-2 border-indigo-100 p-5 rounded-2xl text-gray-700 font-bold hover:bg-indigo-50 hover:border-indigo-400 hover:-translate-y-1 transition text-left text-lg shadow-sm flex items-center gap-3';
+                    btn.dataset.side = i === 0 ? 'A' : 'B';
+                    btn.innerHTML = '<div class="hold-fill" style="--hold:0"></div><span class="relative z-[1] w-7 h-7 flex items-center justify-center rounded-lg border border-indigo-100 text-xs font-mono font-black text-indigo-400">' + (i===0?'A':'B') + '</span><span class="relative z-[1]">' + opt + '</span>';
+                    btn.addEventListener('click', () => selectMotionAnswer(i, q, btn));
+                    wrap.appendChild(btn);
+            });
+            document.getElementById('motionQuizModal').classList.remove('hidden');
+            motionHoldSide = null; motionHoldStart = 0;
+    }
+
+    function selectMotionAnswer(selectedIndex, q, btnEl){
+            if (motionPhase !== 'quiz') return;
+            motionPhase = 'transition';
+            mZone.classList.remove('show');
+            const wrap = document.getElementById('motionQuestionOptions');
+            const allBtns = wrap.querySelectorAll('button');
+            allBtns.forEach(b => b.style.pointerEvents = 'none');
+            const isCorrect = selectedIndex === q.answer;
+            if (isCorrect) { btnEl.classList.add('!bg-emerald-50','!border-emerald-400'); motionCorrect++; }
+            else { btnEl.classList.add('!bg-red-50','!border-red-400'); allBtns[q.answer].classList.add('!bg-emerald-50','!border-emerald-400'); }
+
+            setTimeout(() => {
+                    document.getElementById('motionQuizModal').classList.add('hidden');
+                    if (!isCorrect) { endMotionGame(false, 'ตอบคำถามข้อที่ ' + (motionQIndex+1) + ' ผิด!'); return; }
+                    motionQIndex++;
+                    if (motionQIndex >= motionQuestions.length) { endMotionGame(true); return; }
+                    showMiniMotionToast('ถูกต้อง! ไปข้อถัดไป');
+                    setTimeout(openMotionQuestion, 500);
+            }, isCorrect ? 500 : 750);
+    }
+
+    function trackHandChoice(palm){
+            if (motionPhase !== 'quiz') return;
+            if (palm.y > RAISED_Y_LIMIT) { motionHoldSide = null; motionHoldStart = 0; updateHoldUI(0, null); return; }
+            const mirroredX = 1 - palm.x;
+            const side = mirroredX < 0.5 ? 'A' : 'B';
+            if (side !== motionHoldSide) { motionHoldSide = side; motionHoldStart = performance.now(); }
+            const elapsed = performance.now() - motionHoldStart;
+            updateHoldUI(Math.min(1, elapsed / HOLD_MS), side);
+            if (elapsed >= HOLD_MS) {
+                    const idx = side === 'A' ? 0 : 1;
+                    const q = motionQuestions[motionQIndex];
+                    const btn = document.querySelector('#motionQuestionOptions button[data-side="' + side + '"]');
+                    motionHoldSide = null; motionHoldStart = 0;
+                    if (btn) selectMotionAnswer(idx, q, btn);
+            }
+    }
+    function updateHoldUI(progress, side){
+            document.querySelectorAll('#motionQuestionOptions button').forEach(b => {
+                    const fill = b.querySelector('.hold-fill');
+                    if (fill) fill.style.setProperty('--hold', b.dataset.side === side ? progress : 0);
+            });
+    }
+
+    function endMotionGame(isVictory, reason){
+            motionPhase = 'ended';
+            mZone.classList.remove('show');
+            document.getElementById('motionGameWrapper').classList.add('hidden');
+            document.getElementById('motionFallbackWrapper').classList.add('hidden');
+            document.getElementById('motionResult').classList.remove('hidden');
+
+            const icon = document.getElementById('motionResultIcon');
+            const iconWrap = document.getElementById('motionResultIconWrap');
+            const title = document.getElementById('motionResultTitle');
+            const msg = document.getElementById('motionResultMsg');
+
+            if (isVictory) {
+                    title.textContent = 'พิชิตสำเร็จ!'; msg.textContent = 'ตอบคำถามถูกครบทั้ง 10 ข้อ เก่งมากเลย!';
+                    icon.setAttribute('data-lucide', 'party-popper'); iconWrap.className = 'w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner border-4 border-white';
+                    icon.className = 'w-12 h-12 text-emerald-500';
+            } else {
+                    title.textContent = 'ยังไม่สำเร็จ'; msg.textContent = reason || 'ลองใหม่อีกครั้งนะ!';
+                    icon.setAttribute('data-lucide', 'x-circle'); iconWrap.className = 'w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner border-4 border-white';
+                    icon.className = 'w-12 h-12 text-red-500';
+            }
+            lucide.createIcons();
+            document.getElementById('motionResultScore').textContent = motionScore;
+            document.getElementById('motionResultCorrect').textContent = motionCorrect;
+            document.getElementById('motionLeaderboardList').innerHTML = "<li class='text-center text-indigo-500 font-bold py-4'>กำลังบันทึกคะแนนและโหลดลำดับ... <span class='animate-pulse inline-block'>⏳</span></li>";
+            saveToSheet("เล่นเกม Speed67 บ่อยาง", motionCorrect, 'motionLeaderboardList');
+    }
+
+    function restartMotionGame(){
+            document.getElementById('motionResult').classList.add('hidden');
+            if (motionUsingFallback) { beginFallbackGame(); }
+            else if (motionCameraReady) { beginMotionGesturePhase(); }
+            else { document.getElementById('motionIntro').classList.remove('hidden'); }
+    }
+
+    function stopMotionGame(){
+            if (motionPhase === 'idle') return;
+            clearInterval(motionTick); clearInterval(fallbackTick);
+            motionPhase = 'idle';
+            if (mVideo.srcObject) { mVideo.srcObject.getTracks().forEach(t => t.stop()); mVideo.srcObject = null; }
+            motionCameraReady = false; motionLoopStarted = false; motionUsingFallback = false;
+            document.getElementById('motionGameWrapper').classList.add('hidden');
+            document.getElementById('motionFallbackWrapper').classList.add('hidden');
+            document.getElementById('motionCameraBlocked').classList.add('hidden');
+            document.getElementById('motionResult').classList.add('hidden');
+            document.getElementById('motionQuizModal').classList.add('hidden');
+            document.getElementById('motionIntro').classList.remove('hidden');
+            const btn = document.getElementById('startMotionBtn');
+            btn.disabled = false; btn.innerHTML = '<i data-lucide="video" class="w-6 h-6"></i> เปิดกล้อง & เริ่มเกม'; lucide.createIcons();
+    }
+
+    // ===== โหมดสำรองไม่ใช้กล้อง (แตะปุ่มแทนการขยับมือ) =====
+    function startMotionFallback(){
+            motionUsingFallback = true;
+            document.getElementById('motionIntro').classList.add('hidden');
+            document.getElementById('motionCameraBlocked').classList.add('hidden');
+            beginFallbackGame();
+    }
+    function beginFallbackGame(){
+            motionScore = 0; motionCorrect = 0; motionQIndex = 0; motionTimeLeft = MOTION_STARTING_TIME;
+            document.getElementById('motionResult').classList.add('hidden');
+            document.getElementById('motionGameWrapper').classList.add('hidden');
+            document.getElementById('motionFallbackWrapper').classList.remove('hidden');
+            document.getElementById('fallbackScoreValue').textContent = 0;
+            document.getElementById('fallbackTimerValue').textContent = motionTimeLeft.toFixed(1) + 's';
+            motionPhase = 'gesture';
+            fallbackLastTick = performance.now();
+            clearInterval(fallbackTick);
+            fallbackTick = setInterval(() => {
+                    if (motionPhase !== 'gesture' && motionPhase !== 'quiz') { fallbackLastTick = performance.now(); return; }
+                    const now = performance.now(); const delta = (now - fallbackLastTick) / 1000; fallbackLastTick = now;
+                    motionTimeLeft -= delta;
+                    document.getElementById('fallbackTimerValue').textContent = Math.max(0,motionTimeLeft).toFixed(1) + 's';
+                    if (motionTimeLeft <= 0) { motionTimeLeft = 0; endMotionGame(false, 'หมดเวลา!'); }
+            }, 50);
+    }
+    function pumpFallback(){
+            if (motionPhase !== 'gesture') return;
+            motionScore += 1;
+            document.getElementById('fallbackScoreValue').textContent = motionScore;
+            if (motionScore >= MOTION_TARGET) unlockMotionQuestions();
+    }
+
+    // =====================================
+    // แบบทดสอบเมืองบ่อยาง (Quiz)
+    // =====================================
+    const quizData = [
+            { q: "1. สาเหตุสำคัญที่ทำให้ย้ายเมืองจากแหลมสนมาบ่อยางคือข้อใด?", options: ["พื้นที่แหลมสนคับแคบและขาดแคลนน้ำจืด", "เกิดโรคระบาดที่แหลมสน", "ถูกข้าศึกโจมตี", "ราคาที่ดินแพงขึ้น"], ans: 0 },
+            { q: "2. ข้อได้เปรียบของฝั่งบ่อยางคือข้อใด?", options: ["เป็นภูเขาสูง ป้องกันข้าศึกง่าย", "มีท่าเรือธรรมชาติและพื้นที่กว้างขวาง", "ใกล้เหมืองแร่ดีบุก", "มีป่าไม้สักหนาแน่น"], ans: 1 },
+            { q: "3. ใครเป็นผู้ย้ายเมืองสงขลาจากแหลมสนมายังบ่อยาง?", options: ["พระยาวิเชียรคีรี (เถี้ยนเส้ง)", "พระยาวิเชียรคีรี (บุญสัง)", "พระยาวิเชียรคีรี (เม่น)", "พระยาวิเชียรคีรี (ชม)"], ans: 0 },
+            { q: "4. รัชกาลที่ 3 โปรดเกล้าฯ ให้ตั้งเมืองสงขลาที่บ่อยางอย่างเป็นทางการในปีใด?", options: ["พ.ศ. 2223", "พ.ศ. 2379", "พ.ศ. 2385", "พ.ศ. 2444"], ans: 2 },
+            { q: "5. เงินที่พระราชทานเพื่อสร้างกำแพงเมืองบ่อยางมีจำนวนเท่าใด?", options: ["100 ชั่ง", "200 ชั่ง", "300 ชั่ง", "500 ชั่ง"], ans: 1 },
+            { q: "6. เหตุใดการสร้างกำแพงเมืองบ่อยางจึงหยุดชะงักไประหว่างทาง?", options: ["ขาดแคลนวัสดุก่อสร้าง", "เกิดกบฏที่เมืองไทรบุรี", "เกิดน้ำท่วมใหญ่", "ช่างก่อสร้างเสียชีวิต"], ans: 1 },
+            { q: "7. เสาหลักเมืองสงขลา (ศาลเจ้าพ่อหลักเมือง) ปัจจุบันตั้งอยู่ที่ถนนใด?", options: ["ถนนนครนอก", "ถนนนางงาม", "ถนนนครใน", "ถนนยะลา"], ans: 1 },
+            { q: "8. เจ้าเมืองสงขลาลำดับใดที่เป็นผู้บูรณะวัดมัชฌิมาวาส?", options: ["พระยาวิเชียรคีรี (เถี้ยนเส้ง)", "เจ้าพระยาวิเชียรคีรี (บุญสัง)", "พระยาวิเชียรคีรี (เม่น)", "พระยาวิเชียรคีรี (ชม)"], ans: 1 },
+            { q: "9. รัชกาลที่ 5 ทรงจัดตั้งการปกครองรูปแบบใดที่รวมสงขลาไว้ในมณฑลนครศรีธรรมราช?", options: ["มณฑลเทศาภิบาล", "สุขาภิบาล", "จตุสดมภ์", "เทศบาล"], ans: 0 },
+            { q: "10. พระราชบัญญัติบริหารราชการแผ่นดิน พ.ศ. 2476 ได้ยุบมณฑลให้เหลือรูปแบบใด?", options: ["อำเภอ", "ตำบล", "จังหวัด", "ภาค"], ans: 2 }
+    ];
+    let currentQuizIndex = 0; let quizScore = 0; let selectedQuizOption = -1;
+
+    function startQuiz() {
+            quizScore = 0; currentQuizIndex = 0;
+            document.getElementById('quizIntro').classList.add('hidden'); document.getElementById('quizResult').classList.add('hidden'); document.getElementById('quizContainer').classList.remove('hidden'); loadQuizQuestion();
+    }
+    function loadQuizQuestion() {
+            selectedQuizOption = -1; let nextBtn = document.getElementById('nextQuizBtn'); nextBtn.disabled = true; nextBtn.className = "bg-gray-200 text-gray-400 px-10 py-4 rounded-2xl font-bold transition cursor-not-allowed text-lg";
+            const q = quizData[currentQuizIndex]; document.getElementById('quizProgress').innerText = `ข้อที่ ${currentQuizIndex + 1}/${quizData.length}`; document.getElementById('quizQuestionText').innerText = q.q;
+            document.getElementById('quizOptions').innerHTML = q.options.map((opt, i) => `<button id="quizOpt-${i}" onclick="selectQuizOption(${i})" class="quiz-btn w-full text-left p-6 rounded-2xl border-2 border-gray-200 text-gray-700 hover:border-indigo-400 hover:bg-indigo-50 hover:-translate-y-1 transition text-lg bg-white shadow-sm font-medium">${opt}</button>`).join('');
+    }
+    function selectQuizOption(idx) {
+            selectedQuizOption = idx; for(let i=0; i<4; i++) { let btn = document.getElementById(`quizOpt-${i}`); btn.classList.remove('selected'); if(i === idx) btn.classList.add('selected'); }
+            let nextBtn = document.getElementById('nextQuizBtn'); nextBtn.disabled = false; nextBtn.className = "bg-emerald-500 text-white px-10 py-4 rounded-2xl font-bold hover:bg-emerald-600 hover:-translate-y-1 transition shadow-[0_4px_12px_rgba(16,185,129,0.3)] text-lg";
+    }
+    function nextQuizQuestion() { if(selectedQuizOption === quizData[currentQuizIndex].ans) quizScore++; currentQuizIndex++; if(currentQuizIndex < quizData.length) loadQuizQuestion(); else finishQuiz(); }
+    function finishQuiz() {
+            document.getElementById('quizContainer').classList.add('hidden'); document.getElementById('quizResult').classList.remove('hidden'); document.getElementById('finalQuizScore').innerText = quizScore;
+            document.getElementById('quizLeaderboardList').innerHTML = "<li class='text-center text-emerald-600 font-bold py-4'>กำลังบันทึกคะแนน... <span class='animate-pulse inline-block'>⏳</span></li>";
+            saveToSheet("แบบทดสอบบ่อยาง", quizScore, 'quizLeaderboardList');
+    }
+    </script>
+ </body>
+</html>

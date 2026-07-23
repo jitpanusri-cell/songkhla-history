@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>เกมผจญภัยเขาแดง (Mario Style)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700;900&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans Thai', sans-serif; margin: 0; padding: 0; overflow: hidden; touch-action: none; background-color: #e0f2fe; }
+        #gameCanvas { display: block; outline: none; }
+        .mario-btn { transition: all 0.1s; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+        .mario-btn:active { transform: scale(0.9); }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col items-center bg-blue-50">
+    <!-- หน้าเริ่มเกม -->
+    <div id="marioIntro" class="absolute inset-0 z-50 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center p-4">
+        <div class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl text-center max-w-lg w-full border-4 border-blue-100 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-blue-400 to-emerald-400"></div>
+            <h1 class="text-4xl md:text-5xl font-black text-blue-600 mb-4 tracking-tight drop-shadow-sm">ตะลุยด่านเขาแดง</h1>
+            <p class="text-gray-600 mb-8 text-lg">โหม่งกล่องคำถาม ตอบให้ถูกเพื่อสะสมคะแนน<br>(ถ้าตอบผิด ต้องเล่นจนกว่าจะตอบถูกนะ!)</p>
+
+            <div class="grid grid-cols-2 gap-4 text-sm text-gray-500 mb-8 bg-blue-50 p-4 rounded-xl">
+                <div class="flex flex-col items-center"><i data-lucide="arrow-left-right" class="w-8 h-8 text-blue-400 mb-2"></i><span>เดินซ้าย/ขวา</span></div>
+                <div class="flex flex-col items-center"><i data-lucide="arrow-up-circle" class="w-8 h-8 text-blue-400 mb-2"></i><span>กระโดด (กด 2 ครั้ง = กระโดดสูง)</span></div>
+            </div>
+            <button onclick="startMarioGame()" class="w-full bg-blue-500 text-white text-2xl font-black py-4 rounded-2xl hover:bg-blue-600 hover:-translate-y-1 transition shadow-[0_4px_12px_rgba(59,130,246,0.4)]">
+                PLAY GAME
+            </button>
+        </div>
+    </div>
+    <!-- ส่วนของตัวเกมแบบเต็มหน้าจอ -->
+    <div id="marioGameWrapper" class="hidden w-full h-full flex flex-col max-w-[1200px] mx-auto bg-gradient-to-b from-[#60a5fa] to-[#e0f2fe] relative shadow-2xl">
+
+        <!-- UI แสดงสถานะมุมซ้ายบน -->
+        <div class="absolute top-4 left-4 flex gap-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-full shadow-sm border border-white/50 font-black text-sm md:text-lg">
+            <div class="flex items-center gap-1 text-red-500"><i data-lucide="heart" class="w-5 h-5 fill-current"></i> <span id="uiHearts">3</span></div>
+            <div class="flex items-center gap-1 text-blue-600"><i data-lucide="star" class="w-5 h-5 fill-current"></i> <span id="uiScore">0</span></div>
+            <div class="flex items-center gap-1 text-amber-500"><i data-lucide="help-circle" class="w-5 h-5 fill-current"></i> <span id="uiQuestions">0/10</span></div>
+        </div>
+        <!-- พื้นที่ Canvas สำหรับวาดเกม -->
+        <div id="canvasContainer" class="flex-grow w-full relative overflow-hidden">
+            <canvas id="gameCanvas" class="absolute inset-0 w-full h-full block"></canvas>
+        </div>
+        <!-- ปุ่มคุมบนมือถือ (ติดขอบล่าง) -->
+        <div id="marioControls" class="flex justify-between items-center px-4 md:px-8 pb-6 pt-4 shrink-0 bg-white shadow-[0_-10px_20px_rgba(0,0,0,0.1)] z-20 border-t-2 border-gray-100">
+            <div class="flex gap-3 md:gap-6">
+                <button id="btnLeft" class="mario-btn bg-gray-100 active:bg-blue-200 w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center border-b-4 border-gray-300 active:border-b-0 active:translate-y-1"><i data-lucide="arrow-left" class="w-10 h-10 md:w-12 md:h-12 text-gray-700"></i></button>
+                <button id="btnRight" class="mario-btn bg-gray-100 active:bg-blue-200 w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center border-b-4 border-gray-300 active:border-b-0 active:translate-y-1"><i data-lucide="arrow-right" class="w-10 h-10 md:w-12 md:h-12 text-gray-700"></i></button>
+            </div>
+            <button id="btnJump" class="mario-btn bg-blue-500 active:bg-blue-600 w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center border-b-8 border-blue-700 active:border-b-0 active:translate-y-2 shadow-lg"><i data-lucide="arrow-up" class="w-12 h-12 md:w-14 md:h-14 text-white"></i></button>
+        </div>
+    </div>
+    <!-- Modal คำถามระหว่างเกม -->
+    <div id="marioQuizModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 md:p-10 w-full max-w-2xl shadow-2xl transform scale-100 relative">
+            <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-yellow-400 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-4xl font-black text-yellow-800">?</div>
+            <h2 id="mQuestionText" class="text-2xl md:text-3xl font-bold text-gray-800 mb-8 mt-6 text-center leading-relaxed">คำถาม?</h2>
+
+            <div id="mOptions" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- ปุ่มตัวเลือก (จะสุ่มตำแหน่ง) -->
+            </div>
+            <div id="mExplanationArea" class="hidden text-center">
+                <div id="mResultStatus" class="text-2xl font-black mb-4"></div>
+                <div class="bg-blue-50 text-blue-800 p-6 rounded-2xl text-lg font-medium mb-6" id="mExplanationText">คำอธิบาย...</div>
+                <button onclick="resumeMarioGame()" class="bg-blue-500 text-white px-10 py-4 rounded-2xl font-black text-xl hover:bg-blue-600 transition shadow-lg w-full md:w-auto">ลุยต่อ!</button>
+            </div>
+        </div>
+    </div>
+    <!-- หน้าสรุปผลเกม -->
+    <div id="marioResult" class="hidden absolute inset-0 z-50 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center p-4">
+        <div class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl text-center max-w-lg w-full border-4 border-blue-100">
+            <h1 id="resultTitle" class="text-4xl md:text-5xl font-black tracking-tight mb-3">จบเกม!</h1>
+            <p class="text-gray-500 text-lg mb-8">เยี่ยมมาก! คุณฝ่าด่านจนถึงเส้นชัยแล้ว</p>
+
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="bg-red-50 p-6 rounded-2xl border-2 border-red-100">
+                    <i data-lucide="heart" class="w-10 h-10 text-red-500 fill-current mx-auto mb-2"></i>
+                    <div class="text-sm text-red-600 font-bold mb-1">หัวใจเหลือ</div>
+                    <div class="text-4xl font-black text-red-700" id="resultHearts">0</div>
+                </div>
+                <div class="bg-blue-50 p-6 rounded-2xl border-2 border-blue-100">
+                    <i data-lucide="star" class="w-10 h-10 text-blue-500 fill-current mx-auto mb-2"></i>
+                    <div class="text-sm text-blue-600 font-bold mb-1">คะแนนที่ได้</div>
+                    <div class="text-4xl font-black text-blue-700" id="resultScore">0</div>
+                </div>
+            </div>
+
+            <p id="saveStatus" class="text-sm text-gray-400 mb-6"></p>
+
+            <button onclick="location.reload()" class="w-full bg-gray-800 text-white text-xl font-bold py-4 rounded-2xl hover:bg-gray-900 transition">เล่นใหม่อีกครั้ง</button>
+        </div>
+    </div>
+    <script>
+        lucide.createIcons();
+
+        // ===== รับข้อมูลนักเรียนจาก URL (ส่งมาจากหน้าเว็บบทเรียนตอนกดเปิดเกม) =====
+        // และบันทึกคะแนนกลับไปที่ Google Sheet ผ่าน Apps Script API เมื่อเกมจบ (แพ้หรือชนะก็บันทึก)
+        const SCORE_API_URL = "https://script.google.com/macros/s/AKfycbwAfmqJTXPhRP1WSV2_EyYoqSs0b_4C3rL5_EwW8EryTpIDkmBU6Sx4UM8TJ9ndYrGX/exec";
+        const urlParams = new URLSearchParams(window.location.search);
+        const studentInfo = {
+            studentId: urlParams.get('studentId') || '',
+            name: urlParams.get('name') || '',
+            className: urlParams.get('className') || ''
+        };
+        const hasStudentInfo = !!(studentInfo.studentId && studentInfo.className);
+        function saveScoreToServer(score) {
+            if (!hasStudentInfo) return;
+            const params = new URLSearchParams({
+                api: 'saveScore', studentId: studentInfo.studentId, name: studentInfo.name,
+                className: studentInfo.className, action: 'เล่นเกมกิจกรรม', score: score
+            });
+            fetch(SCORE_API_URL + '?' + params.toString(), { method: 'GET', mode: 'no-cors' }).catch(() => {});
+        }
+        function updateSaveStatus() {
+            const el = document.getElementById('saveStatus');
+            if (!el) return;
+            if (hasStudentInfo) {
+                el.innerText = `📤 บันทึกคะแนนให้ ${studentInfo.name} (${studentInfo.className}) เรียบร้อยแล้ว`;
+            } else {
+                el.innerText = 'เล่นแบบไม่ระบุตัวตน (คะแนนจะไม่ถูกบันทึกลงชีต เข้าเกมผ่านหน้าบทเรียนเพื่อให้บันทึกคะแนนได้)';
+            }
+        }
+
+        CanvasRenderingContext2D.prototype.roundRectCustom = function (x, y, w, h, r) {
+            if (typeof r === 'undefined') r = 0;
+            if (typeof r === 'number') r = {tl: r, tr: r, br: r, bl: r};
+            else if (Array.isArray(r)) r = {tl: r[0], tr: r[1], br: r[2], bl: r[3]};
+            this.beginPath();
+            this.moveTo(x + r.tl, y);
+            this.lineTo(x + w - r.tr, y);
+            this.quadraticCurveTo(x + w, y, x + w, y + r.tr);
+            this.lineTo(x + w, y + h - r.br);
+            this.quadraticCurveTo(x + w, y + h, x + w - r.br, y + h);
+            this.lineTo(x + r.bl, y + h);
+            this.quadraticCurveTo(x, y + h, x, y + h - r.bl);
+            this.lineTo(x, y + r.tl);
+            this.quadraticCurveTo(x, y, x + r.tl, y);
+            this.closePath();
+            this.fill();
+        }
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let gameRunning = false, mReqAnimFrame, mState = 'IDLE';
+        let player, platforms, boxes, enemies, clouds;
+        let camera = { x: 0, y: 0 };
+        const keys = { left: false, right: false, up: false };
+        const GRAVITY = 0.5, JUMP_POWER = -10, DOUBLE_JUMP_POWER = -11;
+        const HOLD_JUMP_THRESHOLD = 150;
+        let jumpRequested = false, jumpEffects = [], jumpPressStartTime = 0, jumpHoldBoostApplied = false;
+
+        let availableQuestions = [], currentBoxIndex = -1;
+        let nextMapX = 0, goalSpawned = false, goal = { x: -1000, y: 0, w: 0, h: 0 };
+        const mQuestions = [
+            { q: "ผู้สถาปนาเมืองสงขลาฝั่งเขาแดงคือใคร?", options: ["ดะโต๊ะ โมกอล", "สุลต่าน สุไลมาน", "มุสตาฟา", "สมเด็จพระนารายณ์"], ans: 0, exp: "ดะโต๊ะ โมกอล อพยพหนีภัยจากหมู่เกาะชวามาตั้งถิ่นฐานที่หัวเขาแดงในปี พ.ศ. 2145" },
+            { q: "คำว่า 'ซิงหะร่า' ตามสำเนียงชาวอาหรับแปลว่าอะไร?", options: ["เมืองท่าเสรี", "เมืองบนยอดเขาที่มีทะเล", "ภูเขาสูงใหญ่", "กำแพงเมืองมั่นคง"], ans: 1, exp: "ตามบันทึกพ่อค้าชาวยุโรปเรียกตามชาวอาหรับว่า ซิงหะร่า แปลว่าเมืองบนยอดเขาที่มีทะเล" },
+            { q: "นโยบายใดที่ทำให้ชาวอาหรับ-ชวา ต้องอพยพหนีภัยยุโรป?", options: ["นโยบายเรือด่วน", "นโยบายภาษีแพง", "นโยบายเรือปืน", "นโยบายผูกขาด"], ans: 2, exp: "นโยบายเรือปืน (Gunship Policy) ของชาวยุโรปที่ล่าอาณานิคม ทำให้ดะโต๊ะ โมกอลต้องอพยพหนีภัยมาตั้งถิ่นฐานใหม่" },
+            { q: "เมืองสงขลาเขาแดงในยุคแรกเจริญรุ่งเรืองด้วยการเป็นเมืองท่าแบบใด?", options: ["เมืองท่าปลอดภาษี", "เมืองท่าผูกขาด", "เมืองท่าปิด", "เมืองประมงน้ำลึก"], ans: 0, exp: "ดะโต๊ะ โมกอล เริ่มกิจการการค้าทางทะเล ทำให้เมืองสงขลาเป็นเมืองท่าปลอดภาษีและกลายเป็นเมืองท่านานาชาติ" },
+            { q: "สุลต่าน สุไลมาน ซื้อปืนใหญ่มาติดตั้งตามป้อมปราการกี่ป้อม?", options: ["10 ป้อม", "14 ป้อม", "18 ป้อม", "22 ป้อม"], ans: 2, exp: "สุลต่าน สุไลมาน ซื้อปืนใหญ่จากพ่อค้าชาวดัตช์และอังกฤษ มาติดตั้งตามป้อมปราการรอบเมืองทั้งหมด 18 ป้อม" },
+            { q: "ใครคือ 'พระเจ้าเมืองสงขลาที่ 2'?", options: ["สมเด็จพระนารายณ์", "ดะโต๊ะ โมกอล", "มุสตาฟา", "สุลต่าน สุไลมาน"], ans: 2, exp: "มุสตาฟา คือโอรสของสุลต่าน สุไลมาน หลังจากบิดาสิ้นพระชนม์จึงตั้งตนเป็นพระเจ้าเมืองสงขลาที่ 2" },
+            { q: "กษัตริย์อยุธยาที่ยกทัพมาปราบสงขลา 2 ครั้งแต่ไม่สำเร็จคือใคร?", options: ["สมเด็จพระเจ้าปราสาททอง", "สมเด็จพระเอกาทศรถ", "สมเด็จพระนารายณ์", "สมเด็จพระนเรศวร"], ans: 0, exp: "สมเด็จพระเจ้าปราสาททองทรงส่งกองทัพมาปราบปรามเมืองสงขลาถึง 2 ครั้ง แต่ไม่สำเร็จเพราะสงขลามีป้อมปราการที่แข็งแรงมาก" },
+            { q: "พ.ศ. 2223 สมเด็จพระนารายณ์ใช้กุศโลบายใดในการจัดการสงขลา?", options: ["ปิดอ่าวทางทะเล", "แบ่งแยกแล้วปกครอง", "ผูกมิตรกับอังกฤษ", "ส่งทูตเจรจา"], ans: 1, exp: "สมเด็จพระนารายณ์มหาราชใช้กุศโลบาย 'แบ่งแยกแล้วปกครอง' โดยการโดดเดี่ยวเมืองสงขลาก่อนเข้าโจมตี" },
+            { q: "หัวเมืองใดที่อยุธยาฟื้นฟูอำนาจเพื่อ 'โดดเดี่ยว' สงขลา?", options: ["ไชยา, นครศรีธรรมราช", "ภูเก็ต, พังงา", "ชุมพร, ระนอง", "ปัตตานี, สตูล"], ans: 0, exp: "อยุธยาฟื้นฟูอำนาจเมืองไชยา นครศรีธรรมราช พัทลุง และปัตตานี เพื่อลิดรอนอำนาจและโดดเดี่ยวเมืองสงขลาให้อ่อนแอลง" },
+            { q: "ทัพอยุธยาตีเมืองสงขลาแตกด้วยวิธีใดเป็นหลัก?", options: ["ใช้ปืนใหญ่ยิงกำแพง", "ขุดอุโมงค์ใต้ดิน", "ติดสินบนทหารรักษาป้อม", "ล้อมเมืองจนขาดเสบียง"], ans: 2, exp: "ทัพอยุธยาใช้กลยุทธ์เกลี้ยกล่อมและติดสินบนทหารรักษาป้อม ทำให้สามารถบุกเข้าโจมตีและเผาเมืองจนวอดวายได้สำเร็จ" }
+        ];
+        function resizeCanvas() {
+            const container = document.getElementById('canvasContainer');
+            if(container) {
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+            }
+        }
+        window.addEventListener('resize', () => {
+            if (mState === 'PLAYING' || mState === 'PAUSED') resizeCanvas();
+        });
+        function initMap() {
+            platforms = []; boxes = []; enemies = []; clouds = [];
+            availableQuestions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+            nextMapX = 0; goalSpawned = false; goal = { x: -1000, y: 0, w: 0, h: 0 };
+
+            // h: 1000 ทำให้พื้นดินวาดลงไปลึกๆ รองรับหน้าจอมือถือแนวยาว
+            platforms.push({x: 0, y: 350, w: 1000, h: 1000});
+            nextMapX = 1000;
+
+            for(let i=0; i<30; i++) { clouds.push({x: Math.random()*5000, y: Math.random()*150+20, w: Math.random()*60+60, speed: Math.random()*0.2+0.1}); }
+
+            generateNextSegment(); generateNextSegment(); generateNextSegment();
+        }
+        function generateNextSegment() {
+            let startX = nextMapX + 150;
+
+            if (availableQuestions.length === 0 && !goalSpawned) {
+                platforms.push({x: startX, y: 350, w: 2500, h: 1000});
+                goal = { x: startX + 800, y: 100, w: 100, h: 250 };
+                goalSpawned = true;
+                nextMapX = startX + 2500;
+                return;
+            }
+
+            if (goalSpawned) {
+                platforms.push({x: startX, y: 350, w: 2000, h: 1000});
+                nextMapX = startX + 2000;
+                return;
+            }
+
+            let type = Math.floor(Math.random() * 3);
+            if (type === 0) {
+                platforms.push({x: startX, y: 350, w: 1000, h: 1000});
+                platforms.push({x: startX + 300, y: 220, w: 150, h: 30});
+                boxes.push({x: startX + 350, y: 120, w: 46, h: 46, used: false, bounceY: 0});
+                enemies.push({x: startX + 500, y: 306, w: 44, h: 44, vx: 2, minX: startX + 400, maxX: startX + 800});
+                nextMapX = startX + 1000;
+            } else if (type === 1) {
+                platforms.push({x: startX, y: 350, w: 1200, h: 1000});
+                platforms.push({x: startX + 250, y: 240, w: 120, h: 30});
+                platforms.push({x: startX + 600, y: 180, w: 120, h: 30});
+                boxes.push({x: startX + 280, y: 140, w: 46, h: 46, used: false, bounceY: 0});
+                boxes.push({x: startX + 630, y: 80, w: 46, h: 46, used: false, bounceY: 0});
+                enemies.push({x: startX + 400, y: 306, w: 44, h: 44, vx: -1.5, minX: startX + 100, maxX: startX + 800});
+                nextMapX = startX + 1200;
+            } else {
+                platforms.push({x: startX, y: 350, w: 900, h: 1000});
+                platforms.push({x: startX + 350, y: 200, w: 200, h: 30});
+                boxes.push({x: startX + 425, y: 100, w: 46, h: 46, used: false, bounceY: 0});
+                enemies.push({x: startX + 200, y: 306, w: 44, h: 44, vx: 1.5, minX: startX + 100, maxX: startX + 350});
+                enemies.push({x: startX + 700, y: 306, w: 44, h: 44, vx: -2, minX: startX + 600, maxX: startX + 850});
+                nextMapX = startX + 900;
+            }
+        }
+        function startMarioGame() {
+            document.getElementById('marioIntro').classList.add('hidden');
+            document.getElementById('marioResult').classList.add('hidden');
+            document.getElementById('marioGameWrapper').classList.remove('hidden');
+
+            resizeCanvas();
+
+            player = { x: 50, y: 200, w: 44, h: 44, vx: 0, vy: 0, speed: 5.5, jumpPower: JUMP_POWER, grounded: false, hearts: 3, score: 0, invincibleTimer: 0, faceRight: true, jumpsUsed: 0, maxJumps: 2 };
+            jumpRequested = false; jumpEffects = []; jumpPressStartTime = 0; jumpHoldBoostApplied = false;
+
+            initMap(); updateUI(); gameRunning = true; mState = 'PLAYING';
+            if(mReqAnimFrame) cancelAnimationFrame(mReqAnimFrame);
+            gameLoop();
+        }
+        function updateUI() {
+            document.getElementById('uiHearts').innerText = player.hearts;
+            document.getElementById('uiScore').innerText = player.score;
+            document.getElementById('uiQuestions').innerText = (10 - availableQuestions.length) + "/10";
+        }
+
+        function AABB(rect1, rect2) { return rect1.x < rect2.x + rect2.w && rect1.x + rect1.w > rect2.x && rect1.y < rect2.y + rect2.h && rect1.y + rect1.h > rect2.y; }
+        function gameLoop() {
+            if(!gameRunning) return;
+            if(mState === 'PLAYING') updateGame();
+            renderGame();
+            mReqAnimFrame = requestAnimationFrame(gameLoop);
+        }
+        function updateGame() {
+            if (player.x + 2000 > nextMapX) generateNextSegment();
+            if (keys.left) { player.vx = -player.speed; player.faceRight = false; }
+            else if (keys.right) { player.vx = player.speed; player.faceRight = true; }
+            else player.vx = 0;
+            player.x += player.vx;
+
+            // ตายถ้าตกเหว (ปรับให้ต่ำลงเพื่อให้รองรับความสูงมือถือ)
+            if(player.y > 1500) {
+                player.hearts--; updateUI();
+                if(player.hearts <= 0) { checkGameOver(); }
+                else {
+                    player.y = 50; player.vy = 0; player.vx = 0; player.jumpsUsed = 0; jumpHoldBoostApplied = false;
+                    let safePlatform = platforms.find(p => p.y === 350 && p.x < player.x && p.x + p.w > player.x - 400);
+                    if(safePlatform) player.x = safePlatform.x + (safePlatform.w / 2);
+                    else player.x = camera.x + 100;
+                    player.invincibleTimer = 120;
+                }
+                return;
+            }
+            platforms.forEach(p => { if(AABB(player, p)) { if(player.vx > 0) player.x = p.x - player.w; else if(player.vx < 0) player.x = p.x + p.w; }});
+            player.vy += GRAVITY; player.y += player.vy; player.grounded = false;
+            platforms.forEach(p => {
+                if(AABB(player, p)) {
+                    if(player.vy > 0) { player.y = p.y - player.h; player.vy = 0; player.grounded = true; player.jumpsUsed = 0; jumpHoldBoostApplied = false; }
+                    else if(player.vy < 0) { player.y = p.y + p.h; player.vy = 0; }
+                }
+            });
+            if (jumpRequested) {
+                jumpRequested = false;
+                if (player.grounded) {
+                    player.vy = JUMP_POWER; player.grounded = false; player.jumpsUsed = 1;
+                } else if (player.jumpsUsed < player.maxJumps) {
+                    player.vy = DOUBLE_JUMP_POWER; player.jumpsUsed = player.maxJumps; spawnJumpEffect(player.x + player.w/2, player.y + player.h);
+                }
+            }
+            if (keys.up && !jumpHoldBoostApplied && player.jumpsUsed < player.maxJumps && player.vy < 0) {
+                if (Date.now() - jumpPressStartTime >= HOLD_JUMP_THRESHOLD) {
+                    player.vy = DOUBLE_JUMP_POWER; player.jumpsUsed = player.maxJumps; jumpHoldBoostApplied = true; spawnJumpEffect(player.x + player.w/2, player.y + player.h);
+                }
+            }
+            boxes.forEach((b) => {
+                if(b.bounceY > 0) b.bounceY -= 1;
+                if(AABB(player, b)) {
+                    if(player.vy > 0 && player.y + player.h - player.vy <= b.y) { player.y = b.y - player.h; player.vy = 0; player.grounded = true; player.jumpsUsed = 0; jumpHoldBoostApplied = false; }
+                    else if (player.vy < 0 && player.y - player.vy >= b.y + b.h) {
+                        player.y = b.y + b.h; player.vy = 0; b.bounceY = 10;
+                        if(!b.used) {
+                            b.used = true;
+                            if (availableQuestions.length > 0) {
+                                let rIdx = Math.floor(Math.random() * availableQuestions.length);
+                                currentBoxIndex = availableQuestions[rIdx];
+                                availableQuestions.splice(rIdx, 1);
+                                triggerQuiz(currentBoxIndex);
+                            }
+                        }
+                    } else { if(player.vx > 0) player.x = b.x - player.w; else if(player.vx < 0) player.x = b.x + b.w; }
+                }
+            });
+            enemies.forEach(e => {
+                e.x += e.vx; if(e.x <= e.minX || e.x >= e.maxX) e.vx *= -1;
+                if(player.invincibleTimer <= 0 && AABB(player, e)) {
+                    player.hearts--; player.invincibleTimer = 90; updateUI(); checkGameOver();
+                }
+            });
+            if(player.invincibleTimer > 0) player.invincibleTimer--;
+            jumpEffects.forEach(fx => { fx.life--; fx.y -= 1.2; });
+            jumpEffects = jumpEffects.filter(fx => fx.life > 0);
+            if (goalSpawned && AABB(player, goal)) { mState = 'CLEAR'; showGameResult("จบการผจญภัย!", "text-blue-600"); }
+            camera.x = player.x - canvas.width / 2.5; if (camera.x < 0) camera.x = 0;
+            // คำนวณแกน Y ให้พื้นเกมอยู่สูงจากขอบล่าง Canvas เสมอ (ประมาณ 180px)
+            camera.y = 350 - (canvas.height - 180);
+
+            clouds.forEach(c => { c.x -= c.speed; if(c.x + c.w < camera.x) c.x = camera.x + canvas.width + Math.random()*500; });
+        }
+        function spawnJumpEffect(x, y) {
+            for(let i=0; i<6; i++) jumpEffects.push({ x: x + (Math.random()*30-15), y: y, life: 24, r: Math.random()*3+2 });
+        }
+        function renderGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            clouds.forEach(c => {
+                ctx.beginPath(); ctx.arc(c.x - camera.x, c.y - camera.y, c.w/2, 0, Math.PI*2);
+                ctx.arc(c.x - camera.x + c.w*0.4, c.y - camera.y - c.w*0.2, c.w/2.5, 0, Math.PI*2);
+                ctx.arc(c.x - camera.x + c.w*0.8, c.y - camera.y, c.w/2.2, 0, Math.PI*2); ctx.fill();
+            });
+            if (goalSpawned) {
+                ctx.fillStyle = '#fbcfe8'; ctx.roundRectCustom(goal.x - camera.x, goal.y - camera.y, goal.w, goal.h, 40);
+                ctx.fillStyle = '#fce7f3'; ctx.roundRectCustom(goal.x - camera.x + 10, goal.y - camera.y + 10, goal.w - 20, goal.h - 20, 30);
+                ctx.fillStyle = '#be185d'; ctx.font = "900 24px Noto Sans Thai"; ctx.textAlign = "center"; ctx.fillText("เส้นชัย", goal.x - camera.x + goal.w/2, goal.y - camera.y - 15);
+            }
+            platforms.forEach(p => {
+                ctx.fillStyle = '#d97706'; ctx.roundRectCustom(p.x - camera.x, p.y - camera.y + 15, p.w, p.h - 15, 12);
+                ctx.fillStyle = '#4ade80'; ctx.roundRectCustom(p.x - camera.x, p.y - camera.y, p.w, 20, 12);
+            });
+            ctx.font = "900 28px Nunito"; ctx.textAlign = "center";
+            boxes.forEach(b => {
+                let by = b.y - b.bounceY - camera.y;
+                ctx.fillStyle = b.used ? '#e7e5e4' : '#fde047'; ctx.roundRectCustom(b.x - camera.x, by, b.w, b.h, 12);
+                ctx.fillStyle = b.used ? '#d6d3d1' : '#fef08a'; ctx.roundRectCustom(b.x - camera.x + 4, by + 4, b.w - 8, b.h - 8, 8);
+                ctx.fillStyle = b.used ? '#a8a29e' : '#ca8a04'; ctx.fillText("?", b.x - camera.x + b.w/2, by + 32);
+            });
+            enemies.forEach(e => {
+                let ex = e.x - camera.x; let ey = e.y + (e.vx > 0 && Math.floor(Date.now()/150)%2===0 ? -2 : 0) - camera.y;
+                ctx.fillStyle = '#fb7185';
+                ctx.roundRectCustom(ex, ey, e.w, e.h, [22, 22, 10, 10]);
+                ctx.fillStyle = '#881337';
+                ctx.fillRect(ex + 10 + (e.vx>0?4:0), ey + 18, 6, 6); ctx.fillRect(ex + 24 + (e.vx>0?4:0), ey + 18, 6, 6);
+                ctx.beginPath(); ctx.moveTo(ex + 8 + (e.vx>0?4:0), ey + 12); ctx.lineTo(ex + 18 + (e.vx>0?4:0), ey + 16); ctx.lineWidth = 3; ctx.strokeStyle = '#881337'; ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(ex + 30 + (e.vx>0?4:0), ey + 12); ctx.lineTo(ex + 20 + (e.vx>0?4:0), ey + 16); ctx.stroke();
+            });
+            if (player.invincibleTimer === 0 || Math.floor(Date.now() / 100) % 2 === 0) {
+                let px = player.x - camera.x; let py = player.y - camera.y;
+
+                ctx.fillStyle = '#60a5fa'; ctx.roundRectCustom(px, py, player.w, player.h, 16);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'; ctx.roundRectCustom(px + 4, py + 4, player.w - 16, 12, 6);
+
+                let eyeOffset = player.faceRight ? 22 : 10;
+                if(player.vx === 0) eyeOffset = 16;
+                ctx.fillStyle = '#1e3a8a';
+                ctx.beginPath(); ctx.arc(px + eyeOffset, py + 18, 4, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(px + eyeOffset + 12, py + 18, 4, 0, Math.PI*2); ctx.fill();
+
+                ctx.fillStyle = '#fbcfe8';
+                ctx.beginPath(); ctx.arc(px + eyeOffset - 5, py + 24, 3.5, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(px + eyeOffset + 17, py + 24, 3.5, 0, Math.PI*2); ctx.fill();
+
+                if (player.vx !== 0 && player.grounded && Math.floor(Date.now() / 100) % 2 === 0) {
+                    ctx.fillStyle = '#3b82f6'; ctx.roundRectCustom(px + 8, py + player.h - 2, 10, 6, 3); ctx.roundRectCustom(px + 26, py + player.h - 2, 10, 6, 3);
+                }
+            }
+            jumpEffects.forEach(fx => {
+                ctx.globalAlpha = Math.max(fx.life / 24, 0); ctx.fillStyle = '#fde047';
+                ctx.beginPath(); ctx.arc(fx.x - camera.x, fx.y - camera.y, fx.r, 0, Math.PI*2); ctx.fill(); ctx.globalAlpha = 1;
+            });
+        }
+        function triggerQuiz(idx) {
+            mState = 'PAUSED'; keys.left = false; keys.right = false; keys.up = false; jumpRequested = false; currentBoxIndex = idx;
+            let q = mQuestions[idx];
+
+            document.getElementById('mQuestionText').innerText = q.q;
+
+            // สร้าง Array ตัวเลือกแล้วสุ่มตำแหน่ง (Shuffle)
+            let opts = q.options.map((opt, i) => ({ text: opt, isCorrect: (i === q.ans) }));
+            opts.sort(() => Math.random() - 0.5);
+
+            document.getElementById('mOptions').innerHTML = opts.map((opt) =>
+                `<button onclick="answerMarioQuiz(${opt.isCorrect})" class="w-full bg-white border-2 border-yellow-200 p-4 md:p-5 rounded-2xl text-gray-700 font-bold hover:bg-yellow-50 hover:border-yellow-400 hover:-translate-y-1 transition text-left text-lg shadow-sm">${opt.text}</button>`
+            ).join('');
+
+            document.getElementById('mExplanationArea').classList.add('hidden');
+            document.getElementById('mOptions').classList.remove('hidden');
+            document.getElementById('marioQuizModal').classList.remove('hidden');
+        }
+        function answerMarioQuiz(isCorrect) {
+            let q = mQuestions[currentBoxIndex];
+            let statusEl = document.getElementById('mResultStatus');
+
+            if(isCorrect) {
+                player.score++; player.hearts++;
+                statusEl.innerHTML = `<span class="text-green-500 flex justify-center items-center gap-2"><i data-lucide="check-circle" class="w-8 h-8"></i> ถูกต้อง! (+1 หัวใจ, +1 คะแนน)</span>`;
+            } else {
+                player.score--;
+                // ถ้าตอบผิด ให้ยัดคำถามข้อนี้กลับเข้ากองสุ่มใหม่ จะได้โดนถามอีกจนกว่าจะถูก
+                availableQuestions.push(currentBoxIndex);
+                statusEl.innerHTML = `<span class="text-red-500 flex justify-center items-center gap-2"><i data-lucide="x-circle" class="w-8 h-8"></i> ผิดครับ! ข้อนี้จะกลับมาถามใหม่นะ</span>`;
+            }
+            updateUI(); lucide.createIcons();
+            document.getElementById('mOptions').classList.add('hidden');
+            document.getElementById('mExplanationText').innerText = q.exp;
+            document.getElementById('mExplanationArea').classList.remove('hidden');
+        }
+        function resumeMarioGame() { document.getElementById('marioQuizModal').classList.add('hidden'); mState = 'PLAYING'; }
+
+        function checkGameOver() { if(player.hearts <= 0) { mState = 'OVER'; showGameResult("Game Over!", "text-red-500"); } }
+        function showGameResult(title, colorClass) {
+            gameRunning = false;
+            document.getElementById('marioResult').classList.remove('hidden');
+            document.getElementById('resultTitle').className = `text-4xl md:text-5xl font-black tracking-tight mb-3 ${colorClass}`;
+            document.getElementById('resultTitle').innerText = title;
+            document.getElementById('resultHearts').innerText = player.hearts;
+            document.getElementById('resultScore').innerText = player.score;
+            saveScoreToServer(player.score);
+            updateSaveStatus();
+        }
+        window.addEventListener('keydown', e => {
+            if(mState !== 'PLAYING') return;
+            if(e.code === 'ArrowLeft') keys.left = true;
+            if(e.code === 'ArrowRight') keys.right = true;
+            if(e.code === 'ArrowUp' && !keys.up) { keys.up = true; jumpRequested = true; jumpPressStartTime = Date.now(); jumpHoldBoostApplied = false; }
+        });
+        window.addEventListener('keyup', e => {
+            if(e.code === 'ArrowLeft') keys.left = false;
+            if(e.code === 'ArrowRight') keys.right = false;
+            if(e.code === 'ArrowUp') keys.up = false;
+        });
+
+        const bindTouch = (id, key) => {
+            const el = document.getElementById(id);
+            el.addEventListener('touchstart', (e) => { e.preventDefault(); if(mState==='PLAYING') keys[key] = true; });
+            el.addEventListener('touchend', (e) => { e.preventDefault(); keys[key] = false; });
+        };
+        bindTouch('btnLeft', 'left'); bindTouch('btnRight', 'right');
+        const btnJump = document.getElementById('btnJump');
+        btnJump.addEventListener('touchstart', (e) => { e.preventDefault(); if(mState === 'PLAYING') { keys.up = true; jumpRequested = true; jumpPressStartTime = Date.now(); jumpHoldBoostApplied = false; } });
+        btnJump.addEventListener('touchend', (e) => { e.preventDefault(); keys.up = false; });
+
+    </script>
+</body>
+</html>
