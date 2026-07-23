@@ -12,10 +12,11 @@
 | `boyang-lesson/` | บทเรียน + แบบทดสอบ บ่อยาง (มีเกมกล้อง 67 Motion Challenge ในตัว) | https://jitpanusri-cell.github.io/songkhla-history/boyang-lesson/ |
 | `khaodaeng-mario-game/` | เกมกิจกรรม (มาริโอ้) ของหน้าเขาแดง | https://jitpanusri-cell.github.io/songkhla-history/khaodaeng-mario-game/ |
 | `laemson-game/` | เกมปืนใหญ่เล็งตอบ ของหน้าแหลมสน | https://jitpanusri-cell.github.io/songkhla-history/laemson-game/ |
+| `backend/Code.gs` | สำเนาโค้ด Apps Script (เก็บไว้อ้างอิง/version control เท่านั้น) | ไม่มี URL — ไฟล์นี้ **ไม่ทำงานบน GitHub Pages** |
 
 ## ระบบหลังบ้าน (Google Apps Script)
 
-ทุกหน้าเรียกใช้ Apps Script ตัวเดียวกัน (ไฟล์ `Code.gs` ที่ deploy แยกไว้ใน Apps Script project) ผ่าน JSONP เพื่อ:
+ทุกหน้าเรียกใช้ Apps Script ตัวเดียวกัน ผ่าน JSONP เพื่อ:
 
 - `?api=verifyStudent` — ตรวจสอบรหัสนักเรียนตอนล็อกอิน
 - `?api=saveScore` — บันทึกคะแนน/กิจกรรมล่าสุดกลับ Google Sheet และดึง leaderboard
@@ -24,9 +25,10 @@
 
 ## วิธี deploy
 
-1. เปิดใช้งาน GitHub Pages: Settings > Pages > Branch: `main` > Save
+1. เปิดใช้งาน GitHub Pages: Settings > Pages > Branch: `main` > Save (GitHub Pages จะข้าม `backend/` ไปเอง เพราะไม่มี `index.html` ในนั้น)
 2. รอสักครู่แล้วเข้าลิงก์ตามตารางด้านบนเพื่อทดสอบ
 3. ถ้าแก้ไขเนื้อหาบทเรียน/คำถามในไฟล์ไหน ให้แก้ที่ `index.html` ในโฟลเดอร์นั้นได้เลย ไม่ต้องรีบิลด์อะไรเพิ่ม
+4. `backend/Code.gs` เป็นสำเนาเก็บไว้ดูเฉยๆ ถ้าจะแก้ backend จริง ต้อง copy เนื้อหาไปวางในโปรเจกต์ที่ script.google.com แล้วกด Deploy > Manage deployments > New version ทุกครั้งที่แก้
 
 ## หมายเหตุ
 
