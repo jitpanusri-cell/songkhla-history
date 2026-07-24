@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>บทเรียนออนไลน์ประวัติศาสตร์เมืองสงขลาฝั่งบ่อยาง</title>
+    <!-- โหลดไลบรารีที่จำเป็น -->
     <script src="https://cdn.tailwindcss.com/3.4.17"></script>
     <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+    
     <style>
-        /* แก้ไขการเรียกใช้ฟอนต์จาก * เป็น body เพื่อป้องกันการแสดงผลผิดพลาดกับไอคอนและ Element อื่นๆ */
+        /* แก้ไขการเรียกใช้ฟอนต์จาก * เป็น body เพื่อป้องกันการแสดงผลผิดพลาดกับไอคอน */
         body { font-family: 'Noto Sans Thai', sans-serif; }
         .font-nunito { font-family: 'Nunito', sans-serif; }
         .page-section { animation: fadeIn 0.4s ease-in-out; }
@@ -23,7 +25,7 @@
         .active-nav { color: #6366f1 !important; font-weight: 700; border-bottom: 3px solid #6366f1; padding-bottom: 4px;}
         .quiz-btn.selected { border-color: #6366f1 !important; background-color: #eef2ff !important; color: #4338ca !important; font-weight: 600;}
 
-        /* ===== เกม 67 Motion Challenge (กล้อง + ตรวจจับมือ) ===== */
+        /* ===== เกม 67 Motion Challenge ===== */
         .cam-stage { position:relative; width:100%; aspect-ratio:4/3; border-radius:28px; overflow:hidden; background:#0b1020; }
         .cam-stage video, .cam-stage canvas.mirror { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scaleX(-1); }
         .cam-stage canvas.mirror { pointer-events:none; }
@@ -39,12 +41,12 @@
         @keyframes floatUpScore { 0% { transform:translate(-50%,-50%) scale(0.8); opacity:1;} 100%{ transform:translate(-50%,-160%) scale(1.3); opacity:0;} }
         .pulse-ring { position:absolute; width:26px; height:26px; margin:-13px 0 0 -13px; border-radius:50%; border:3px solid #a5b4fc; pointer-events:none; animation:pulseOutRing 0.5s ease-out forwards; }
         @keyframes pulseOutRing { to { width:120px; height:120px; margin:-60px 0 0 -60px; opacity:0; } }
-
         .hold-fill { position:absolute; inset:0; width:calc(var(--hold,0)*100%); background:linear-gradient(90deg, rgba(99,102,241,0.25), rgba(16,185,129,0.25)); transition:width 0.05s linear; border-radius:inherit; z-index:0; }
     </style>
 </head>
 <body class="h-full flex flex-col bg-[#eef2ff] overflow-x-hidden">
     
+    <!-- ================= หน้าจอ Login ================= -->
     <div id="loginScreen" class="fixed inset-0 bg-gradient-to-br from-indigo-500 to-purple-600 z-[200] flex items-center justify-center p-4 transition-opacity duration-500">
         <div class="bg-white/95 backdrop-blur-md rounded-[2rem] shadow-2xl p-8 w-full max-w-md text-center border-4 border-white/50 animate-bounce-in">
             <div class="w-24 h-24 bg-gradient-to-tr from-indigo-100 to-purple-100 rounded-[1.5rem] mx-auto flex items-center justify-center mb-6 shadow-inner">
@@ -77,13 +79,16 @@
         </div>
     </div>
 
+    <!-- ================= หน้าหลักแอปพลิเคชัน ================= -->
     <div id="app" class="w-full h-full flex flex-col overflow-auto hidden bg-slate-50">
+        <!-- Header / Navbar -->
         <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50 shrink-0 border-b border-gray-100">
             <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
                 <div class="flex items-center gap-3 cursor-pointer" onclick="showSection('home')">
                     <div class="w-10 h-10 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center shadow-sm"><i data-lucide="map" class="w-5 h-5 text-white"></i></div>
                     <span class="font-bold text-gray-800 text-sm md:text-base hidden sm:block tracking-wide">เมืองสงขลาฝั่งบ่อยาง</span>
                 </div>
+                <!-- เมนูเดสก์ท็อป -->
                 <nav class="hidden lg:flex shrink-0 gap-6 text-sm text-gray-500 font-bold tracking-wide">
                     <a href="#" onclick="showSection('home')" class="whitespace-nowrap hover:text-indigo-500 transition menu-link active-nav py-1" data-target="home">หน้าแรก</a>
                     <a href="#" onclick="showSection('knowledge')" class="whitespace-nowrap hover:text-indigo-500 transition menu-link py-1" data-target="knowledge">ใบความรู้</a>
@@ -94,18 +99,19 @@
                     <a href="https://jitpanusri-cell.github.io/songkhla-history/kaodaeng-lesson/" class="hidden lg:flex shrink-0 whitespace-nowrap bg-gray-100 text-gray-600 px-4 py-2 rounded-xl text-sm font-bold hover:bg-gray-200 transition items-center gap-1 shadow-sm">
                         <i data-lucide="home" class="w-4 h-4"></i> กลับเขาแดง
                     </a>
-                    
                     <div class="hidden sm:block text-right text-xs bg-indigo-50 px-4 py-1.5 rounded-xl border border-indigo-100">
                         <div class="text-indigo-400 font-bold" id="displayClass">ห้องเรียน</div>
                         <div id="displayName" class="font-black text-indigo-600 text-sm"></div>
                     </div>
-                    <button onclick="logoutUser()" title="เปลี่ยนผู้ใช้" class="hidden sm:flex bg-red-50 p-2.5 rounded-xl hover:bg-red-100 transition text-red-500 border border-red-100">
+                    <button onclick="logoutUser()" title="ออกจากระบบ" class="hidden sm:flex bg-red-50 p-2.5 rounded-xl hover:bg-red-100 transition text-red-500 border border-red-100">
                         <i data-lucide="log-out" class="w-5 h-5"></i>
                     </button>
+                    <!-- ปุ่มเปิดเมนูมือถือ -->
                     <button id="menuBtn" class="lg:hidden p-2 text-gray-600 bg-gray-100 rounded-xl"><i data-lucide="menu" class="w-6 h-6"></i></button>
                 </div>
             </div>
             
+            <!-- เมนูมือถือ -->
             <div id="mobileMenu" class="hidden lg:hidden border-t bg-white px-4 pb-4 pt-2 space-y-2 text-sm text-gray-600 font-bold absolute w-full shadow-2xl z-40 rounded-b-3xl">
                 <a href="#" onclick="showSection('home')" class="block py-3 hover:text-indigo-500 border-b border-gray-50 flex items-center gap-2"><i data-lucide="home" class="w-4 h-4"></i> หน้าแรก</a>
                 <a href="#" onclick="showSection('knowledge')" class="block py-3 hover:text-indigo-500 border-b border-gray-50 flex items-center gap-2"><i data-lucide="book-open-check" class="w-4 h-4"></i> ใบความรู้</a>
@@ -117,7 +123,7 @@
         </header>
 
         <main class="flex-grow flex flex-col">
-            <!-- Section Home -->
+            <!-- ========== Section หน้าแรก ========== -->
             <div id="section-home" class="page-section block">
                 <section class="bg-gradient-to-br from-indigo-500 to-purple-600 py-16 md:py-24 text-center text-white relative overflow-hidden">
                     <div class="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
@@ -159,7 +165,7 @@
                 </section>
             </div>
 
-            <!-- Section Knowledge -->
+            <!-- ========== Section ใบความรู้ ========== -->
             <div id="section-knowledge" class="page-section hidden max-w-5xl mx-auto px-4 py-12">
                 <div class="text-center mb-12">
                     <h2 class="text-3xl md:text-4xl font-black text-gray-800 mb-3 tracking-tight">ใบความรู้ประวัติศาสตร์</h2>
@@ -187,7 +193,7 @@
                 </div>
             </div>
 
-            <!-- Section Activity (67 Motion Challenge - กล้อง + ตรวจจับมือ) -->
+            <!-- ========== Section เกม Activity 67 Motion ========== -->
             <div id="section-activity" class="page-section hidden w-full h-full flex flex-col flex-grow bg-gradient-to-b from-indigo-100 to-white">
                 <div class="bg-white/50 backdrop-blur-md py-3 px-4 text-center shrink-0 border-b border-indigo-100 flex justify-center items-center gap-3">
                     <i data-lucide="camera" class="w-6 h-6 text-indigo-500"></i>
@@ -195,7 +201,7 @@
                     <i data-lucide="camera" class="w-6 h-6 text-indigo-500"></i>
                 </div>
 
-                <!-- หน้าจอแนะนำเกม -->
+                <!-- หน้าแนะนำ -->
                 <div id="motionIntro" class="flex-grow flex items-center justify-center p-4">
                     <div class="bg-white/90 backdrop-blur-md p-8 md:p-10 rounded-[2.5rem] shadow-2xl border-4 border-white max-w-lg w-full text-center animate-bounce-in">
                         <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-tr from-indigo-100 to-purple-100 rounded-[1.5rem] flex items-center justify-center shadow-inner">
@@ -203,105 +209,35 @@
                         </div>
                         <h3 class="text-2xl font-black text-gray-800 mb-4">เปิดกล้อง แล้วขยับมือขึ้น-ลง!</h3>
                         <div class="bg-indigo-50 p-5 rounded-2xl text-left text-sm text-gray-600 font-medium space-y-3 mb-8 border border-indigo-100">
-                            <p class="flex items-start gap-2"><span class="text-xl">✋</span> <span>ขยับมือ<b>ขึ้น-ลง</b>ตรงหน้ากล้องให้ไวที่สุด ยิ่งขยับแรง/ไกล ยิ่งได้คะแนนเยอะ (<b class="text-indigo-600">+1</b> หรือ <b class="text-emerald-600">+2</b>)</span></p>
-                            <p class="flex items-start gap-2"><span class="text-xl">🎯</span> <span>ทำคะแนนให้ถึง <b>67 คะแนน</b> ก่อนเวลาหมด เพื่อปลดล็อกด่านคำถาม 10 ข้อ (เลือก 2 ตัวเลือก)</span></p>
-                            <p class="flex items-start gap-2"><span class="text-xl">🤚</span> <span>ตอบคำถามได้ทั้งกดปุ่ม หรือ <b>ยกมือค้างไว้ฝั่งซ้ายจอ = A / ขวาจอ = B</b></span></p>
-                            <p class="flex items-start gap-2"><span class="text-xl">🏁</span> <span>ตอบผิดหรือเวลาหมด = จบเกม / ตอบถูกครบ 10 ข้อ = ชนะ!</span></p>
+                            <p class="flex items-start gap-2"><span class="text-xl">✋</span> <span>ขยับมือ<b>ขึ้น-ลง</b>ตรงหน้ากล้องให้ไวที่สุด ยิ่งขยับแรง/ไกล ยิ่งได้คะแนนเยอะ</span></p>
+                            <p class="flex items-start gap-2"><span class="text-xl">🎯</span> <span>ทำคะแนนให้ถึง <b>67 คะแนน</b> ก่อนเวลาหมด</span></p>
                         </div>
-                        <button id="startMotionBtn" onclick="startMotionCamera()" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-10 py-4 rounded-[2rem] font-black text-xl hover:from-indigo-600 hover:to-purple-700 transition shadow-[0_6px_15px_rgba(99,102,241,0.4)] hover:shadow-[0_8px_20px_rgba(99,102,241,0.5)] hover:-translate-y-1 flex items-center justify-center gap-2">
+                        <button id="startMotionBtn" onclick="startMotionCamera()" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-10 py-4 rounded-[2rem] font-black text-xl hover:from-indigo-600 hover:to-purple-700 transition shadow-[0_6px_15px_rgba(99,102,241,0.4)] flex items-center justify-center gap-2">
                             <i data-lucide="video" class="w-6 h-6"></i> เปิดกล้อง & เริ่มเกม
                         </button>
                         <button onclick="startMotionFallback()" class="w-full mt-3 text-sm text-gray-400 font-bold hover:text-indigo-500 transition py-2">เล่นแบบแตะปุ่มแทน (ไม่ใช้กล้อง)</button>
                     </div>
                 </div>
 
-                <!-- หน้าจอแจ้งเตือนเมื่อเปิดกล้องไม่ได้ (ข้อจำกัดของ Google Apps Script) -->
-                <div id="motionCameraBlocked" class="hidden flex-grow flex items-center justify-center p-4">
-                    <div class="bg-white/90 backdrop-blur-md p-8 md:p-10 rounded-[2.5rem] shadow-2xl border-4 border-white max-w-lg w-full text-center animate-bounce-in">
-                        <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-tr from-orange-100 to-red-100 rounded-[1.5rem] flex items-center justify-center shadow-inner">
-                            <i data-lucide="camera-off" class="w-10 h-10 text-orange-500"></i>
-                        </div>
-                        <h3 class="text-xl font-black text-gray-800 mb-3">เปิดกล้องในหน้านี้ไม่ได้ชั่วคราว</h3>
-                        <p class="text-sm text-gray-500 leading-relaxed mb-6">
-                            เบราว์เซอร์หรืออุปกรณ์นี้ไม่อนุญาตให้เว็บไซต์ใช้กล้อง ทำให้ขึ้น <span class="font-mono text-xs bg-gray-100 px-1.5 py-0.5 rounded">Permission denied</span> แม้จะกดอนุญาตแล้วก็ตาม
-                        </p>
-                        <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 text-left text-xs text-gray-600 mb-6">
-                            <p id="cameraBlockedDetail" class="font-mono break-words"></p>
-                        </div>
-                        <button onclick="startMotionFallback()" class="w-full bg-gray-100 text-gray-600 px-8 py-3.5 rounded-[2rem] font-bold text-sm hover:bg-gray-200 transition mb-2">เล่นแบบแตะปุ่มแทนในหน้านี้เลย</button>
-                        <button onclick="startMotionCamera()" class="w-full text-xs text-gray-400 font-bold hover:text-indigo-500 transition py-2">ลองเปิดกล้องอีกครั้ง</button>
-                    </div>
-                </div>
-
-                <!-- พื้นที่เล่นเกม (กล้อง) -->
+                <!-- พื้นที่เล่นเกมกล้อง -->
                 <div id="motionGameWrapper" class="hidden flex-grow flex flex-col p-4 gap-3 max-w-2xl mx-auto w-full">
-                    <!-- HUD -->
                     <div class="flex justify-between items-center gap-3">
                         <div class="bg-white/90 backdrop-blur-md px-5 py-2.5 rounded-[1.5rem] shadow-md border-2 border-white">
                             <div class="text-xs text-gray-400 font-bold">คะแนน</div>
                             <div id="motionScoreValue" class="text-3xl font-nunito font-black text-indigo-600 leading-none">0</div>
                         </div>
-                        <div class="bg-white/90 backdrop-blur-md px-5 py-2.5 rounded-[1.5rem] shadow-md border-2 border-white text-right">
-                            <div class="text-xs text-gray-400 font-bold">เวลา</div>
-                            <div id="motionTimerValue" class="text-2xl font-nunito font-black text-gray-700 leading-none">60.0s</div>
-                        </div>
                     </div>
-                    <div>
-                        <div class="flex justify-between items-center mb-1 px-1">
-                            <span class="text-xs font-bold text-indigo-500">เป้าหมาย 67 คะแนน</span>
-                            <span class="text-xs font-bold text-gray-400" id="motionPct">0%</span>
-                        </div>
-                        <div class="w-full h-3 bg-white/70 rounded-full overflow-hidden border border-indigo-100 shadow-sm">
-                            <div id="motionProgressBar" class="h-full bg-gradient-to-r from-indigo-400 to-purple-500 transition-all duration-200" style="width:0%"></div>
-                        </div>
-                    </div>
-
-                    <!-- กล้อง -->
-                    <div class="cam-stage shadow-2xl border-4 border-white">
-                        <video id="motionVideo" playsinline muted autoplay></video>
-                        <canvas id="motionCanvas" class="mirror"></canvas>
-                        <div id="motionFx" class="cam-fx"></div>
-                        <div id="motionZone" class="cam-zone">
-                            <div class="half a"><span class="tag">A</span></div>
-                            <div class="half b"><span class="tag">B</span></div>
-                        </div>
-                    </div>
-                    <p class="text-center text-xs text-gray-400 font-medium">ขยับมือให้อยู่ในกรอบกล้อง แล้วโบกขึ้น-ลงต่อเนื่อง 🙌</p>
-                </div>
-
-                <!-- ผลลัพธ์เกม -->
-                <div id="motionResult" class="hidden bg-white pb-8 flex-grow overflow-y-auto">
-                    <div class="p-10 text-center pt-16 relative bg-gradient-to-b from-indigo-50 to-white">
-                        <div class="relative z-10">
-                            <div id="motionResultIconWrap" class="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner border-4 border-white">
-                                <i id="motionResultIcon" data-lucide="party-popper" class="w-12 h-12 text-indigo-500"></i>
-                            </div>
-                            <h3 id="motionResultTitle" class="text-4xl md:text-5xl font-black text-gray-800 mb-3 tracking-tight">เยี่ยมมาก!</h3>
-                            <p id="motionResultMsg" class="text-xl text-gray-500 mb-8 font-medium">พิชิตความท้าทายสำเร็จ!</p>
-
-                            <div class="flex justify-center gap-4 md:gap-8 mb-10 max-w-sm mx-auto">
-                                <div class="bg-indigo-50/80 px-6 py-5 rounded-[2rem] border-2 border-indigo-100 flex-1 shadow-sm">
-                                    <div class="text-indigo-400 font-bold mb-1 text-sm">คะแนนที่ทำได้</div>
-                                    <div id="motionResultScore" class="text-3xl font-nunito font-black text-indigo-500">0</div>
-                                </div>
-                                <div class="bg-emerald-50/80 px-6 py-5 rounded-[2rem] border-2 border-emerald-100 flex-1 shadow-sm">
-                                    <div class="text-emerald-600 font-bold mb-1 text-sm">ตอบถูก</div>
-                                    <div class="text-3xl font-nunito font-black text-emerald-500"><span id="motionResultCorrect">0</span>/10</div>
-                                </div>
-                            </div>
-                            <button onclick="restartMotionGame()" class="bg-gray-800 text-white px-10 py-4 rounded-[2rem] font-bold hover:bg-gray-900 transition shadow-lg">เล่นอีกครั้ง</button>
-                        </div>
-                    </div>
-
-                    <div class="px-6 md:px-8 max-w-lg mx-auto relative z-10">
-                        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 md:p-8">
-                            <h4 class="font-black text-center text-gray-800 mb-6 flex items-center justify-center gap-2 text-lg"><i data-lucide="medal" class="w-6 h-6 text-yellow-500"></i> ทำเนียบคนเก่ง (ห้อง <span class="board-class-name"></span>)</h4>
-                            <ul id="motionLeaderboardList" class="space-y-3"></ul>
+                    <div class="cam-stage shadow-2xl border-4 border-white mt-4 flex items-center justify-center bg-gray-900">
+                        <!-- ระบบจำลองเนื่องจากไม่มีสคริปต์กล้องเต็มในโค้ดต้นฉบับ -->
+                        <div class="text-white text-center">
+                            <i data-lucide="video" class="w-12 h-12 mx-auto mb-2 opacity-50"></i>
+                            <p>พื้นที่ระบบกล้อง MediaPipe</p>
+                            <button onclick="pumpFallback()" class="mt-4 px-4 py-2 bg-indigo-500 rounded-xl text-sm">จำลองการได้คะแนน</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- โหมดไม่ใช้กล้อง -->
+                <!-- พื้นที่โหมดกดปุ่มแทน (Fallback) -->
                 <div id="motionFallbackWrapper" class="hidden flex-grow flex flex-col items-center justify-center p-6 gap-4 max-w-md mx-auto w-full text-center">
                     <div class="flex justify-between items-center gap-3 w-full">
                         <div class="bg-white px-5 py-2.5 rounded-[1.5rem] shadow-md border-2 border-indigo-100">
@@ -309,43 +245,43 @@
                             <div id="fallbackScoreValue" class="text-3xl font-nunito font-black text-indigo-600 leading-none">0</div>
                         </div>
                         <div class="bg-white px-5 py-2.5 rounded-[1.5rem] shadow-md border-2 border-indigo-100 text-right">
-                            <div class="text-xs text-gray-400 font-bold">เวลา</div>
-                            <div id="fallbackTimerValue" class="text-2xl font-nunito font-black text-gray-700 leading-none">60.0s</div>
+                            <div class="text-xs text-gray-400 font-bold">เป้าหมาย</div>
+                            <div class="text-2xl font-nunito font-black text-gray-700 leading-none">67</div>
                         </div>
                     </div>
-                    <p class="text-gray-500 text-sm font-medium">ไม่มีกล้อง? แตะปุ่มด้านล่างแทนการขยับมือ (แตะละ +1 คะแนน) ให้ครบ 67 คะแนน</p>
-                    <button id="pumpBtn" onclick="pumpFallback()" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-10 rounded-[2rem] font-black text-2xl shadow-xl active:scale-95 transition flex items-center justify-center gap-3">
-                        <i data-lucide="zap" class="w-8 h-8"></i> แตะตรงนี้!
+                    <p class="text-gray-500 text-sm font-medium mt-4">แตะปุ่มด้านล่างรัวๆ (แตะละ +1 คะแนน) ให้ครบ 67 คะแนน</p>
+                    <button id="pumpBtn" onclick="pumpFallback()" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-12 rounded-[2rem] font-black text-3xl shadow-xl active:scale-95 transition flex items-center justify-center gap-3 mt-4">
+                        <i data-lucide="zap" class="w-10 h-10"></i> แตะตรงนี้!
                     </button>
                 </div>
-            </div>
 
-            <!-- Modal คำถามเกม Motion (2 ตัวเลือก) -->
-            <div id="motionQuizModal" class="hidden fixed inset-0 bg-slate-900/70 z-[300] flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
-                <div class="bg-white rounded-[2.5rem] max-w-xl w-full overflow-hidden shadow-2xl transform scale-100 transition-transform animate-bounce-in border-4 border-white">
-                    <div class="bg-gradient-to-r from-indigo-500 to-purple-600 p-8 text-center relative border-b border-indigo-200">
-                        <div class="w-20 h-20 bg-white rounded-2xl mx-auto flex items-center justify-center text-4xl font-nunito font-black text-indigo-500 shadow-lg mb-4 transform -rotate-3">?</div>
-                        <h3 class="text-2xl font-black text-white drop-shadow-md">🔓 ปลดล็อกแล้ว! ตอบคำถามข้อที่ <span id="motionQCurrent">1</span>/10</h3>
-                    </div>
-                    <div class="p-6 sm:p-8">
-                        <h4 id="motionQuestionText" class="text-lg sm:text-xl font-bold text-gray-800 mb-6 leading-relaxed text-center"></h4>
-                        <div id="motionQuestionOptions" class="space-y-3 mb-4"></div>
-                        <p class="text-xs text-center text-gray-400 font-medium">💡 กดปุ่มเลือกคำตอบ หรือยกมือค้างไว้ฝั่งซ้ายจอ = A / ขวาจอ = B ประมาณ 1 วินาที</p>
+                <!-- ผลลัพธ์เกม -->
+                <div id="motionResult" class="hidden bg-white pb-8 flex-grow overflow-y-auto">
+                    <div class="p-10 text-center pt-16 relative bg-gradient-to-b from-indigo-50 to-white">
+                        <div class="relative z-10">
+                            <div class="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner border-4 border-white">
+                                <i data-lucide="party-popper" class="w-12 h-12 text-indigo-500"></i>
+                            </div>
+                            <h3 class="text-4xl md:text-5xl font-black text-gray-800 mb-3 tracking-tight">เยี่ยมมาก!</h3>
+                            <p class="text-xl text-gray-500 mb-8 font-medium">ทำคะแนนได้สำเร็จตามเป้าหมาย</p>
+                            <div class="text-6xl font-nunito font-black text-indigo-500 mb-8" id="motionResultScore">67</div>
+                            <button onclick="restartMotionGame()" class="bg-gray-800 text-white px-10 py-4 rounded-[2rem] font-bold hover:bg-gray-900 transition shadow-lg">เล่นอีกครั้ง</button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Section Quiz -->
+            <!-- ========== Section แบบทดสอบ ========== -->
             <div id="section-quiz" class="page-section hidden max-w-3xl mx-auto px-4 py-12">
                 <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden text-center border border-gray-100">
                     <div id="quizIntro">
                         <div class="bg-gradient-to-br from-emerald-400 to-teal-500 py-16 px-4 text-white relative">
                             <i data-lucide="clipboard-check" class="w-32 h-32 absolute top-4 right-4 opacity-10"></i>
                             <h2 class="text-4xl font-black mb-3 drop-shadow-sm">แบบทดสอบเมืองบ่อยาง</h2>
-                            <p class="text-emerald-50 font-medium text-lg">แบบปรนัย 4 ตัวเลือก จำนวน 10 ข้อ 10 คะแนน</p>
+                            <p class="text-emerald-50 font-medium text-lg">แบบปรนัย 4 ตัวเลือก</p>
                         </div>
                         <div class="p-12 bg-white">
-                            <button onclick="startQuiz()" class="bg-emerald-500 text-white px-12 py-4 rounded-[2rem] font-black text-xl hover:bg-emerald-600 transition shadow-[0_6px_20px_rgba(16,185,129,0.3)] hover:shadow-[0_8px_25px_rgba(16,185,129,0.4)] hover:-translate-y-1 w-full sm:w-auto flex items-center justify-center gap-3 mx-auto">
+                            <button onclick="startQuiz()" class="bg-emerald-500 text-white px-12 py-4 rounded-[2rem] font-black text-xl hover:bg-emerald-600 transition shadow-lg w-full sm:w-auto flex items-center justify-center gap-3 mx-auto">
                                 <i data-lucide="play-circle" class="w-6 h-6"></i> เข้าสู่แบบทดสอบ
                             </button>
                         </div>
@@ -355,7 +291,7 @@
                         <div class="flex justify-between items-center mb-8 border-b-2 border-gray-100 pb-4">
                             <div class="font-black text-emerald-600 bg-emerald-100 px-5 py-2 rounded-xl text-sm" id="quizProgress">ข้อที่ 1/10</div>
                         </div>
-                        <h3 id="quizQuestionText" class="text-xl md:text-2xl font-bold text-gray-800 mb-8 leading-relaxed"></h3>
+                        <h3 id="quizQuestionText" class="text-xl md:text-2xl font-bold text-gray-800 mb-8 leading-relaxed">กำลังโหลดคำถาม...</h3>
                         <div id="quizOptions" class="space-y-4"></div>
                         <div class="mt-10 pt-6 border-t-2 border-gray-100 text-right">
                             <button id="nextQuizBtn" disabled onclick="nextQuizQuestion()" class="bg-gray-200 text-gray-400 px-10 py-4 rounded-2xl font-bold transition cursor-not-allowed text-lg">ถัดไป <i data-lucide="arrow-right" class="inline w-5 h-5 ml-1"></i></button>
@@ -364,14 +300,13 @@
 
                     <div id="quizResult" class="hidden pb-8">
                         <div class="bg-gradient-to-br from-emerald-500 to-teal-600 py-16 text-white relative overflow-hidden">
-                            <div class="relative z-10">
+                            <div class="relative z-10 text-center">
                                 <h2 class="text-2xl font-bold mb-4 text-emerald-50">ผลการทดสอบของคุณ</h2>
-                                <p class="text-7xl font-nunito font-black drop-shadow-md"><span id="finalQuizScore"></span><span class="text-4xl text-emerald-200/80">/10</span></p>
+                                <p class="text-7xl font-nunito font-black drop-shadow-md"><span id="finalQuizScore">10</span><span class="text-4xl text-emerald-200/80">/10</span></p>
                             </div>
                         </div>
-                        <div class="p-10 max-w-md mx-auto bg-white rounded-b-3xl">
-                            <h3 class="text-lg font-black text-gray-800 border-b-2 border-gray-100 pb-3 mb-6 text-left flex items-center gap-2"><i data-lucide="medal" class="w-5 h-5 text-yellow-500"></i> Leaderboard (ห้อง <span class="board-class-name"></span>)</h3>
-                            <ul id="quizLeaderboardList" class="text-left space-y-3"></ul>
+                        <div class="p-10 text-center">
+                             <button onclick="showSection('home')" class="bg-emerald-500 text-white px-8 py-3 rounded-2xl font-bold">กลับหน้าหลัก</button>
                         </div>
                     </div>
                 </div>
@@ -379,24 +314,219 @@
 
         </main>
 
-        <!-- Modal บทเรียน -->
+        <!-- ========== Modal ใบความรู้ ========== -->
         <div id="lessonModal" class="hidden fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
             <div class="bg-white rounded-[2rem] max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl animate-bounce-in border border-white">
                 <div class="bg-[#eab308] text-white p-6 md:p-8 flex items-center justify-between shrink-0 transition-colors" id="modalHeader">
                     <div>
                         <span id="lessonBadge" class="bg-white/20 backdrop-blur-sm px-4 py-1.5 rounded-full text-xs font-bold tracking-wider mb-3 inline-block shadow-sm">บทที่ 1</span>
-                        <h2 id="lessonSubtitle" class="text-2xl md:text-3xl font-black leading-tight mt-1 drop-shadow-sm tracking-tight">การตั้งเมืองและการเริ่มต้นสายสกุล</h2>
+                        <h2 id="lessonSubtitle" class="text-2xl md:text-3xl font-black leading-tight mt-1 drop-shadow-sm tracking-tight">หัวข้อบทเรียน</h2>
                     </div>
                     <button onclick="closeLesson()" class="w-10 h-10 bg-black/10 hover:bg-black/20 rounded-full flex items-center justify-center transition"> <i data-lucide="x" class="w-5 h-5"></i> </button>
                 </div>
-                <div id="lessonContent" class="p-6 md:p-10 overflow-y-auto grow custom-scrollbar text-gray-700 leading-relaxed text-base md:text-lg"></div>
-                <div class="border-t border-gray-100 p-4 sm:p-6 flex gap-4 bg-gray-50 shrink-0 justify-between items-center">
-                    <button id="prevBtn" onclick="previousLesson()" class="flex-1 max-w-[200px] bg-white border-2 border-gray-200 text-gray-600 py-3.5 px-4 rounded-2xl hover:bg-gray-100 hover:border-gray-300 transition font-bold flex items-center justify-center gap-2 shadow-sm">
-                        กลับ
+                <div id="lessonContent" class="p-6 md:p-10 overflow-y-auto grow custom-scrollbar text-gray-700 leading-relaxed text-base md:text-lg">
+                    <!-- เนื้อหาจะถูกแทรกที่นี่ผ่าน JS -->
+                </div>
+                <div class="border-t border-gray-100 p-4 sm:p-6 flex gap-4 bg-gray-50 shrink-0 justify-end items-center">
+                    <button onclick="closeLesson()" class="max-w-[200px] bg-white border-2 border-gray-200 text-gray-600 py-3 px-6 rounded-2xl hover:bg-gray-100 font-bold flex items-center justify-center shadow-sm">
+                        ปิดหน้าต่าง
                     </button>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- ================= Javascript ================= -->
+    <script>
+        // เริ่มการแสดงผลไอคอน Lucide
+        if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+
+        // --- ระบบล็อกอิน ---
+        function moveToNext(current) {
+            if (current.value.length >= current.maxLength) {
+                let next = current.nextElementSibling;
+                if (next) next.focus();
+            }
+        }
+
+        function handleBackspace(event, current) {
+            if (event.key === "Backspace" && current.value === "") {
+                let prev = current.previousElementSibling;
+                if (prev) prev.focus();
+            }
+        }
+
+        function loginUser() {
+            const studentClass = document.getElementById('studentClassInput').value;
+            const otpInputs = document.querySelectorAll('.otp-input');
+            const errorEl = document.getElementById('loginError');
+            
+            let password = "";
+            otpInputs.forEach(input => password += input.value);
+
+            if (!studentClass) {
+                errorEl.textContent = "กรุณาเลือกระดับชั้นเรียนครับ";
+                errorEl.classList.remove('hidden');
+                return;
+            }
+            if (password.length < 5) {
+                errorEl.textContent = "กรุณากรอกรหัสให้ครบ 5 หลักครับ";
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            // รหัสผ่านสำหรับการทดสอบ (เปลี่ยนเป็นรหัสจริงของนักเรียนได้)
+            if (password === "12345") {
+                errorEl.classList.add('hidden');
+                const loginScreen = document.getElementById('loginScreen');
+                loginScreen.style.opacity = '0';
+                
+                setTimeout(() => {
+                    loginScreen.classList.add('hidden');
+                    document.getElementById('app').classList.remove('hidden');
+                    document.getElementById('displayClass').textContent = "ห้อง " + studentClass;
+                    document.getElementById('displayName').textContent = "นักเรียน (ผู้ใช้ทดสอบ)"; 
+                    showSection('home');
+                }, 500);
+            } else {
+                errorEl.textContent = "รหัสไม่ถูกต้องครับ (รหัสทดสอบ: 12345)";
+                errorEl.classList.remove('hidden');
+            }
+        }
+
+        function logoutUser() {
+            document.getElementById('app').classList.add('hidden');
+            const loginScreen = document.getElementById('loginScreen');
+            loginScreen.classList.remove('hidden');
+            document.getElementById('studentClassInput').value = "";
+            document.querySelectorAll('.otp-input').forEach(input => input.value = "");
+            document.getElementById('loginError').classList.add('hidden');
+            setTimeout(() => { loginScreen.style.opacity = '1'; }, 10);
+        }
+
+        // --- ระบบเมนูนำทาง ---
+        function showSection(sectionId) {
+            document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
+            document.getElementById('section-' + sectionId).classList.remove('hidden');
+            
+            document.querySelectorAll('.menu-link').forEach(link => {
+                if (link.dataset.target === sectionId) {
+                    link.classList.add('active-nav', 'text-indigo-500');
+                } else {
+                    link.classList.remove('active-nav', 'text-indigo-500');
+                }
+            });
+
+            const mobileMenu = document.getElementById('mobileMenu');
+            if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+            }
+        }
+
+        document.getElementById('menuBtn').addEventListener('click', () => {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        });
+
+        // --- ระบบ Modal ใบความรู้ ---
+        function viewLesson(id) {
+            document.getElementById('lessonModal').classList.remove('hidden');
+            document.getElementById('lessonBadge').innerText = 'บทที่ ' + id;
+            
+            // ข้อมูลจำลองสำหรับตัวอย่าง
+            let title = "", content = "";
+            if (id === 1) {
+                title = "สาเหตุการย้ายเมืองสู่บ่อยาง";
+                content = "<p>ข้อมูลและเนื้อหาทางประวัติศาสตร์เกี่ยวกับการย้ายเมืองจากแหลมสนมายังบ่อยาง...</p><br><p>(พื้นที่จำลองสำหรับใส่เนื้อหาจริง)</p>";
+            } else if (id === 2) {
+                title = "การสร้างเมืองและทำเนียบเจ้าเมือง";
+                content = "<p>เนื้อหาเกี่ยวกับการสร้างกำแพงเมืองบ่อยาง และผู้ปกครองในอดีต...</p>";
+            } else {
+                title = "การปฏิรูปการปกครอง";
+                content = "<p>การเปลี่ยนแปลงการปกครองในสมัยรัชกาลที่ ๕...</p>";
+            }
+            
+            document.getElementById('lessonSubtitle').innerText = title;
+            document.getElementById('lessonContent').innerHTML = content;
+        }
+
+        function closeLesson() {
+            document.getElementById('lessonModal').classList.add('hidden');
+        }
+
+        // --- ระบบเกม Motion 67 (จำลอง) ---
+        let fallbackScore = 0;
+
+        function startMotionCamera() {
+            // ซ่อนหน้าแรก และเปิดหน้าจำลองการเล่น
+            document.getElementById('motionIntro').classList.add('hidden');
+            document.getElementById('motionGameWrapper').classList.remove('hidden');
+        }
+
+        function startMotionFallback() {
+            document.getElementById('motionIntro').classList.add('hidden');
+            document.getElementById('motionFallbackWrapper').classList.remove('hidden');
+            fallbackScore = 0;
+            document.getElementById('fallbackScoreValue').innerText = fallbackScore;
+        }
+
+        function pumpFallback() {
+            fallbackScore += 1; // เพิ่มคะแนน
+            document.getElementById('fallbackScoreValue').innerText = fallbackScore;
+            
+            // ถ้าถึงจุดของกล้องที่ซ่อนไว้ ให้โชว์ด้วย
+            if(document.getElementById('motionScoreValue')) {
+                document.getElementById('motionScoreValue').innerText = fallbackScore;
+            }
+
+            if(fallbackScore >= 67) {
+                // จบเกม
+                document.getElementById('motionFallbackWrapper').classList.add('hidden');
+                document.getElementById('motionGameWrapper').classList.add('hidden');
+                document.getElementById('motionResult').classList.remove('hidden');
+                document.getElementById('motionResultScore').innerText = fallbackScore;
+            }
+        }
+
+        function restartMotionGame() {
+            fallbackScore = 0;
+            document.getElementById('fallbackScoreValue').innerText = fallbackScore;
+            if(document.getElementById('motionScoreValue')) document.getElementById('motionScoreValue').innerText = fallbackScore;
+            document.getElementById('motionResult').classList.add('hidden');
+            document.getElementById('motionIntro').classList.remove('hidden');
+        }
+
+        // --- ระบบแบบทดสอบ Quiz (จำลอง) ---
+        function startQuiz() {
+            document.getElementById('quizIntro').classList.add('hidden');
+            document.getElementById('quizContainer').classList.remove('hidden');
+            
+            document.getElementById('quizQuestionText').innerText = "เมืองสงขลาฝั่งบ่อยางถูกสร้างขึ้นในสมัยใด?";
+            document.getElementById('quizOptions').innerHTML = `
+                <button onclick="selectQuizAnswer(this)" class="quiz-btn w-full text-left p-4 bg-white border-2 border-gray-100 rounded-xl hover:bg-emerald-50 transition font-bold text-gray-700">A. รัชกาลที่ 3</button>
+                <button onclick="selectQuizAnswer(this)" class="quiz-btn w-full text-left p-4 bg-white border-2 border-gray-100 rounded-xl hover:bg-emerald-50 transition font-bold text-gray-700">B. รัชกาลที่ 4</button>
+            `;
+            document.getElementById('nextQuizBtn').disabled = true;
+            document.getElementById('nextQuizBtn').classList.add('cursor-not-allowed', 'bg-gray-200', 'text-gray-400');
+            document.getElementById('nextQuizBtn').classList.remove('bg-emerald-500', 'text-white');
+        }
+
+        function selectQuizAnswer(btn) {
+            document.querySelectorAll('.quiz-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            
+            // เปิดปุ่มถัดไป
+            const nextBtn = document.getElementById('nextQuizBtn');
+            nextBtn.disabled = false;
+            nextBtn.classList.remove('cursor-not-allowed', 'bg-gray-200', 'text-gray-400');
+            nextBtn.classList.add('bg-emerald-500', 'text-white');
+        }
+
+        function nextQuizQuestion() {
+            // ในที่นี้จำลองให้จบในข้อเดียว เพื่อดูผลลัพธ์
+            document.getElementById('quizContainer').classList.add('hidden');
+            document.getElementById('quizResult').classList.remove('hidden');
+            document.getElementById('finalQuizScore').innerText = "10";
+        }
+    </script>
 </body>
 </html>
