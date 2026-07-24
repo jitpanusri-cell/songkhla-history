@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>67 Motion Challenge - ขยับมือให้ครบ 67 คะแนน</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+<style>
+  :root{
+    --indigo:#6366f1; --indigo-d:#4338ca; --purple:#9333ea;
+    --emerald:#10b981; --emerald-d:#047857;
+    --danger:#ef4444;
+    --ink:#1e2433; --ink-dim:#8891a5;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ height:100%; margin:0; overflow:hidden; overscroll-behavior:none; }
+  body{ font-family:'Noto Sans Thai', sans-serif; background:#111; color:var(--ink); position:relative; user-select:none; }
+  .font-nunito{ font-family:'Nunito', sans-serif; }
+
+  /* ===== กล้องเต็มจอ ===== */
+  #cameraLayer{ position:fixed; inset:0; z-index:0; background:#0c0e14; }
+  #cameraLayer video, #cameraLayer canvas.mirror{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scaleX(-1); }
+  #cameraLayer canvas.mirror{ pointer-events:none; }
+  #cameraLayer::after{ content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.35) 0%, transparent 20%, transparent 75%, rgba(0,0,0,0.4) 100%); pointer-events:none; }
+  #fxLayer{ position:fixed; inset:0; z-index:15; pointer-events:none; overflow:hidden; }
+  #zoneHint{ position:fixed; inset:0; z-index:12; display:flex; opacity:0; transition:opacity 0.3s ease; pointer-events:none; }
+  #zoneHint.show{ opacity:1; }
+  #zoneHint .half{ flex:1; display:flex; align-items:center; justify-content:center; }
+  #zoneHint .half.a{ background:linear-gradient(90deg, rgba(99,102,241,0.35), transparent); }
+  #zoneHint .half.b{ background:linear-gradient(-90deg, rgba(16,185,129,0.35), transparent); }
+  #zoneHint .tag{ font-family:'Nunito', sans-serif; font-weight:900; font-size:min(22vw,140px); color:rgba(255,255,255,0.4); text-shadow:0 4px 20px rgba(0,0,0,0.4); }
+
+  /* ===== HUD ===== */
+  .hud{ position:fixed; top:0; left:0; right:0; z-index:30; display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:max(16px, env(safe-area-inset-top)) 16px 0 16px; pointer-events:none; }
+  .hud-card{ background:rgba(255,255,255,0.92); backdrop-filter:blur(10px); border-radius:24px; padding:10px 22px; box-shadow:0 8px 24px rgba(0,0,0,0.18); border:2px solid #fff; }
+  .hud-label{ font-family:'Nunito',sans-serif; font-size:12px; font-weight:800; letter-spacing:0.15em; color:var(--ink-dim); }
+  .hud-value{ font-family:'Nunito',sans-serif; font-weight:900; font-size:52px; line-height:1.05; color:var(--indigo-d); font-variant-numeric:tabular-nums; }
+  .hud-value.timer{ color:var(--purple); }
+  .hud-value.timer.low{ color:var(--danger); animation:pulseWarn 0.6s infinite; }
+  @keyframes pulseWarn{ 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+
+  .progress-wrap{ position:fixed; top:112px; left:16px; right:16px; z-index:30; }
+  .progress-cap{ display:flex; justify-content:space-between; margin-bottom:4px; padding:0 4px; }
+  .progress-cap span{ font-family:'Nunito',sans-serif; font-weight:800; font-size:13px; color:#fff; text-shadow:0 1px 6px rgba(0,0,0,0.5); }
+  .progress-track{ height:14px; border-radius:99px; background:rgba(255,255,255,0.35); backdrop-filter:blur(6px); overflow:hidden; border:2px solid rgba(255,255,255,0.5); }
+  .progress-fill{ height:100%; width:0%; border-radius:99px; background:linear-gradient(90deg,var(--indigo),var(--purple)); transition:width 0.25s ease; }
+
+  @media (max-width:480px){
+    .hud-value{ font-size:38px; }
+    .hud-card{ padding:8px 16px; border-radius:18px; }
+  }
+
+  /* ===== เอฟเฟกต์คะแนนลอย / พัลส์ ===== */
+  .float-score{ position:absolute; z-index:16; font-family:'Nunito',sans-serif; font-weight:900; font-size:44px; pointer-events:none; animation:floatUp 0.85s cubic-bezier(0.2,0.9,0.3,1) forwards; text-shadow:0 3px 10px rgba(0,0,0,0.35); transform:translate(-50%,-50%); }
+  @keyframes floatUp{ 0%{ transform:translate(-50%,-50%) scale(0.6); opacity:1;} 25%{ transform:translate(-50%,-90%) scale(1.25);} 100%{ transform:translate(-50%,-220%) scale(1.1); opacity:0;} }
+  .pulse-ring{ position:absolute; width:36px; height:36px; margin:-18px 0 0 -18px; border-radius:50%; border:5px solid #fff; box-shadow:0 0 0 3px rgba(99,102,241,0.5); pointer-events:none; animation:pulseOut 0.55s ease-out forwards; }
+  @keyframes pulseOut{ to{ width:170px; height:170px; margin:-85px 0 0 -85px; opacity:0; } }
+
+  /* ===== การ์ดกระจกสไตล์เว็บไซต์ (ขาว มน เงา) ===== */
+  .overlay{ position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center; padding:20px; background:rgba(30,20,60,0.55); backdrop-filter:blur(8px); animation:fadeIn 0.3s ease both; }
+  @keyframes fadeIn{ from{opacity:0;} to{opacity:1;} }
+  .overlay.hidden{ display:none; }
+  @keyframes bounceIn{ 0%{transform:scale(0.8);opacity:0;} 60%{transform:scale(1.05);opacity:1;} 100%{transform:scale(1);opacity:1;} }
+  .card{ width:100%; max-width:440px; max-height:88vh; overflow-y:auto; border-radius:36px; background:#fff; box-shadow:0 25px 60px rgba(0,0,0,0.35); border:4px solid #fff; padding:36px 30px; text-align:center; animation:bounceIn 0.45s cubic-bezier(0.175,0.885,0.32,1.275) both; }
+
+  .icon-badge{ width:84px; height:84px; margin:0 auto 18px auto; border-radius:26px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#eef2ff,#f5e8ff); box-shadow:inset 0 2px 6px rgba(0,0,0,0.04); }
+  .title-xl{ font-family:'Nunito',sans-serif; font-weight:900; font-size:32px; color:var(--ink); margin:0 0 8px 0; }
+  .title-grad{ background:linear-gradient(120deg,var(--indigo),var(--purple)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .subtitle{ color:var(--ink-dim); font-size:14.5px; margin:0 0 20px 0; font-weight:500; line-height:1.7; }
+
+  .rule-row{ display:flex; align-items:flex-start; gap:12px; text-align:left; margin-bottom:12px; background:#f8f9fc; border-radius:16px; padding:10px 14px; }
+  .rule-emoji{ font-size:22px; line-height:1.4; }
+  .rule-text{ font-size:13.5px; color:#444; font-weight:500; line-height:1.55; padding-top:2px; }
+  .rule-text b{ color:var(--indigo-d); }
+
+  .btn-main{ appearance:none; border:none; cursor:pointer; width:100%; padding:19px; border-radius:99px; font-family:'Nunito',sans-serif; font-weight:800; font-size:18px; color:#fff; background:linear-gradient(120deg,var(--indigo),var(--purple)); box-shadow:0 10px 26px rgba(99,102,241,0.4); transition:transform 0.15s; display:flex; align-items:center; justify-content:center; gap:10px; text-decoration:none; }
+  .btn-main:active{ transform:scale(0.96); }
+  .btn-outline{ appearance:none; border:2px solid #e5e7ff; background:#fff; color:var(--indigo-d); width:100%; padding:15px; border-radius:99px; font-family:'Nunito',sans-serif; font-weight:800; font-size:14.5px; cursor:pointer; margin-top:10px; display:flex; align-items:center; justify-content:center; gap:8px; }
+  .btn-text{ appearance:none; border:none; background:none; color:#9aa2b8; width:100%; padding:10px; font-weight:700; font-size:13.5px; cursor:pointer; margin-top:6px; }
+
+  .stat-row{ display:flex; gap:14px; margin:16px 0 22px 0; }
+  .stat-box{ flex:1; border-radius:24px; padding:18px; border:2px solid; }
+  .stat-box.i{ background:#eef2ff; border-color:#e0e4ff; }
+  .stat-box.e{ background:#ecfdf5; border-color:#d7f7e9; }
+  .stat-label{ font-size:12px; font-weight:800; margin-bottom:4px; }
+  .stat-value{ font-family:'Nunito',sans-serif; font-weight:900; font-size:34px; }
+
+  /* ===== การ์ดคำถาม ===== */
+  .q-badge{ display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:99px; background:#eef2ff; color:var(--indigo-d); font-weight:800; font-size:12px; margin-bottom:8px; }
+  .q-progress{ font-size:12px; color:var(--ink-dim); font-weight:700; margin-bottom:14px; }
+  .question-text{ font-size:20px; font-weight:800; line-height:1.5; margin:0 0 20px 0; color:var(--ink); }
+  .q-options{ display:flex; flex-direction:column; gap:12px; margin-bottom:14px; }
+  .q-opt{ position:relative; overflow:hidden; appearance:none; width:100%; text-align:left; padding:18px 18px; border-radius:20px; background:#f8f9fc; border:2.5px solid #eceef5; color:var(--ink); font-family:'Noto Sans Thai',sans-serif; font-weight:700; font-size:16px; cursor:pointer; display:flex; align-items:center; gap:14px; }
+  .q-opt .fill{ position:absolute; inset:0; width:calc(var(--hold,0)*100%); background:linear-gradient(90deg, rgba(99,102,241,0.25), rgba(16,185,129,0.25)); transition:width 0.05s linear; z-index:0; }
+  .q-opt .tag{ position:relative; z-index:1; font-family:'Nunito',sans-serif; font-weight:900; font-size:15px; color:var(--indigo-d); background:#fff; border-radius:12px; width:34px; height:34px; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 2px 6px rgba(0,0,0,0.06); }
+  .q-opt .lbl{ position:relative; z-index:1; }
+  .q-opt.correct{ background:#ecfdf5; border-color:var(--emerald); }
+  .q-opt.correct .tag{ background:var(--emerald); color:#fff; }
+  .q-opt.wrong{ background:#fef2f2; border-color:var(--danger); animation:shake 0.35s ease; }
+  .q-opt.wrong .tag{ background:var(--danger); color:#fff; }
+  @keyframes shake{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);} }
+  .q-hint{ font-size:12px; color:var(--ink-dim); line-height:1.6; }
+  .q-hint b{ color:var(--ink); }
+
+  .big-toast{ position:fixed; top:38%; left:50%; transform:translate(-50%,-50%); z-index:70; text-align:center; pointer-events:none; animation:toastPop 1.15s ease forwards; }
+  .big-toast .t{ font-family:'Nunito',sans-serif; font-weight:900; font-size:40px; color:#fff; text-shadow:0 4px 20px rgba(0,0,0,0.4); background:linear-gradient(120deg,#a5b4fc,#fff); -webkit-background-clip:text; background-clip:text; }
+  @keyframes toastPop{ 0%{opacity:0; transform:translate(-50%,-50%) scale(0.6);} 15%{opacity:1; transform:translate(-50%,-50%) scale(1.1);} 25%{transform:translate(-50%,-50%) scale(1);} 80%{opacity:1;} 100%{opacity:0; transform:translate(-50%,-65%) scale(1.1);} }
+  .mini-toast{ position:fixed; top:130px; left:50%; transform:translateX(-50%); z-index:70; padding:10px 22px; border-radius:99px; font-weight:800; font-size:13px; background:#fff; color:var(--emerald-d); box-shadow:0 8px 24px rgba(0,0,0,0.2); animation:toastIn 1.3s ease forwards; pointer-events:none; }
+  @keyframes toastIn{ 0%{opacity:0; transform:translate(-50%,-8px);} 12%{opacity:1; transform:translate(-50%,0);} 80%{opacity:1;} 100%{opacity:0; transform:translate(-50%,-8px);} }
+
+  @media (prefers-reduced-motion: reduce){ *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; } }
+</style>
+</head>
+<body>
+
+  <div id="cameraLayer">
+    <video id="video" playsinline muted autoplay></video>
+    <canvas id="overlayCanvas" class="mirror"></canvas>
+  </div>
+  <div id="fxLayer"></div>
+  <div id="zoneHint">
+    <div class="half a"><span class="tag">A</span></div>
+    <div class="half b"><span class="tag">B</span></div>
+  </div>
+
+  <!-- HUD -->
+  <div class="hud">
+    <div class="hud-card">
+      <div class="hud-label">SCORE 🖐️</div>
+      <div id="scoreValue" class="hud-value font-nunito">0</div>
+    </div>
+    <div class="hud-card" style="text-align:right;">
+      <div class="hud-label">TIME/ข้อ ⏱️</div>
+      <div id="timerValue" class="hud-value timer font-nunito">60.0s</div>
+    </div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-cap"><span>🎯 เป้าหมาย <span id="targetLabel">67</span> คะแนน</span><span id="pctLabel">0%</span></div>
+    <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
+  </div>
+
+  <!-- หน้าจอเริ่มเกม -->
+  <div id="startScreen" class="overlay">
+    <div class="card">
+      <div class="icon-badge"><i data-lucide="hand-metal" style="width:38px;height:38px;color:#6366f1;"></i></div>
+      <h1 class="title-xl">67 <span class="title-grad">MOTION</span></h1>
+      <p class="subtitle">เปิดกล้อง แล้ว<b style="color:var(--indigo-d)">ขยับมือขึ้น-ลง</b>ให้ไวที่สุด!<br>สะสมคะแนนให้ครบ 67 เพื่อปลดล็อกคำถาม 🎉</p>
+
+      <div class="rule-row"><span class="rule-emoji">✋</span><span class="rule-text">ขยับมือขึ้น-ลงหน้ากล้อง ได้ <b>+1</b> คะแนน ถ้าขยับแรง/ไกลกว่านั้น ได้ <b style="color:#059669">+2</b> คะแนน</span></div>
+      <div class="rule-row"><span class="rule-emoji">🎯</span><span class="rule-text">ทำคะแนนถึง <b>67</b> ปลดล็อกคำถาม 10 ข้อ (ไม่จำกัดเวลาช่วงนี้ สลับกันทุกรอบ ไม่ซ้ำเดิม!)</span></div>
+      <div class="rule-row"><span class="rule-emoji">⏱️</span><span class="rule-text">แต่ละข้อคำถามมีเวลาตอบ <b style="color:var(--danger)">60 วินาที</b> เมื่อขึ้นข้อใหม่ เวลาจะรีเซ็ตให้เต็มทุกครั้ง</span></div>
+      <div class="rule-row"><span class="rule-emoji">🙌</span><span class="rule-text">ตอบได้ทั้งกดปุ่ม หรือ <b>ยกมือค้างฝั่งซ้าย = A / ขวา = B</b></span></div>
+      <div class="rule-row"><span class="rule-emoji">🔁</span><span class="rule-text">ตอบผิด = ไม่จบเกม! แต่ต้อง<b>ขยับมือให้ครบ 67 ใหม่</b>แล้ววนมาตอบข้อเดิมอีกครั้ง ตอบถูกครบ 10 ข้อ = <b style="color:#059669">ชนะ!</b> (หมดเวลาในข้อคำถาม = จบเกม)</span></div>
+
+      <button id="startBtn" class="btn-main"><i data-lucide="camera" style="width:20px;height:20px;"></i> เปิดกล้อง & เริ่มเกม</button>
+      <p style="font-size:11px; color:#b2b8c8; margin-top:12px;">ต้องอนุญาตให้เว็บนี้เข้าถึงกล้อง และเปิดผ่าน https</p>
+    </div>
+  </div>
+
+  <!-- หน้าจอ error กล้อง -->
+  <div id="cameraErrorScreen" class="overlay hidden">
+    <div class="card">
+      <div class="icon-badge" style="background:linear-gradient(135deg,#fff1f2,#ffe4e6);"><i data-lucide="camera-off" style="width:38px;height:38px;color:#ef4444;"></i></div>
+      <h1 class="title-xl">เปิดกล้องไม่สำเร็จ</h1>
+      <p class="subtitle" id="cameraErrorMsg">กรุณาอนุญาตการใช้งานกล้องแล้วลองใหม่</p>
+      <button id="retryCamBtn" class="btn-main"><i data-lucide="refresh-cw" style="width:18px;height:18px;"></i> ลองเปิดกล้องอีกครั้ง</button>
+      <button id="fallbackBtn" class="btn-outline">🖐️ เล่นแบบไม่ใช้กล้อง (แตะปุ่มแทน)</button>
+    </div>
+  </div>
+
+  <!-- ปุ่มสำรองแบบไม่ใช้กล้อง -->
+  <div id="fallbackPump" class="overlay hidden">
+    <div class="card">
+      <div class="icon-badge"><i data-lucide="hand" style="width:38px;height:38px;color:#6366f1;"></i></div>
+      <h1 class="title-xl">แตะรัว ๆ ให้ครบ 67!</h1>
+      <p class="subtitle">แตะปุ่มด้านล่างแทนการขยับมือ แต่ละแตะ +1 คะแนน</p>
+      <button id="pumpBtn" class="btn-main" style="padding:38px; font-size:24px; border-radius:32px;">⚡ แตะตรงนี้!</button>
+      <button id="closePumpBtn" class="btn-text">เริ่มเกม</button>
+    </div>
+  </div>
+
+  <!-- Modal คำถาม -->
+  <div id="questionModal" class="overlay hidden">
+    <div class="card">
+      <div class="q-badge">🔓 ปลดล็อกแล้ว!</div>
+      <div class="q-progress">คำถามข้อที่ <span id="qCurrent">1</span> / 10</div>
+      <h2 id="questionText" class="question-text"></h2>
+      <div id="questionOptions" class="q-options"></div>
+      <p class="q-hint">💡 กดปุ่มเลือกคำตอบ หรือ <b>ยกมือค้างไว้ฝั่งซ้ายจอ = A / ขวาจอ = B</b> ประมาณ 1 วินาที</p>
+    </div>
+  </div>
+
+  <!-- หน้าจอชนะ -->
+  <div id="victoryScreen" class="overlay hidden">
+    <div class="card">
+      <div class="icon-badge" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);"><i data-lucide="party-popper" style="width:38px;height:38px;color:#10b981;"></i></div>
+      <h1 class="title-xl">🎉 พิชิตสำเร็จ!</h1>
+      <p class="subtitle">ตอบคำถามถูกครบทั้ง 10 ข้อ เก่งมากเลย!</p>
+      <div class="stat-box e" style="margin-bottom:20px;">
+        <div class="stat-label" style="color:#059669;">เวลารวมที่ทำได้</div>
+        <div id="victoryTime" class="stat-value font-nunito" style="color:#059669;">0.00s</div>
+      </div>
+      <button id="victoryRestartBtn" class="btn-main"><i data-lucide="rotate-ccw" style="width:18px;height:18px;"></i> เล่นอีกครั้ง</button>
+    </div>
+  </div>
+
+  <!-- หน้าจอ Game Over -->
+  <div id="gameOverScreen" class="overlay hidden">
+    <div class="card">
+      <div class="icon-badge" style="background:linear-gradient(135deg,#fff1f2,#ffe4e6);"><i data-lucide="x-circle" style="width:38px;height:38px;color:#ef4444;"></i></div>
+      <h1 class="title-xl">ยังไม่สำเร็จ</h1>
+      <p id="goReason" class="subtitle" style="color:#ef4444; font-weight:700;">หมดเวลา!</p>
+      <div class="stat-box i" style="margin-bottom:20px;">
+        <div class="stat-label" style="color:var(--indigo-d);">คะแนนที่ทำได้</div>
+        <div id="finalScore" class="stat-value font-nunito" style="color:var(--indigo-d);">0</div>
+      </div>
+      <button id="restartBtn" class="btn-main"><i data-lucide="rotate-ccw" style="width:18px;height:18px;"></i> ลองใหม่อีกครั้ง</button>
+    </div>
+  </div>
+
+<script>
+(function(){
+  'use strict';
+  lucide.createIcons();
+
+  // ==========================================================
+  // ⚙️ ตั้งค่าเกม
+  // ==========================================================
+  const STARTING_TIME    = 60;
+  const TARGET_SCORE     = 67;
+  const REP_THRESHOLD    = 0.09;
+  const BIG_REP_THRESHOLD= 0.18;
+  const DIR_NOISE        = 0.008;
+  const HOLD_MS          = 750;
+  const RAISED_Y_LIMIT   = 0.62;
+
+  // คำถามต้นฉบับ 10 ข้อ (2 ตัวเลือก) — ลำดับข้อและลำดับตัวเลือกจะถูกสลับใหม่ทุกครั้งที่เริ่มเกม
+  const baseQuestions = [
+    { q: "ฝั่งบ่อยางมีข้อได้เปรียบสำคัญคือข้อใด?", options: ["มีท่าเรือธรรมชาติ", "มีเหมืองทองคำ"], answer: 0 },
+    { q: "ผู้ย้ายเมืองสงขลามาฝั่งบ่อยางคือใคร?", options: ["พระยาวิเชียรคีรี (เถี้ยนเส้ง)", "พระยาวิเชียรคีรี (ชม)"], answer: 0 },
+    { q: "รัชกาลใดโปรดเกล้าฯ ให้ตั้งเมืองที่บ่อยาง?", options: ["รัชกาลที่ 5", "รัชกาลที่ 3"], answer: 1 },
+    { q: "เงินสร้างกำแพงเมืองบ่อยางมีจำนวนกี่ชั่ง?", options: ["500 ชั่ง", "200 ชั่ง"], answer: 1 },
+    { q: "สาเหตุที่การสร้างกำแพงเมืองหยุดชะงักคือ?", options: ["กบฏเมืองไทรบุรี", "แผ่นดินไหว"], answer: 0 },
+    { q: "เสาหลักเมืองสงขลาปัจจุบันอยู่ถนนใด?", options: ["ถนนนครนอก", "ถนนนางงาม"], answer: 1 },
+    { q: "เจ้าเมืองลำดับสุดท้ายฝั่งบ่อยางคือใคร?", options: ["พระยาวิเชียรคีรี (ชม)", "พระยาวิเชียรคีรี (เม่น)"], answer: 0 },
+    { q: "รัชกาลที่ 5 จัดสงขลาไว้ในมณฑลใด?", options: ["มณฑลปัตตานี", "มณฑลนครศรีธรรมราช"], answer: 1 },
+    { q: "ตำแหน่งที่รัชกาลที่ 6 ตั้งขึ้นปกครองภาคคือ?", options: ["สมุหเทศาภิบาล", "ข้าหลวงเทศาภิบาล"], answer: 0 },
+    { q: "หลัง พ.ศ. 2476 มณฑลถูกยุบเหลือรูปแบบใด?", options: ["อำเภอ", "จังหวัด"], answer: 1 }
+  ];
+
+  // สุ่มลำดับอาร์เรย์ (Fisher-Yates)
+  function shuffleArray(arr){
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // สลับทั้งลำดับคำถามและลำดับตัวเลือก A/B ในแต่ละข้อ ให้ไม่ซ้ำเดิมทุกรอบที่เล่น
+  function buildShuffledQuestions(){
+    return shuffleArray(baseQuestions).map(q => {
+      const order = shuffleArray([0, 1]); // ลำดับตัวเลือกใหม่ เช่น [1,0] แปลว่าเอาข้อ 2 ขึ้นก่อน
+      return {
+        q: q.q,
+        options: order.map(i => q.options[i]),
+        answer: order.indexOf(q.answer)
+      };
+    });
+  }
+  let questions = buildShuffledQuestions();
+
+  // ==========================================================
+  // 🧠 สถานะเกม
+  // ==========================================================
+  let phase = 'idle'; // idle | gesture | transition | quiz | victory | gameover
+  let score = 0;
+  let timeLeft = STARTING_TIME;
+  let tickInterval = null, lastTick = 0, gameStartTime = 0;
+  let qIndex = 0;
+  let holdSide = null, holdStart = 0;
+  const gestureState = {};
+  let cameraReady = false;
+  let usingFallback = false;
+
+  const $ = (id) => document.getElementById(id);
+  const scoreValueEl = $('scoreValue'), timerValueEl = $('timerValue'), progressBarEl = $('progressBar'), pctLabelEl = $('pctLabel');
+  const videoEl = $('video'), canvasEl = $('overlayCanvas'), fxLayer = $('fxLayer'), zoneHintEl = $('zoneHint');
+  const startScreenEl = $('startScreen'), startBtn = $('startBtn');
+  const cameraErrorScreenEl = $('cameraErrorScreen'), cameraErrorMsgEl = $('cameraErrorMsg'), retryCamBtn = $('retryCamBtn'), fallbackBtn = $('fallbackBtn');
+  const fallbackPumpEl = $('fallbackPump'), pumpBtn = $('pumpBtn'), closePumpBtn = $('closePumpBtn');
+  const questionModalEl = $('questionModal'), questionTextEl = $('questionText'), questionOptionsEl = $('questionOptions'), qCurrentEl = $('qCurrent');
+  const victoryScreenEl = $('victoryScreen'), victoryTimeEl = $('victoryTime'), victoryRestartBtn = $('victoryRestartBtn');
+  const gameOverScreenEl = $('gameOverScreen'), goReasonEl = $('goReason'), finalScoreEl = $('finalScore'), restartBtn = $('restartBtn');
+
+  const ctx = canvasEl.getContext('2d');
+
+  // ==========================================================
+  // ⏱️ ตัวจับเวลา
+  // ==========================================================
+  function startTimerLoop(){
+    lastTick = performance.now();
+    clearInterval(tickInterval);
+    tickInterval = setInterval(() => {
+      if (phase !== 'quiz') { lastTick = performance.now(); return; }
+      const now = performance.now();
+      const delta = (now - lastTick) / 1000;
+      lastTick = now;
+      timeLeft -= delta;
+      if (timeLeft <= 0) { timeLeft = 0; updateHUD(); endGame('gameover', 'หมดเวลาในข้อคำถาม!'); return; }
+      updateHUD();
+    }, 50);
+  }
+  function stopTimerLoop(){ clearInterval(tickInterval); }
+
+  function updateHUD(){
+    scoreValueEl.textContent = score;
+    timerValueEl.textContent = timeLeft.toFixed(1) + 's';
+    timerValueEl.classList.toggle('low', timeLeft <= 8);
+    const pct = Math.max(0, Math.min(100, (score / TARGET_SCORE) * 100));
+    progressBarEl.style.width = pct + '%';
+    pctLabelEl.textContent = Math.round(pct) + '%';
+  }
+
+  // ==========================================================
+  // 📷 กล้อง + MediaPipe Hands
+  // ==========================================================
+  const hands = new Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
+  hands.setOptions({ maxNumHands: 2, modelComplexity: 1, minDetectionConfidence: 0.65, minTrackingConfidence: 0.5 });
+  hands.onResults(onResults);
+
+  let loopStarted = false;
+  async function frameLoop(){
+    if (videoEl.readyState >= 2 && cameraReady) {
+      try { await hands.send({ image: videoEl }); } catch(err) { /* ข้ามเฟรมที่ประมวลผลไม่ทัน */ }
+    }
+    requestAnimationFrame(frameLoop);
+  }
+
+  async function initCamera(){
+    startBtn.disabled = true;
+    startBtn.innerHTML = '<i data-lucide="loader" style="width:20px;height:20px;"></i> กำลังเปิดกล้อง...';
+    lucide.createIcons();
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 960 } },
+        audio: false
+      });
+      videoEl.srcObject = stream;
+      await new Promise((resolve) => { videoEl.onloadedmetadata = () => { videoEl.play(); resolve(); }; });
+      canvasEl.width = videoEl.videoWidth || 640;
+      canvasEl.height = videoEl.videoHeight || 480;
+      cameraReady = true;
+      if (!loopStarted) { loopStarted = true; frameLoop(); }
+      cameraErrorScreenEl.classList.add('hidden');
+      beginGesturePhase();
+    } catch (err) {
+      cameraErrorMsgEl.textContent = 'เปิดกล้องไม่สำเร็จ: ' + (err && err.message ? err.message : 'ไม่ทราบสาเหตุ');
+      startScreenEl.classList.add('hidden');
+      cameraErrorScreenEl.classList.remove('hidden');
+      lucide.createIcons();
+    } finally {
+      startBtn.disabled = false;
+      startBtn.innerHTML = '<i data-lucide="camera" style="width:20px;height:20px;"></i> เปิดกล้อง & เริ่มเกม';
+      lucide.createIcons();
+    }
+  }
+
+  // ==========================================================
+  // ✋ ประมวลผลผลลัพธ์จาก MediaPipe Hands ทุกเฟรม
+  // ==========================================================
+  function palmCenter(landmarks){
+    const idxs = [0,5,9,13,17];
+    let sx=0, sy=0;
+    idxs.forEach(i => { sx += landmarks[i].x; sy += landmarks[i].y; });
+    return { x: sx/idxs.length, y: sy/idxs.length };
+  }
+
+  function onResults(results){
+    ctx.save();
+    ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+
+    if (results.multiHandLandmarks && results.multiHandLandmarks.length) {
+      results.multiHandLandmarks.forEach((landmarks, slot) => {
+        if (typeof drawConnectors === 'function' && typeof HAND_CONNECTIONS !== 'undefined') {
+          drawConnectors(ctx, landmarks, HAND_CONNECTIONS, { color: 'rgba(165,180,252,0.75)', lineWidth: 3 });
+        }
+        if (typeof drawLandmarks === 'function') {
+          drawLandmarks(ctx, landmarks, { color: '#818cf8', fillColor:'#eef2ff', lineWidth: 1.5, radius: 4 });
+        }
+        const palm = palmCenter(landmarks);
+        const px = palm.x * canvasEl.width, py = palm.y * canvasEl.height;
+        const glow = ctx.createRadialGradient(px, py, 2, px, py, 34);
+        glow.addColorStop(0, 'rgba(129,140,248,0.95)');
+        glow.addColorStop(1, 'rgba(129,140,248,0)');
+        ctx.fillStyle = glow;
+        ctx.beginPath(); ctx.arc(px, py, 34, 0, Math.PI*2); ctx.fill();
+
+        if (phase === 'gesture') trackVerticalGesture(slot, palm);
+        else if (phase === 'quiz') trackHandChoice(palm);
+      });
+    }
+    ctx.restore();
+  }
+
+  // ==========================================================
+  // 📈 ตรวจจับการขยับมือขึ้น-ลง (นับคะแนน)
+  // ==========================================================
+  function trackVerticalGesture(slot, palm){
+    let s = gestureState[slot];
+    if (!s) { gestureState[slot] = { lastY: palm.y, dir: 0, extremeY: palm.y }; return; }
+
+    const dy = palm.y - s.lastY;
+    let newDir = s.dir;
+    if (dy > DIR_NOISE) newDir = 1;
+    else if (dy < -DIR_NOISE) newDir = -1;
+
+    if (newDir !== 0 && newDir !== s.dir) {
+      const amplitude = Math.abs(s.extremeY - s.lastY);
+      if (amplitude > REP_THRESHOLD) registerRep(amplitude, palm);
+      s.extremeY = s.lastY;
+      s.dir = newDir;
+    }
+    s.lastY = palm.y;
+  }
+
+  function registerRep(amplitude, palm){
+    const value = amplitude >= BIG_REP_THRESHOLD ? 2 : 1;
+    score += value;
+    const px = (1 - palm.x) * window.innerWidth;
+    const py = palm.y * window.innerHeight;
+    spawnFloatText(px, py, '+' + value, value === 2 ? '#34d399' : '#a5b4fc');
+    spawnPulseRing(px, py);
+    updateHUD();
+    if (score >= TARGET_SCORE) unlockQuestions();
+  }
+
+  function spawnFloatText(x, y, text, color){
+    const fx = document.createElement('div');
+    fx.className = 'float-score';
+    fx.style.left = x + 'px'; fx.style.top = y + 'px'; fx.style.color = color;
+    fx.textContent = text;
+    fxLayer.appendChild(fx);
+    setTimeout(() => fx.remove(), 880);
+  }
+  function spawnPulseRing(x, y){
+    const r = document.createElement('div');
+    r.className = 'pulse-ring';
+    r.style.left = x + 'px'; r.style.top = y + 'px';
+    fxLayer.appendChild(r);
+    setTimeout(() => r.remove(), 560);
+  }
+
+  // ==========================================================
+  // ❓ ระบบปลดล็อกคำถาม (เมื่อคะแนนถึง 67)
+  // ==========================================================
+  function unlockQuestions(){
+    if (phase !== 'gesture') return;
+    phase = 'transition';
+    showBigToast('🔓 ปลดล็อกคำถามแล้ว!');
+    setTimeout(openQuestion, 900);
+  }
+
+  function showBigToast(text){
+    const t = document.createElement('div');
+    t.className = 'big-toast';
+    t.innerHTML = '<div class="t">' + text + '</div>';
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 1150);
+  }
+  function showMiniToast(text){
+    const t = document.createElement('div');
+    t.className = 'mini-toast';
+    t.textContent = text;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 1350);
+  }
+
+  function openQuestion(){
+    phase = 'quiz';
+    timeLeft = STARTING_TIME; // รีเซ็ตเวลาใหม่ 60 วินาทีทุกครั้งที่ขึ้นข้อคำถามใหม่
+    lastTick = performance.now();
+    updateHUD();
+    zoneHintEl.classList.add('show');
+    const q = questions[qIndex];
+    qCurrentEl.textContent = (qIndex + 1);
+    questionTextEl.textContent = q.q;
+    questionOptionsEl.innerHTML = '';
+    q.options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'q-opt';
+      btn.dataset.side = i === 0 ? 'A' : 'B';
+      btn.innerHTML = '<div class="fill" style="--hold:0"></div><span class="tag">' + (i === 0 ? 'A' : 'B') + '</span><span class="lbl">' + opt + '</span>';
+      btn.addEventListener('click', () => selectAnswer(i, q, btn));
+      questionOptionsEl.appendChild(btn);
+    });
+    questionModalEl.classList.remove('hidden');
+    holdSide = null; holdStart = 0;
+  }
+
+  function selectAnswer(selectedIndex, q, btnEl){
+    if (phase !== 'quiz') return;
+    phase = 'transition';
+    zoneHintEl.classList.remove('show');
+
+    const allBtns = questionOptionsEl.querySelectorAll('.q-opt');
+    allBtns.forEach(b => b.style.pointerEvents = 'none');
+    const isCorrect = selectedIndex === q.answer;
+    if (isCorrect) { btnEl.classList.add('correct'); }
+    else { btnEl.classList.add('wrong'); allBtns[q.answer].classList.add('correct'); }
+
+    setTimeout(() => {
+      questionModalEl.classList.add('hidden');
+      if (!isCorrect) { retryGesturePhase(); return; }
+
+      qIndex++;
+      if (qIndex >= questions.length) { endGame('victory'); return; }
+      showMiniToast('✅ ถูกต้อง! ไปข้อถัดไป');
+      setTimeout(openQuestion, 500);
+    }, isCorrect ? 500 : 750);
+  }
+
+  // ตอบผิด: ไม่จบเกม แต่ให้กลับไปขยับมือสะสมคะแนนให้ครบ 67 ใหม่ แล้ววนกลับมาตอบข้อเดิมอีกครั้ง
+  function retryGesturePhase(){
+    score = 0;
+    timeLeft = STARTING_TIME;
+    for (const k in gestureState) delete gestureState[k];
+    updateHUD();
+    showBigToast('❌ ตอบผิด! ขยับมือใหม่ให้ครบ 67');
+    phase = 'gesture';
+  }
+
+  function trackHandChoice(palm){
+    if (phase !== 'quiz') return;
+    if (palm.y > RAISED_Y_LIMIT) { holdSide = null; holdStart = 0; updateHoldUI(0, null); return; }
+
+    const mirroredX = 1 - palm.x;
+    const side = mirroredX < 0.5 ? 'A' : 'B';
+
+    if (side !== holdSide) { holdSide = side; holdStart = performance.now(); }
+    const elapsed = performance.now() - holdStart;
+    updateHoldUI(Math.min(1, elapsed / HOLD_MS), side);
+
+    if (elapsed >= HOLD_MS) {
+      const idx = side === 'A' ? 0 : 1;
+      const q = questions[qIndex];
+      const btn = questionOptionsEl.querySelector('[data-side="' + side + '"]');
+      holdSide = null; holdStart = 0;
+      if (btn) selectAnswer(idx, q, btn);
+    }
+  }
+
+  function updateHoldUI(progress, side){
+    const allBtns = questionOptionsEl.querySelectorAll('.q-opt');
+    allBtns.forEach(b => {
+      const isActive = b.dataset.side === side;
+      const fill = b.querySelector('.fill');
+      if (fill) fill.style.setProperty('--hold', isActive ? progress : 0);
+    });
+  }
+
+  // ==========================================================
+  // ▶️ วงจรเกม: เริ่ม / จบ / รีสตาร์ท
+  // ==========================================================
+  function beginGesturePhase(){
+    score = 0; timeLeft = STARTING_TIME; qIndex = 0;
+    gameStartTime = performance.now(); // ใช้คำนวณเวลารวมทั้งเกมตอนชนะ
+    questions = buildShuffledQuestions(); // สลับคำถาม+คำตอบใหม่ทุกรอบที่เริ่มเกม
+    for (const k in gestureState) delete gestureState[k];
+    updateHUD();
+
+    startScreenEl.classList.add('hidden');
+    cameraErrorScreenEl.classList.add('hidden');
+    fallbackPumpEl.classList.add('hidden');
+    victoryScreenEl.classList.add('hidden');
+    gameOverScreenEl.classList.add('hidden');
+    questionModalEl.classList.add('hidden');
+    zoneHintEl.classList.remove('show');
+
+    phase = 'gesture';
+    startTimerLoop();
+  }
+
+  function endGame(kind, reason){
+    phase = kind;
+    zoneHintEl.classList.remove('show');
+    if (kind === 'victory') {
+      const timeUsed = (performance.now() - gameStartTime) / 1000;
+      victoryTimeEl.textContent = timeUsed.toFixed(2) + 's';
+      victoryScreenEl.classList.remove('hidden');
+    } else {
+      goReasonEl.textContent = reason || 'จบเกม';
+      finalScoreEl.textContent = score;
+      gameOverScreenEl.classList.remove('hidden');
+    }
+  }
+
+  // ==========================================================
+  // 🖱️ ปุ่มต่าง ๆ
+  // ==========================================================
+  startBtn.addEventListener('click', initCamera);
+  retryCamBtn.addEventListener('click', initCamera);
+  restartBtn.addEventListener('click', () => {
+    if (usingFallback) fallbackPumpEl.classList.remove('hidden');
+    else beginGesturePhase();
+  });
+  victoryRestartBtn.addEventListener('click', () => {
+    if (usingFallback) fallbackPumpEl.classList.remove('hidden');
+    else beginGesturePhase();
+  });
+
+  fallbackBtn.addEventListener('click', () => {
+    usingFallback = true;
+    cameraErrorScreenEl.classList.add('hidden');
+    fallbackPumpEl.classList.remove('hidden');
+    lucide.createIcons();
+  });
+  closePumpBtn.addEventListener('click', () => {
+    fallbackPumpEl.classList.add('hidden');
+    beginGesturePhase();
+  });
+  pumpBtn.addEventListener('click', () => {
+    if (phase !== 'gesture') return;
+    score += 1;
+    updateHUD();
+    if (score >= TARGET_SCORE) unlockQuestions();
+  });
+
+  updateHUD();
+})();
+</script>
+</body>
+</html>
