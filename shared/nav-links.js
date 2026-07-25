@@ -1,12 +1,12 @@
 // shared/nav-links.js
 // ปุ่มนำทาง 4 ปุ่มคงที่ (หน้าหลัก / เขาแดง / แหลมสน / บ่อยาง) — โค้ดชุดเดียว ใช้ร่วมกันทุกหน้า
+// วางไว้ที่ท้ายหน้า (ในส่วน footer) ของทุกหน้าเหมือนกันหมด
 // ปุ่มทั้ง 4 จะแสดงเหมือนกันทุกหน้าเสมอ ปุ่มของหน้าที่กำลังเปิดอยู่จะถูกไฮไลต์และกดไม่ได้ (ไม่ใช่ลิงก์)
 //
 // วิธีใช้ในแต่ละหน้า:
 //   1) ใส่ <script src="../shared/nav-links.js"></script> ในหน้า (หน้าที่ root ใช้ "./shared/nav-links.js")
-//   2) ใส่ <div id="era-nav-desktop" class="flex items-center gap-2"></div> ตรงจุดที่ต้องการให้ปุ่ม (แถบเมนูบนจอใหญ่)
-//   3) ใส่ <div id="era-nav-mobile"></div> ตรงจุดที่ต้องการให้ปุ่ม (เมนูมือถือ/หน้าหลัก)
-//   4) เรียก initEraNav('home' | 'kaodaeng' | 'laemson' | 'boyang') หลัง lucide.createIcons() ตอนโหลดหน้า
+//   2) ใส่ <div id="era-nav-footer" class="flex flex-wrap items-center justify-center gap-2 mb-4"></div> ไว้ในส่วน <footer> ของหน้า (ท้ายสุดของหน้า)
+//   3) เรียก initEraNav('home' | 'kaodaeng' | 'laemson' | 'boyang') หลัง lucide.createIcons() ตอนโหลดหน้า
 //
 // ถ้าต้องแก้ลิงก์ ข้อความ สี หรือไอคอนของปุ่มเหล่านี้ แก้ที่ไฟล์นี้ไฟล์เดียว จะมีผลกับทุกหน้าทันที
 
@@ -49,40 +49,22 @@
   ];
 
   window.initEraNav = function (currentPageId) {
-    var desktopEl = document.getElementById('era-nav-desktop');
-    if (desktopEl) {
-      desktopEl.classList.add('gap-1.5');
-      desktopEl.innerHTML = PAGES.map(function (p) {
+    // ปุ่มนำทางที่ท้ายหน้า (footer) — ออกแบบให้ใช้ได้กับพื้นหลังสีเข้มของ footer ทุกหน้า
+    var footerEl = document.getElementById('era-nav-footer');
+    if (footerEl) {
+      footerEl.innerHTML = PAGES.map(function (p) {
         var isCurrent = p.id === currentPageId;
         if (isCurrent) {
           return '<span title="กำลังอยู่หน้านี้" ' +
-            'class="hidden lg:flex shrink-0 whitespace-nowrap items-center bg-gray-800 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold cursor-default ring-2 ring-offset-1 ring-gray-800">' +
-            '<i data-lucide="' + p.icon + '" class="w-3.5 h-3.5 mr-1"></i> ' + p.label +
+            'class="flex shrink-0 whitespace-nowrap items-center bg-white text-gray-900 px-4 py-2 rounded-full text-xs sm:text-sm font-bold cursor-default shadow-sm">' +
+            '<i data-lucide="' + p.icon + '" class="w-4 h-4 mr-1.5"></i> ' + p.label +
             '</span>';
         }
         return '<a href="' + p.url + '" ' +
-          'class="hidden lg:flex shrink-0 whitespace-nowrap items-center ' + p.pill + ' px-2.5 py-1.5 rounded-lg text-xs font-bold transition">' +
-          '<i data-lucide="' + p.icon + '" class="w-3.5 h-3.5 mr-1"></i> ' + p.label +
+          'class="flex shrink-0 whitespace-nowrap items-center bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition border border-white/20">' +
+          '<i data-lucide="' + p.icon + '" class="w-4 h-4 mr-1.5"></i> ' + p.label +
           '</a>';
       }).join('');
-    }
-
-    var mobileEl = document.getElementById('era-nav-mobile');
-    if (mobileEl) {
-      mobileEl.innerHTML =
-        '<div class="pt-2 pb-1 text-xs font-bold text-gray-400">เมนูหลักทุกยุค:</div>' +
-        PAGES.map(function (p) {
-          var isCurrent = p.id === currentPageId;
-          if (isCurrent) {
-            return '<div class="block py-2 border-b font-bold flex justify-between items-center bg-gray-100 px-2 rounded-lg text-gray-500">' +
-              '<span><i data-lucide="' + p.icon + '" class="w-4 h-4 inline mr-1"></i> ' + p.label + ' (กำลังอยู่หน้านี้)</span>' +
-              '</div>';
-          }
-          return '<a href="' + p.url + '" class="block py-2 border-b font-bold flex justify-between items-center">' +
-            '<span><i data-lucide="' + p.icon + '" class="w-4 h-4 inline mr-1"></i> ' + p.mobileLabel + '</span>' +
-            '<i data-lucide="external-link" class="w-4 h-4"></i>' +
-            '</a>';
-        }).join('');
     }
 
     if (window.lucide && typeof window.lucide.createIcons === 'function') {
