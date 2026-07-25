@@ -226,6 +226,30 @@
   'use strict';
   lucide.createIcons();
 
+  // ===== เชื่อมต่อกับระบบบทเรียน (รับข้อมูลนักเรียนจาก URL แล้วส่งคะแนนกลับ Google Sheet) =====
+  const SCORE_API_URL = "https://script.google.com/macros/s/AKfycbwAfmqJTXPhRP1WSV2_EyYoqSs0b_4C3rL5_EwW8EryTpIDkmBU6Sx4UM8TJ9ndYrGX/exec";
+  const urlParams = new URLSearchParams(window.location.search);
+  const studentInfo = {
+    studentId: urlParams.get('studentId') || '',
+    name: urlParams.get('name') || '',
+    className: urlParams.get('className') || ''
+  };
+  const hasStudentInfo = !!(studentInfo.studentId && studentInfo.className);
+  function saveScoreToServer(scoreVal){
+    if (!hasStudentInfo) return;
+    const params = new URLSearchParams({
+      api: 'saveScore',
+      studentId: studentInfo.studentId,
+      name: studentInfo.name,
+      className: studentInfo.className,
+      action: 'เล่นเกมขยับมือ 67 (บ่อยาง)',
+      score: scoreVal
+    });
+    // ใช้ mode:'no-cors' เพราะ Apps Script ไม่ได้ตั้งค่า CORS header ให้อ่าน response ข้ามโดเมนได้
+    // แต่คำขอ GET ยังคงถูกประมวลผลและบันทึกลงชีตตามปกติ
+    fetch(SCORE_API_URL + '?' + params.toString(), { method: 'GET', mode: 'no-cors' }).catch(() => {});
+  }
+
   // ==========================================================
   // ⚙️ ตั้งค่าเกม
   // ==========================================================
@@ -592,10 +616,12 @@
       const timeUsed = (performance.now() - gameStartTime) / 1000;
       victoryTimeEl.textContent = timeUsed.toFixed(2) + 's';
       victoryScreenEl.classList.remove('hidden');
+      saveScoreToServer(10);
     } else {
       goReasonEl.textContent = reason || 'จบเกม';
       finalScoreEl.textContent = score;
       gameOverScreenEl.classList.remove('hidden');
+      saveScoreToServer(qIndex);
     }
   }
 

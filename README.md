@@ -7,11 +7,14 @@
 
 | โฟลเดอร์ | เนื้อหา | URL |
 |---|---|---|
+| `index.html` (root) | หน้าหลักของเว็บไซต์ มีการ์ดลิงก์ไป 3 ยุค | https://jitpanusri-cell.github.io/songkhla-history/ |
 | `kaodaeng-lesson/` | บทเรียน + แบบทดสอบ เขาแดง | https://jitpanusri-cell.github.io/songkhla-history/kaodaeng-lesson/ |
 | `laemson-lesson/` | บทเรียน + แบบทดสอบ แหลมสน | https://jitpanusri-cell.github.io/songkhla-history/laemson-lesson/ |
-| `boyang-lesson/` | บทเรียน + แบบทดสอบ บ่อยาง (มีเกมกล้อง 67 Motion Challenge ในตัว) | https://jitpanusri-cell.github.io/songkhla-history/boyang-lesson/ |
+| `boyang-lesson/` | บทเรียน + แบบทดสอบ บ่อยาง | https://jitpanusri-cell.github.io/songkhla-history/boyang-lesson/ |
+| `boyang-lesson/67-motion-challenge.html` | เกมกล้อง 67 Motion Challenge (MediaPipe Hands) ของหน้าบ่อยาง เปิดจากปุ่มในหน้าบทเรียนเป็นแท็บใหม่ | https://jitpanusri-cell.github.io/songkhla-history/boyang-lesson/67-motion-challenge.html |
 | `khaodaeng-mario-game/` | เกมกิจกรรม (มาริโอ้) ของหน้าเขาแดง | https://jitpanusri-cell.github.io/songkhla-history/khaodaeng-mario-game/ |
 | `laemson-game/` | เกมปืนใหญ่เล็งตอบ ของหน้าแหลมสน | https://jitpanusri-cell.github.io/songkhla-history/laemson-game/ |
+| `shared/nav-links.js` | โค้ดปุ่มนำทางข้ามหน้า (เขาแดง/แหลมสน/บ่อยาง) ใช้ร่วมกันทุกหน้าบทเรียน | ไม่มี URL — เป็นไฟล์ script ที่ทุกหน้า `<script src="../shared/nav-links.js">` |
 | `backend/Code.gs` | สำเนาโค้ด Apps Script (เก็บไว้อ้างอิง/version control เท่านั้น) | ไม่มี URL — ไฟล์นี้ **ไม่ทำงานบน GitHub Pages** |
 
 ## ระบบหลังบ้าน (Google Apps Script)
@@ -30,7 +33,12 @@
 3. ถ้าแก้ไขเนื้อหาบทเรียน/คำถามในไฟล์ไหน ให้แก้ที่ `index.html` ในโฟลเดอร์นั้นได้เลย ไม่ต้องรีบิลด์อะไรเพิ่ม
 4. `backend/Code.gs` เป็นสำเนาเก็บไว้ดูเฉยๆ ถ้าจะแก้ backend จริง ต้อง copy เนื้อหาไปวางในโปรเจกต์ที่ script.google.com แล้วกด Deploy > Manage deployments > New version ทุกครั้งที่แก้
 
+## ปุ่มนำทางข้ามหน้า (shared/nav-links.js)
+
+ทั้ง 3 หน้าบทเรียน (เขาแดง/แหลมสน/บ่อยาง) ใช้โค้ดชุดเดียวกันจากไฟล์ `shared/nav-links.js` ในการแสดงปุ่มข้ามไปหน้าอื่น (ทั้งบนแถบเมนูจอใหญ่และเมนูมือถือ) แทนที่จะเขียนลิงก์แยกในแต่ละไฟล์ ถ้าต้องแก้ข้อความ ลิงก์ สี หรือไอคอนของปุ่มเหล่านี้ แก้ที่ไฟล์ `shared/nav-links.js` ไฟล์เดียว จะมีผลกับทั้ง 3 หน้าทันที
+
 ## หมายเหตุ
 
 - นักเรียนต้องเข้าเกมผ่านหน้าบทเรียน (กดปุ่มในหน้า ไม่ใช่เปิดลิงก์เกมตรงๆ) เพื่อให้ระบบแนบรหัสนักเรียน/ชื่อ/ห้อง ไปกับ URL แล้วเกมจะบันทึกคะแนนกลับชีตได้ถูกคน
 - หน้าบ่อยางใช้กล้อง (MediaPipe Hands) ต้องเปิดผ่าน HTTPS เท่านั้น ซึ่ง GitHub Pages รองรับอยู่แล้วโดยปริยาย
+- เกม 67 Motion Challenge ของบ่อยางแยกเป็นไฟล์ต่างหาก (`67-motion-challenge.html`) เหมือนกับเกมของเขาแดง/แหลมสน — ปุ่ม "เปิดกล้อง & เริ่มเกม" ในหน้าบทเรียนเรียก `openBoYangGame()` ซึ่งแนบ `studentId`/`name`/`className` ไปกับ URL แล้วเปิดเกมเป็นแท็บใหม่ เมื่อเล่นจบ (ชนะหรือหมดเวลา) เกมจะยิงคะแนนกลับ Google Sheet เองผ่าน `saveScoreToServer()` โดยไม่ต้องกลับมาที่หน้าบทเรียนก่อน

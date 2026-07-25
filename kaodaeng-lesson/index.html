@@ -90,12 +90,7 @@
          <a href="#" onclick="showSection('video')" class="whitespace-nowrap hover:text-[#E85D5D] transition menu-link" data-target="video">สื่อวิดีทัศน์</a>
      </nav>
      <div class="flex items-center gap-2">
-         <a href="https://jitpanusri-cell.github.io/songkhla-history/laemson-lesson/" target="_blank" class="hidden lg:flex shrink-0 whitespace-nowrap items-center bg-yellow-100 text-yellow-800 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-yellow-200 transition">
-             <i data-lucide="map-pin" class="w-3.5 h-3.5 mr-1"></i> ฝั่งแหลมสน
-         </a>
-         <a href="https://jitpanusri-cell.github.io/songkhla-history/boyang-lesson/" target="_blank" class="hidden lg:flex shrink-0 whitespace-nowrap items-center bg-blue-100 text-blue-800 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-200 transition">
-             <i data-lucide="building-2" class="w-3.5 h-3.5 mr-1"></i> ฝั่งบ่อยาง
-         </a>
+         <div id="era-nav-desktop" class="flex items-center gap-2"></div>
          <div class="hidden sm:block text-right text-xs bg-gray-50 px-3 py-1 rounded-lg border ml-1">
              <div class="text-gray-500" id="displayClass">ห้องเรียน</div>
              <div id="displayName" class="font-bold text-[#E85D5D]"></div>
@@ -114,15 +109,7 @@
          <a href="#" onclick="showSection('quiz')" class="block py-2 hover:text-[#E85D5D] border-b">แบบทดสอบ</a>
          <a href="#" onclick="showSection('video')" class="block py-2 hover:text-[#E85D5D] border-b">สื่อวิดีทัศน์</a>
          
-         <div class="pt-2 pb-1 text-xs font-bold text-gray-400">ข้ามไปศึกษายุคอื่น:</div>
-         <a href="https://jitpanusri-cell.github.io/songkhla-history/laemson-lesson/" target="_blank" class="block py-2 text-yellow-700 border-b font-bold flex justify-between items-center">
-             <span><i data-lucide="map-pin" class="w-4 h-4 inline mr-1"></i> ไปฝั่งแหลมสน (ยุคที่ 2)</span>
-             <i data-lucide="external-link" class="w-4 h-4"></i>
-         </a>
-         <a href="https://jitpanusri-cell.github.io/songkhla-history/boyang-lesson/" target="_blank" class="block py-2 text-blue-700 border-b font-bold flex justify-between items-center">
-             <span><i data-lucide="building-2" class="w-4 h-4 inline mr-1"></i> ไปฝั่งบ่อยาง (ยุคที่ 3)</span>
-             <i data-lucide="external-link" class="w-4 h-4"></i>
-         </a>
+         <div id="era-nav-mobile"></div>
          
          <a href="#" onclick="logoutUser()" class="block py-2 text-red-500 font-bold pt-3">ออกจากระบบ</a>
     </div>
@@ -368,11 +355,13 @@
    </footer>
   </div>
 
+  <script src="../shared/nav-links.js"></script>
   <script>
   let studentName = "";
   let studentIdStr = "";
   let studentClass = "";
   lucide.createIcons();
+  initEraNav('kaodaeng');
 
   const API_BASE_URL = "https://script.google.com/macros/s/AKfycbwAfmqJTXPhRP1WSV2_EyYoqSs0b_4C3rL5_EwW8EryTpIDkmBU6Sx4UM8TJ9ndYrGX/exec";
   let jsonpCounter = 0;
