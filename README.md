@@ -7,7 +7,7 @@
 
 | โฟลเดอร์ | เนื้อหา | URL |
 |---|---|---|
-| `index.html` (root) | ไม่ใช่หน้าหลักจริง — แค่ redirect อัตโนมัติไป `kaodaeng-lesson/` (เขาแดงคือหน้าหลักของเว็บนี้) | https://jitpanusri-cell.github.io/songkhla-history/ |
+| `index.html` (root) | หน้าหลักของเว็บไซต์ (ดีไซน์ก็อปจากหน้าเขาแดง ไม่มีระบบล็อกอิน) มีการ์ดลิงก์ไป 3 ยุค | https://jitpanusri-cell.github.io/songkhla-history/ |
 | `kaodaeng-lesson/` | บทเรียน + แบบทดสอบ เขาแดง | https://jitpanusri-cell.github.io/songkhla-history/kaodaeng-lesson/ |
 | `laemson-lesson/` | บทเรียน + แบบทดสอบ แหลมสน | https://jitpanusri-cell.github.io/songkhla-history/laemson-lesson/ |
 | `boyang-lesson/` | บทเรียน + แบบทดสอบ บ่อยาง | https://jitpanusri-cell.github.io/songkhla-history/boyang-lesson/ |
