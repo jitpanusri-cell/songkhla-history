@@ -7,7 +7,7 @@
 
 | โฟลเดอร์ | เนื้อหา | URL |
 |---|---|---|
-| `index.html` (root) | หน้าหลักของเว็บไซต์ มีการ์ดลิงก์ไป 3 ยุค | https://jitpanusri-cell.github.io/songkhla-history/ |
+| `index.html` (root) | ไม่ใช่หน้าหลักจริง — แค่ redirect อัตโนมัติไป `kaodaeng-lesson/` (เขาแดงคือหน้าหลักของเว็บนี้) | https://jitpanusri-cell.github.io/songkhla-history/ |
 | `kaodaeng-lesson/` | บทเรียน + แบบทดสอบ เขาแดง | https://jitpanusri-cell.github.io/songkhla-history/kaodaeng-lesson/ |
 | `laemson-lesson/` | บทเรียน + แบบทดสอบ แหลมสน | https://jitpanusri-cell.github.io/songkhla-history/laemson-lesson/ |
 | `boyang-lesson/` | บทเรียน + แบบทดสอบ บ่อยาง | https://jitpanusri-cell.github.io/songkhla-history/boyang-lesson/ |
@@ -35,7 +35,7 @@
 
 ## ปุ่มนำทางข้ามหน้า (shared/nav-links.js)
 
-ทั้ง 3 หน้าบทเรียน (เขาแดง/แหลมสน/บ่อยาง) ใช้โค้ดชุดเดียวกันจากไฟล์ `shared/nav-links.js` ในการแสดงปุ่มข้ามไปหน้าอื่น (ทั้งบนแถบเมนูจอใหญ่และเมนูมือถือ) แทนที่จะเขียนลิงก์แยกในแต่ละไฟล์ ถ้าต้องแก้ข้อความ ลิงก์ สี หรือไอคอนของปุ่มเหล่านี้ แก้ที่ไฟล์ `shared/nav-links.js` ไฟล์เดียว จะมีผลกับทั้ง 3 หน้าทันที
+ทั้ง 3 หน้าบทเรียน (เขาแดง/แหลมสน/บ่อยาง) ใช้โค้ดชุดเดียวกันจากไฟล์ `shared/nav-links.js` ในการแสดงปุ่มนำทาง 3 ปุ่ม (เขาแดง = หน้าหลัก / แหลมสน / บ่อยาง) ไว้ที่ท้ายหน้า (footer) ของทุกหน้าเหมือนกันหมด แทนที่จะเขียนลิงก์แยกในแต่ละไฟล์ ปุ่มของหน้าที่กำลังเปิดอยู่จะไฮไลต์และกดไม่ได้ ถ้าต้องแก้ข้อความ ลิงก์ สี หรือไอคอนของปุ่มเหล่านี้ แก้ที่ไฟล์ `shared/nav-links.js` ไฟล์เดียว จะมีผลกับทั้ง 3 หน้าทันที
 
 ## หมายเหตุ
 

@@ -1,12 +1,13 @@
 // shared/nav-links.js
-// ปุ่มนำทาง 4 ปุ่มคงที่ (หน้าหลัก / เขาแดง / แหลมสน / บ่อยาง) — โค้ดชุดเดียว ใช้ร่วมกันทุกหน้า
+// ปุ่มนำทาง 3 ปุ่มคงที่ (เขาแดง=หน้าหลัก / แหลมสน / บ่อยาง) — โค้ดชุดเดียว ใช้ร่วมกันทุกหน้า
 // วางไว้ที่ท้ายหน้า (ในส่วน footer) ของทุกหน้าเหมือนกันหมด
-// ปุ่มทั้ง 4 จะแสดงเหมือนกันทุกหน้าเสมอ ปุ่มของหน้าที่กำลังเปิดอยู่จะถูกไฮไลต์และกดไม่ได้ (ไม่ใช่ลิงก์)
+// หมายเหตุ: เขาแดงคือหน้าหลักของเว็บนี้ (ไม่มีหน้า Home แยกต่างหาก) ปุ่มเขาแดงจึงมีความหมายเป็น "กลับหน้าหลัก" ในตัว
+// ปุ่มทั้ง 3 จะแสดงเหมือนกันทุกหน้าเสมอ ปุ่มของหน้าที่กำลังเปิดอยู่จะถูกไฮไลต์และกดไม่ได้ (ไม่ใช่ลิงก์)
 //
 // วิธีใช้ในแต่ละหน้า:
-//   1) ใส่ <script src="../shared/nav-links.js"></script> ในหน้า (หน้าที่ root ใช้ "./shared/nav-links.js")
+//   1) ใส่ <script src="../shared/nav-links.js"></script> ในหน้า
 //   2) ใส่ <div id="era-nav-footer" class="flex flex-wrap items-center justify-center gap-2 mb-4"></div> ไว้ในส่วน <footer> ของหน้า (ท้ายสุดของหน้า)
-//   3) เรียก initEraNav('home' | 'kaodaeng' | 'laemson' | 'boyang') หลัง lucide.createIcons() ตอนโหลดหน้า
+//   3) เรียก initEraNav('kaodaeng' | 'laemson' | 'boyang') หลัง lucide.createIcons() ตอนโหลดหน้า
 //
 // ถ้าต้องแก้ลิงก์ ข้อความ สี หรือไอคอนของปุ่มเหล่านี้ แก้ที่ไฟล์นี้ไฟล์เดียว จะมีผลกับทุกหน้าทันที
 
@@ -15,19 +16,11 @@
 
   var PAGES = [
     {
-      id: 'home',
-      label: 'หน้าหลัก',
-      mobileLabel: 'กลับหน้าหลัก',
-      url: BASE + '/',
-      icon: 'home',
-      pill: 'bg-slate-200 text-slate-700 hover:bg-slate-300'
-    },
-    {
       id: 'kaodaeng',
-      label: 'เขาแดง',
-      mobileLabel: 'ไปหน้าเขาแดง',
+      label: 'เขาแดง (หน้าหลัก)',
+      mobileLabel: 'กลับหน้าหลัก (เขาแดง)',
       url: BASE + '/kaodaeng-lesson/',
-      icon: 'mountain',
+      icon: 'home',
       pill: 'bg-red-100 text-red-700 hover:bg-red-200'
     },
     {
