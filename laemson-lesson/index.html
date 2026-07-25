@@ -2,7 +2,7 @@
 <html lang="th" class="h-full">
  <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>บทเรียนออนไลน์ประวัติศาสตร์เมืองสงขลาฝั่งแหลมสน</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
@@ -28,9 +28,6 @@
 
     /* Modern Quiz Button */
     .quiz-btn.selected { border-color: #f59e0b !important; background-color: #fffbeb !important; color: #b45309 !important; font-weight: 700; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15); transform: translateY(-2px); }
-
-    /* Glassmorphism Classes */
-    .glass-panel { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.5); }
   </style>
  </head>
  <body class="h-full flex flex-col bg-[#fffbeb] overflow-x-hidden selection:bg-yellow-200 selection:text-yellow-900">
@@ -40,15 +37,15 @@
       <div class="absolute top-0 left-0 w-64 h-64 bg-white/20 rounded-full blur-3xl"></div>
       <div class="absolute bottom-0 right-0 w-80 h-80 bg-orange-600/20 rounded-full blur-3xl"></div>
 
-      <div class="glass-panel rounded-[3rem] shadow-2xl p-10 w-full max-w-md text-center animate-spring relative z-10">
-          <div class="w-28 h-28 bg-gradient-to-tr from-yellow-100 to-orange-100 rounded-[2rem] mx-auto flex items-center justify-center mb-8 shadow-inner border border-white/60">
+      <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md text-center animate-spring relative z-10">
+          <div class="w-28 h-28 bg-gradient-to-tr from-yellow-100 to-orange-100 rounded-full mx-auto flex items-center justify-center mb-8 shadow-inner border border-white/60">
               <i data-lucide="graduation-cap" class="w-14 h-14 text-orange-500 drop-shadow-sm"></i>
           </div>
-          <h2 class="text-3xl font-black text-gray-800 mb-2 tracking-tight">บทเรียนเมืองสงขลา</h2>
+          <h2 class="text-3xl font-bold text-gray-800 mb-2 tracking-tight">บทเรียนเมืองสงขลา</h2>
           <p class="text-orange-600 mb-8 font-bold text-sm bg-orange-100/50 inline-block px-4 py-1.5 rounded-full border border-orange-200/50">( ตอน ฝั่งแหลมสน )</p>
 
           <div class="relative mb-5">
-              <select id="studentClassInput" class="w-full px-6 py-4 rounded-2xl border-2 border-transparent bg-white/80 focus:bg-white focus:border-orange-400 outline-none transition text-center font-bold text-gray-700 shadow-sm appearance-none cursor-pointer">
+              <select id="studentClassInput" class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-orange-400 outline-none transition text-center font-bold text-gray-700 bg-white shadow-sm appearance-none cursor-pointer">
                   <option value="">-- เลือกระดับชั้น --</option>
                   <option value="ม.3/1">ม.3/1</option>
                   <option value="ม.3/5">ม.3/5</option>
@@ -64,15 +61,15 @@
               <i data-lucide="chevron-down" class="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none"></i>
           </div>
 
-          <div class="flex justify-center gap-2 mb-10" id="otpContainer">
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-14 h-16 text-center text-3xl font-black rounded-2xl border-2 border-transparent bg-white/80 focus:bg-white focus:border-orange-400 outline-none transition shadow-sm text-orange-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-14 h-16 text-center text-3xl font-black rounded-2xl border-2 border-transparent bg-white/80 focus:bg-white focus:border-orange-400 outline-none transition shadow-sm text-orange-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-14 h-16 text-center text-3xl font-black rounded-2xl border-2 border-transparent bg-white/80 focus:bg-white focus:border-orange-400 outline-none transition shadow-sm text-orange-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-14 h-16 text-center text-3xl font-black rounded-2xl border-2 border-transparent bg-white/80 focus:bg-white focus:border-orange-400 outline-none transition shadow-sm text-orange-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-14 h-16 text-center text-3xl font-black rounded-2xl border-2 border-transparent bg-white/80 focus:bg-white focus:border-orange-400 outline-none transition shadow-sm text-orange-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+          <div class="flex justify-center gap-1 sm:gap-2 mb-10 flex-wrap" id="otpContainer">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-9 h-11 sm:w-14 sm:h-16 text-center text-xl sm:text-3xl font-bold rounded-lg border-2 border-gray-200 bg-white focus:border-orange-400 outline-none transition shadow-sm text-orange-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-9 h-11 sm:w-14 sm:h-16 text-center text-xl sm:text-3xl font-bold rounded-lg border-2 border-gray-200 bg-white focus:border-orange-400 outline-none transition shadow-sm text-orange-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-9 h-11 sm:w-14 sm:h-16 text-center text-xl sm:text-3xl font-bold rounded-lg border-2 border-gray-200 bg-white focus:border-orange-400 outline-none transition shadow-sm text-orange-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-9 h-11 sm:w-14 sm:h-16 text-center text-xl sm:text-3xl font-bold rounded-lg border-2 border-gray-200 bg-white focus:border-orange-400 outline-none transition shadow-sm text-orange-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-9 h-11 sm:w-14 sm:h-16 text-center text-xl sm:text-3xl font-bold rounded-lg border-2 border-gray-200 bg-white focus:border-orange-400 outline-none transition shadow-sm text-orange-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
           </div>
 
-          <button id="loginBtn" onclick="loginUser()" class="w-full bg-gradient-to-r from-orange-400 to-orange-500 text-white py-4 rounded-2xl font-black text-xl hover:from-orange-500 hover:to-orange-600 transition-all shadow-[0_8px_20px_rgba(249,115,22,0.3)] hover:shadow-[0_12px_25px_rgba(249,115,22,0.4)] hover:-translate-y-1 flex justify-center items-center gap-3">
+          <button id="loginBtn" onclick="loginUser()" class="w-full bg-orange-500 text-white py-3 rounded-lg font-bold hover:bg-orange-600 transition shadow-md flex justify-center items-center gap-2 mt-2">
               <span id="loginBtnText">เข้าสู่บทเรียน</span> <i data-lucide="arrow-right" class="w-5 h-5"></i>
           </button>
           <p id="loginError" class="text-red-500 text-sm mt-5 hidden font-bold bg-red-50/80 py-3 rounded-xl border border-red-100"></p>
@@ -81,11 +78,11 @@
 
   <div id="app" class="w-full h-full flex flex-col overflow-auto hidden bg-[#fafaf9]">
    <!-- Header 2026 Style -->
-   <header class="glass-panel sticky top-0 z-50 shrink-0 border-b border-white/40 shadow-[0_4px_30px_rgba(0,0,0,0.03)]">
+   <header class="bg-white shadow-sm sticky top-0 z-50 shrink-0">
     <div class="max-w-7xl mx-auto px-5 py-3 flex items-center justify-between">
      <div class="flex items-center gap-4 cursor-pointer group" onclick="showSection('home')">
-      <div class="w-11 h-11 bg-gradient-to-tr from-yellow-400 to-orange-400 rounded-[1.2rem] flex items-center justify-center shadow-md group-hover:scale-110 transition-transform"><i data-lucide="map" class="w-5 h-5 text-white"></i></div>
-      <span class="font-black text-gray-800 text-base hidden sm:block tracking-wide">แหลมสน <span class="text-orange-500">บทเรียนออนไลน์</span></span>
+      <div class="w-9 h-9 bg-orange-500 rounded-lg flex items-center justify-center"><i data-lucide="map" class="w-5 h-5 text-white"></i></div>
+      <span class="font-bold text-gray-800 text-base hidden sm:block tracking-wide">แหลมสน <span class="text-orange-500">บทเรียนออนไลน์</span></span>
      </div>
      <nav class="hidden xl:flex shrink-0 gap-8 text-sm text-gray-500 font-bold tracking-wide">
          <a href="#" onclick="showSection('home')" class="whitespace-nowrap hover:text-orange-500 transition menu-link active-nav py-2" data-target="home">หน้าแรก</a>
@@ -95,18 +92,18 @@
      </nav>
      <div class="flex items-center gap-4">
 
-         <div class="hidden sm:flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border border-gray-100 shadow-sm">
-             <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center text-orange-500 font-black text-xs" id="displayClass"></div>
-             <div id="displayName" class="font-black text-gray-700 text-sm"></div>
+         <div class="hidden sm:flex items-center gap-3 bg-white px-4 py-2 rounded-lg border border-gray-100 shadow-sm">
+             <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center text-orange-500 font-bold text-xs" id="displayClass"></div>
+             <div id="displayName" class="font-bold text-gray-700 text-sm"></div>
          </div>
-         <button onclick="logoutUser()" title="เปลี่ยนผู้ใช้" class="hidden sm:flex bg-red-50 p-3 rounded-2xl hover:bg-red-100 transition text-red-500 hover:shadow-md">
+         <button onclick="logoutUser()" title="เปลี่ยนผู้ใช้" class="hidden sm:flex bg-red-100 p-2 rounded-lg hover:bg-red-200 transition text-red-600 ml-1">
              <i data-lucide="log-out" class="w-5 h-5"></i>
          </button>
-         <button id="menuBtn" class="xl:hidden p-2.5 text-gray-600 bg-gray-100 rounded-xl"><i data-lucide="menu" class="w-6 h-6"></i></button>
+         <button id="menuBtn" class="xl:hidden p-2 text-gray-600 bg-gray-100 rounded-lg"><i data-lucide="menu" class="w-5 h-5"></i></button>
      </div>
     </div>
 
-    <div id="mobileMenu" class="hidden xl:hidden border-t border-gray-100 bg-white/95 backdrop-blur-xl px-5 pb-5 pt-3 space-y-2 text-sm text-gray-600 font-bold absolute w-full shadow-2xl z-40 rounded-b-3xl">
+    <div id="mobileMenu" class="hidden xl:hidden border-t bg-white px-4 pb-4 pt-2 space-y-2 text-sm text-gray-600 font-medium absolute w-full shadow-lg z-40">
          <a href="#" onclick="showSection('home')" class="block py-3.5 hover:text-orange-500 border-b border-gray-50 flex items-center gap-3"><i data-lucide="home" class="w-5 h-5"></i> หน้าแรก</a>
          <a href="#" onclick="showSection('knowledge')" class="block py-3.5 hover:text-orange-500 border-b border-gray-50 flex items-center gap-3"><i data-lucide="book-open-check" class="w-5 h-5"></i> ใบความรู้</a>
          <a href="#" onclick="showSection('activity')" class="block py-3.5 text-orange-500 hover:text-orange-600 border-b border-gray-50 flex items-center gap-3 bg-orange-50/50 rounded-xl px-3"><i data-lucide="crosshair" class="w-5 h-5"></i> เล่นเกมปืนใหญ่เล็งตอบ</a>
@@ -124,13 +121,13 @@
 
             <div class="relative z-10 max-w-4xl mx-auto px-5">
              <div class="flex justify-center mb-8">
-                 <div class="w-24 h-24 glass-panel rounded-[2rem] flex items-center justify-center shadow-xl transform rotate-3 hover:rotate-6 transition duration-300">
+                 <div class="w-24 h-24 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl flex items-center justify-center shadow-lg">
                      <i data-lucide="anchor" class="w-12 h-12 text-white drop-shadow-md"></i>
                  </div>
              </div>
              <h1 id="welcomeText" class="text-5xl md:text-7xl font-black mb-6 leading-tight drop-shadow-lg tracking-tight">ประวัติศาสตร์เมืองสงขลา<br><span class="text-yellow-100 inline-block mt-2 bg-white/10 px-6 py-2 rounded-3xl backdrop-blur-sm border border-white/20">ฝั่งแหลมสน</span></h1>
              <p class="text-orange-50 text-xl md:text-2xl mb-12 font-medium tracking-wide">บทเรียนออนไลน์ รายวิชา มหาวชิราวุธ 1</p>
-             <button onclick="showSection('knowledge')" class="bg-white text-orange-500 px-12 py-5 rounded-full font-black text-xl shadow-[0_15px_30px_rgba(0,0,0,0.15)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.2)] hover:-translate-y-2 transition-all transform flex items-center gap-3 mx-auto">
+             <button onclick="showSection('knowledge')" class="bg-white text-orange-500 px-8 py-3 rounded-full font-bold shadow-lg hover:bg-gray-100 transition transform hover:-translate-y-1 flex items-center gap-3 mx-auto">
                  เริ่มเรียนกันเลย <i data-lucide="arrow-right" class="w-6 h-6"></i>
              </button>
             </div>
@@ -138,20 +135,20 @@
 
            <section class="max-w-6xl mx-auto px-5 py-16">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div onclick="showSection('knowledge')" class="bg-white p-10 rounded-[3rem] shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgba(245,158,11,0.1)] transition-all duration-300 cursor-pointer text-center group border border-gray-50 hover:-translate-y-3">
-                    <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-tr from-yellow-100 to-orange-100 rounded-[2rem] flex items-center justify-center group-hover:from-yellow-400 group-hover:to-orange-400 transition-colors duration-300 shadow-inner"><i data-lucide="book-open-check" class="w-12 h-12 text-orange-500 group-hover:text-white transition"></i></div>
-                    <h3 class="font-black text-gray-800 text-2xl mb-3">ใบความรู้</h3>
+                <div onclick="showSection('knowledge')" class="bg-white p-6 md:p-8 rounded-2xl shadow-sm hover:shadow-md transition cursor-pointer text-center group border border-gray-100">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-yellow-100 rounded-full flex items-center justify-center group-hover:bg-orange-400 transition duration-300"><i data-lucide="book-open-check" class="w-12 h-12 text-orange-500 group-hover:text-white transition"></i></div>
+                    <h3 class="font-bold text-gray-800 text-2xl mb-3">ใบความรู้</h3>
                     <p class="text-base text-gray-500 font-medium leading-relaxed">ศึกษาการตั้งเมืองและการพัฒนาในยุคแหลมสน</p>
                 </div>
-                <div onclick="showSection('activity')" class="bg-white p-10 rounded-[3rem] shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgba(245,158,11,0.1)] transition-all duration-300 cursor-pointer text-center group border border-gray-50 hover:-translate-y-3 relative overflow-hidden">
+                <div onclick="showSection('activity')" class="bg-white p-6 md:p-8 rounded-2xl shadow-sm hover:shadow-md transition cursor-pointer text-center group border border-gray-100 relative overflow-hidden">
                     <div class="absolute -right-10 -top-10 w-40 h-40 bg-orange-50 rounded-full blur-2xl group-hover:bg-orange-100 transition"></div>
-                    <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-tr from-orange-100 to-amber-200 rounded-[2rem] flex items-center justify-center group-hover:from-orange-400 group-hover:to-amber-500 transition-colors duration-300 shadow-inner relative z-10"><i data-lucide="crosshair" class="w-12 h-12 text-orange-600 group-hover:text-white transition"></i></div>
-                    <h3 class="font-black text-gray-800 text-2xl mb-3 relative z-10">เกมปืนใหญ่เล็งตอบ</h3>
+                    <div class="w-16 h-16 mx-auto mb-4 bg-orange-100 rounded-full flex items-center justify-center group-hover:bg-orange-500 transition duration-300 relative z-10"><i data-lucide="crosshair" class="w-12 h-12 text-orange-600 group-hover:text-white transition"></i></div>
+                    <h3 class="font-bold text-gray-800 text-2xl mb-3 relative z-10">เกมปืนใหญ่เล็งตอบ</h3>
                     <p class="text-base text-gray-500 font-medium leading-relaxed relative z-10">เล็งยิงตอบคำถามประวัติศาสตร์ สนุกเต็มจอ!</p>
                 </div>
-                <div onclick="showSection('quiz')" class="bg-white p-10 rounded-[3rem] shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgba(16,185,129,0.1)] transition-all duration-300 cursor-pointer text-center group border border-gray-50 hover:-translate-y-3">
-                    <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-tr from-emerald-100 to-teal-100 rounded-[2rem] flex items-center justify-center group-hover:from-emerald-400 group-hover:to-teal-400 transition-colors duration-300 shadow-inner"><i data-lucide="file-check-2" class="w-12 h-12 text-emerald-600 group-hover:text-white transition"></i></div>
-                    <h3 class="font-black text-gray-800 text-2xl mb-3">แบบทดสอบ</h3>
+                <div onclick="showSection('quiz')" class="bg-white p-6 md:p-8 rounded-2xl shadow-sm hover:shadow-md transition cursor-pointer text-center group border border-gray-100">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-emerald-100 rounded-full flex items-center justify-center group-hover:bg-emerald-500 transition duration-300"><i data-lucide="file-check-2" class="w-12 h-12 text-emerald-600 group-hover:text-white transition"></i></div>
+                    <h3 class="font-bold text-gray-800 text-2xl mb-3">แบบทดสอบ</h3>
                     <p class="text-base text-gray-500 font-medium leading-relaxed">วัดผลสัมฤทธิ์ทางการเรียน 10 ข้อ 10 คะแนน</p>
                 </div>
             </div>
@@ -161,44 +158,44 @@
        <!-- Section Knowledge -->
        <div id="section-knowledge" class="page-section hidden max-w-6xl mx-auto px-5 py-16">
            <div class="text-center mb-16">
-               <h2 class="text-4xl md:text-5xl font-black text-gray-800 mb-4 tracking-tight">ใบความรู้ประวัติศาสตร์</h2>
+               <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4 tracking-tight">ใบความรู้ประวัติศาสตร์</h2>
                <p class="text-gray-500 font-bold text-xl">เลือกหัวข้อเพื่อศึกษาความเป็นมาของยุคแหลมสน</p>
            </div>
            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-               <div class="bg-white rounded-[3rem] shadow-[0_10px_30px_rgba(0,0,0,0.03)] p-10 text-center flex flex-col group border-2 border-transparent hover:border-yellow-400 transition-all hover:-translate-y-3 relative overflow-hidden">
-                   <div class="w-16 h-16 bg-yellow-100 rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 text-yellow-600 font-black text-2xl shadow-sm">1</div>
-                   <h3 class="font-black text-gray-800 mb-4 text-xl">การกำเนิดเมืองและการเริ่มต้นสายสกุล</h3>
+               <div class="bg-white rounded-2xl shadow-sm hover:shadow-md p-6 md:p-8 text-center flex flex-col group border-2 border-transparent hover:border-yellow-400 transition relative overflow-hidden">
+                   <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6 text-yellow-600 font-bold text-2xl shadow-sm">1</div>
+                   <h3 class="font-bold text-gray-800 mb-4 text-xl">การกำเนิดเมืองและการเริ่มต้นสายสกุล</h3>
                    <p class="text-base text-gray-500 mb-10 flex-grow leading-relaxed font-medium">ณ บ้านแหลมสน และตำนานหลวงสุวรรณคีรีสมบัติ</p>
-                   <button class="w-full bg-yellow-50 text-yellow-700 text-base px-6 py-4 rounded-full hover:bg-yellow-400 hover:text-white transition-all font-black shadow-sm" onclick="viewLesson(1)">อ่านบทเรียน</button>
+                   <button class="w-full bg-yellow-50 text-yellow-700 text-sm px-4 py-3 rounded-lg hover:bg-yellow-400 hover:text-white transition font-bold" onclick="viewLesson(1)">อ่านบทเรียน</button>
                </div>
-               <div class="bg-white rounded-[3rem] shadow-[0_10px_30px_rgba(0,0,0,0.03)] p-10 text-center flex flex-col group border-2 border-transparent hover:border-orange-400 transition-all hover:-translate-y-3">
-                   <div class="w-16 h-16 bg-orange-100 rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 text-orange-600 font-black text-2xl shadow-sm">2</div>
-                   <h3 class="font-black text-gray-800 mb-4 text-xl">ความเจริญเศรษฐกิจและการย้ายเมือง</h3>
+               <div class="bg-white rounded-2xl shadow-sm hover:shadow-md p-6 md:p-8 text-center flex flex-col group border-2 border-transparent hover:border-orange-400 transition">
+                   <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6 text-orange-600 font-bold text-2xl shadow-sm">2</div>
+                   <h3 class="font-bold text-gray-800 mb-4 text-xl">ความเจริญเศรษฐกิจและการย้ายเมือง</h3>
                    <p class="text-base text-gray-500 mb-10 flex-grow leading-relaxed font-medium">การผูกขาดการค้า และการขยับขยายสู่บ่อยาง</p>
-                   <button class="w-full bg-orange-50 text-orange-700 text-base px-6 py-4 rounded-full hover:bg-orange-400 hover:text-white transition-all font-black shadow-sm" onclick="viewLesson(2)">อ่านบทเรียน</button>
+                   <button class="w-full bg-orange-50 text-orange-700 text-sm px-4 py-3 rounded-lg hover:bg-orange-400 hover:text-white transition font-bold" onclick="viewLesson(2)">อ่านบทเรียน</button>
                </div>
-               <div class="bg-white rounded-[3rem] shadow-[0_10px_30px_rgba(0,0,0,0.03)] p-10 text-center flex flex-col group border-2 border-transparent hover:border-amber-600 transition-all hover:-translate-y-3">
-                   <div class="w-16 h-16 bg-amber-100 rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 text-amber-700 font-black text-2xl shadow-sm">3</div>
-                   <h3 class="font-black text-gray-800 mb-4 text-xl">หลักฐานทางโบราณคดีที่สำคัญ</h3>
+               <div class="bg-white rounded-2xl shadow-sm hover:shadow-md p-6 md:p-8 text-center flex flex-col group border-2 border-transparent hover:border-amber-600 transition">
+                   <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6 text-amber-700 font-bold text-2xl shadow-sm">3</div>
+                   <h3 class="font-bold text-gray-800 mb-4 text-xl">หลักฐานทางโบราณคดีที่สำคัญ</h3>
                    <p class="text-base text-gray-500 mb-10 flex-grow leading-relaxed font-medium">ซุ้มประตูบ่อเก๋ง วัดออก วัดบ่อทรัพย์ และสุสาน</p>
-                   <button class="w-full bg-amber-50 text-amber-800 text-base px-6 py-4 rounded-full hover:bg-amber-500 hover:text-white transition-all font-black shadow-sm" onclick="viewLesson(3)">อ่านบทเรียน</button>
+                   <button class="w-full bg-amber-50 text-amber-800 text-sm px-4 py-3 rounded-lg hover:bg-amber-500 hover:text-white transition font-bold" onclick="viewLesson(3)">อ่านบทเรียน</button>
                </div>
            </div>
        </div>
 
        <!-- Section Activity (LINK TO GITHUB GAME) -->
        <div id="section-activity" class="page-section hidden max-w-5xl mx-auto px-5 py-20 text-center flex-grow flex items-center justify-center">
-           <div class="bg-slate-900 rounded-[3rem] p-10 md:p-20 shadow-2xl relative overflow-hidden border border-slate-700 w-full">
+           <div class="bg-slate-900 rounded-2xl p-10 md:p-20 shadow-2xl relative overflow-hidden border border-slate-700 w-full">
 
                <div class="absolute top-0 right-0 w-80 h-80 bg-orange-500/20 rounded-full blur-3xl"></div>
                <div class="absolute bottom-0 left-0 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl"></div>
 
                <div class="relative z-10">
-                   <div class="w-32 h-32 bg-gradient-to-tr from-yellow-400 to-orange-500 rounded-[2.5rem] mx-auto flex items-center justify-center mb-8 shadow-lg transform rotate-3 hover:rotate-6 transition duration-300">
+                   <div class="w-32 h-32 bg-gradient-to-tr from-yellow-400 to-orange-500 rounded-full mx-auto flex items-center justify-center mb-8 shadow-lg">
                        <i data-lucide="crosshair" class="w-16 h-16 text-white drop-shadow-md"></i>
                    </div>
 
-                   <h2 class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight drop-shadow-lg">
+                   <h2 class="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight drop-shadow-lg">
                        พร้อมเล็งปืนใหญ่ลุยเมืองสงขลา<br class="hidden md:block">แล้วหรือยัง?
                    </h2>
 
@@ -207,7 +204,7 @@
                        ระบบได้แยกตัวเกมไปเปิดในหน้าจอใหม่ (Full Screen) เพื่อประสบการณ์การเล่นที่ลื่นไหลและเต็มตา
                    </p>
 
-                   <button onclick="openGame()" class="inline-flex bg-gradient-to-r from-orange-400 to-orange-500 text-white px-10 py-5 rounded-full font-black text-2xl hover:scale-105 hover:from-orange-500 hover:to-orange-600 transition-all shadow-[0_15px_30px_rgba(249,115,22,0.4)] items-center gap-3 animate-spring border-2 border-white/20">
+                   <button onclick="openGame()" class="inline-flex bg-orange-500 text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-orange-600 transition shadow-md items-center gap-2">
                        <i data-lucide="external-link" class="w-6 h-6"></i> ไปเล่นเกมกันเลย!
                    </button>
 
@@ -220,15 +217,15 @@
 
        <!-- Section Quiz -->
        <div id="section-quiz" class="page-section hidden max-w-4xl mx-auto px-5 py-16">
-           <div class="bg-white rounded-[3.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] overflow-hidden text-center border border-gray-50">
+           <div class="bg-white rounded-2xl shadow-lg overflow-hidden text-center border border-gray-100">
                <div id="quizIntro">
                    <div class="bg-gradient-to-br from-emerald-400 to-teal-500 py-24 px-5 text-white relative">
                        <i data-lucide="clipboard-check" class="w-40 h-40 absolute top-10 right-10 opacity-10 transform rotate-12"></i>
-                       <h2 class="text-5xl font-black mb-4 drop-shadow-md tracking-tight">แบบทดสอบเมืองแหลมสน</h2>
+                       <h2 class="text-5xl font-bold mb-4 drop-shadow-md tracking-tight">แบบทดสอบเมืองแหลมสน</h2>
                        <p class="text-emerald-50 font-bold text-xl">แบบปรนัย 4 ตัวเลือก จำนวน 10 ข้อ 10 คะแนน</p>
                    </div>
                    <div class="p-16 bg-white">
-                       <button onclick="startQuiz()" class="bg-emerald-500 text-white px-14 py-5 rounded-full font-black text-2xl hover:bg-emerald-600 hover:scale-105 transition-all shadow-[0_10px_25px_rgba(16,185,129,0.3)] w-full sm:w-auto flex items-center justify-center gap-3 mx-auto">
+                       <button onclick="startQuiz()" class="bg-emerald-500 text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-emerald-600 transition shadow-md w-full sm:w-auto flex items-center justify-center gap-2 mx-auto">
                            <i data-lucide="play-circle" class="w-8 h-8"></i> เข้าสู่แบบทดสอบ
                        </button>
                    </div>
@@ -236,24 +233,24 @@
 
                <div id="quizContainer" class="p-10 md:p-16 hidden text-left bg-gray-50/30">
                    <div class="flex justify-between items-center mb-10 border-b-2 border-gray-100 pb-5">
-                       <div class="font-black text-emerald-600 bg-emerald-100 px-6 py-2.5 rounded-full text-base tracking-wide" id="quizProgress">ข้อที่ 1/10</div>
+                       <div class="font-bold text-emerald-600 bg-emerald-50 px-4 py-1 rounded-full text-sm" id="quizProgress">ข้อที่ 1/10</div>
                    </div>
-                   <h3 id="quizQuestionText" class="text-2xl md:text-3xl font-black text-gray-800 mb-10 leading-relaxed"></h3>
+                   <h3 id="quizQuestionText" class="text-2xl md:text-3xl font-bold text-gray-800 mb-10 leading-relaxed"></h3>
                    <div id="quizOptions" class="space-y-4"></div>
                    <div class="mt-12 pt-8 border-t-2 border-gray-100 text-right">
-                       <button id="nextQuizBtn" disabled onclick="nextQuizQuestion()" class="bg-gray-200 text-gray-400 px-12 py-4 rounded-full font-black transition-all cursor-not-allowed text-xl flex items-center justify-end ml-auto gap-2">ถัดไป <i data-lucide="arrow-right" class="w-6 h-6"></i></button>
+                       <button id="nextQuizBtn" disabled onclick="nextQuizQuestion()" class="bg-gray-300 text-gray-500 px-8 py-3 rounded-lg font-bold transition cursor-not-allowed flex items-center justify-end gap-2">ถัดไป <i data-lucide="arrow-right" class="w-6 h-6"></i></button>
                    </div>
                </div>
 
                <div id="quizResult" class="hidden pb-12">
                    <div class="bg-gradient-to-br from-emerald-500 to-teal-600 py-24 text-white relative overflow-hidden">
                        <div class="relative z-10">
-                           <h2 class="text-3xl font-black mb-6 text-emerald-50 tracking-wide">ผลการทดสอบของคุณ</h2>
+                           <h2 class="text-3xl font-bold mb-6 text-emerald-50 tracking-wide">ผลการทดสอบของคุณ</h2>
                            <p class="text-8xl font-nunito font-black drop-shadow-xl"><span id="finalQuizScore"></span><span class="text-5xl text-emerald-200/80">/10</span></p>
                        </div>
                    </div>
-                   <div class="p-12 max-w-2xl mx-auto bg-white rounded-b-[3.5rem]">
-                       <h3 class="text-2xl font-black text-gray-800 border-b-2 border-gray-100 pb-4 mb-8 text-left flex items-center gap-3"><i data-lucide="medal" class="w-8 h-8 text-yellow-500"></i> Leaderboard (ห้อง <span class="board-class-name"></span>)</h3>
+                   <div class="p-12 max-w-2xl mx-auto bg-white rounded-b-2xl">
+                       <h3 class="text-2xl font-bold text-gray-800 border-b-2 border-gray-100 pb-4 mb-8 text-left flex items-center gap-3"><i data-lucide="medal" class="w-8 h-8 text-yellow-500"></i> Leaderboard (ห้อง <span class="board-class-name"></span>)</h3>
                        <ul id="quizLeaderboardList" class="text-left space-y-4"></ul>
                    </div>
                </div>
@@ -263,20 +260,20 @@
 
    <!-- Modal บทเรียน -->
    <div id="lessonModal" class="hidden fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-5 backdrop-blur-xl transition-opacity">
-    <div class="bg-white rounded-[3rem] max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl animate-spring border border-white">
+    <div class="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
      <div class="bg-[#f59e0b] text-white p-8 md:p-10 flex items-center justify-between shrink-0 transition-colors" id="modalHeader">
       <div>
-       <span id="lessonBadge" class="bg-white/25 backdrop-blur-md px-5 py-2 rounded-full text-sm font-black tracking-widest mb-4 inline-block shadow-sm uppercase">บทที่ 1</span>
-       <h2 id="lessonSubtitle" class="text-3xl md:text-4xl font-black leading-tight mt-1 drop-shadow-md tracking-tight">การตั้งเมืองและการเริ่มต้นสายสกุล</h2>
+       <span id="lessonBadge" class="bg-white/20 px-3 py-1 rounded-full text-xs font-bold tracking-wide mb-2 inline-block">บทที่ 1</span>
+       <h2 id="lessonSubtitle" class="text-3xl md:text-4xl font-bold leading-tight mt-1 drop-shadow-md tracking-tight">การตั้งเมืองและการเริ่มต้นสายสกุล</h2>
       </div>
-      <button onclick="closeLesson()" class="w-12 h-12 bg-black/10 hover:bg-black/20 rounded-full flex items-center justify-center transition-all hover:scale-110"> <i data-lucide="x" class="w-6 h-6"></i> </button>
+      <button onclick="closeLesson()" class="p-2 hover:bg-black/20 rounded-full transition bg-black/10"> <i data-lucide="x" class="w-6 h-6"></i> </button>
      </div>
      <div id="lessonContent" class="p-8 md:p-12 overflow-y-auto grow custom-scrollbar text-gray-700 leading-relaxed text-lg md:text-xl font-medium"></div>
      <div class="border-t border-gray-100 p-6 sm:p-8 flex gap-5 bg-gray-50 shrink-0 justify-between items-center">
-         <button id="prevBtn" onclick="previousLesson()" class="flex-1 max-w-[250px] bg-white border-2 border-gray-200 text-gray-600 py-4 px-6 rounded-full hover:bg-gray-100 transition-all font-black flex items-center justify-center gap-3 shadow-sm text-lg">
+         <button id="prevBtn" onclick="previousLesson()" class="flex-1 max-w-[250px] bg-white border-2 border-gray-200 text-gray-700 py-3 px-4 rounded-xl hover:bg-gray-100 hover:border-gray-300 transition font-bold flex items-center justify-center gap-2">
              <i data-lucide="chevron-left" class="w-6 h-6"></i> <span class="hidden sm:inline">บทก่อนหน้า</span>
          </button>
-         <button id="nextBtn" onclick="nextLesson()" class="flex-1 max-w-[250px] bg-[#f59e0b] text-white py-4 px-6 rounded-full hover:bg-[#d97706] shadow-[0_8px_20px_rgba(245,158,11,0.3)] hover:-translate-y-1 transition-all font-black flex items-center justify-center gap-3 text-lg">
+         <button id="nextBtn" onclick="nextLesson()" class="flex-1 max-w-[250px] bg-[#f59e0b] text-white py-3 px-4 rounded-xl hover:bg-[#d97706] shadow-md transition font-bold flex items-center justify-center gap-2">
              <span id="nextBtnText">บทถัดไป</span> <i id="nextBtnIcon" data-lucide="chevron-right" class="w-6 h-6"></i>
          </button>
      </div>
@@ -285,7 +282,7 @@
 
    <footer class="bg-slate-900 text-slate-400 text-center py-8 px-5 text-sm mt-auto shrink-0 border-t-8 border-[#f59e0b]">
     <div id="era-nav-footer" class="flex flex-wrap items-center justify-center gap-2 mb-4"></div>
-    <p class="font-black text-white mb-2 text-base">Copyright © 2026 ประวัติศาสตร์เมืองสงขลาฝั่งแหลมสน</p>
+    <p class="font-bold text-white mb-2 text-base">Copyright © 2026 ประวัติศาสตร์เมืองสงขลาฝั่งแหลมสน</p>
     <p class="text-xs font-bold">ครูผู้สอน/ผู้พัฒนา : นายจิตรภาณุ ศรีหวัง</p>
    </footer>
   </div>
@@ -424,14 +421,14 @@
   function renderRealLeaderboard(elementId, boardData) {
       if(!boardData || boardData.length === 0) { document.getElementById(elementId).innerHTML = "<li class='text-center text-gray-500 py-4 font-bold'>ยังไม่มีข้อมูลในห้องนี้</li>"; return; }
       let html = boardData.map((u, i) => {
-          let medal = i===0 ? '🏆' : i===1 ? '🥈' : i===2 ? '🥉' : `<span class="w-8 inline-block text-center text-gray-400 font-black">${i+1}</span>`;
+          let medal = i===0 ? '🏆' : i===1 ? '🥈' : i===2 ? '🥉' : `<span class="w-8 inline-block text-center text-gray-400 font-bold">${i+1}</span>`;
           let isMe = (u.name === studentName);
           let bg = isMe ? 'bg-orange-50 border-orange-300 shadow-md transform scale-[1.02]' : 'bg-white border-gray-100 hover:bg-gray-50 transition';
-          let textColor = isMe ? 'text-orange-700 font-black' : 'text-gray-700 font-bold';
+          let textColor = isMe ? 'text-orange-700 font-bold' : 'text-gray-700 font-bold';
 
           return `<li class="flex justify-between items-center p-4 border-2 rounded-2xl ${bg}">
               <div class="flex items-center gap-4"><span class="text-2xl drop-shadow-sm">${medal}</span> <span class="${textColor} text-lg">${u.name}</span></div>
-              <span class="bg-slate-800 text-white px-4 py-1.5 rounded-xl text-sm font-black font-nunito shadow-sm">${u.score}/10</span>
+              <span class="bg-slate-800 text-white px-4 py-1.5 rounded-xl text-sm font-bold font-nunito shadow-sm">${u.score}/10</span>
           </li>`;
       }).join('');
       document.getElementById(elementId).innerHTML = html;
@@ -452,13 +449,13 @@
   const lessons = {
     1: { title: 'บทที่ 1', subtitle: 'การตั้งเมืองและการเริ่มต้นสายสกุล', color: '#f59e0b',
         content: `
-            <div class="bg-yellow-50/80 p-8 rounded-[2rem] border border-yellow-200 mb-8">
-                <h3 class="text-2xl font-black text-yellow-700 mb-4 flex items-center gap-3"><i data-lucide="map-pin" class="w-6 h-6"></i> การตั้งเมืองสงขลาฝั่งแหลมสน</h3>
+            <div class="bg-yellow-50/80 p-8 rounded-2xl border border-yellow-200 mb-8">
+                <h3 class="text-2xl font-bold text-yellow-700 mb-4 flex items-center gap-3"><i data-lucide="map-pin" class="w-6 h-6"></i> การตั้งเมืองสงขลาฝั่งแหลมสน</h3>
                 <p class="text-left leading-relaxed text-gray-700">หลังจากเมืองสงขลาเชิงเขาแดงถูกกองทัพของสมเด็จพระนารายณ์โจมตีและทำลายเมืองไปอย่างราบคาบแล้วนั้น เมื่อ พ.ศ 2223 ชาวเมืองสงขลาส่วนหนึ่งได้โยกย้ายไปตั้งชุมชนแห่งใหม่ <strong>"ณ บ้านแหลมสน"</strong> ซึ่งตั้งอยู่ปลายสุดของคาบสมุทรสทิงพระ ตรงข้ามกับทางใต้ของเมืองสงขลาเชิงเขาแดง<br><br>จึงนิยมเรียกเมืองสงขลาใหม่นี้ว่า <strong class="text-yellow-800 bg-yellow-100 px-2 py-1 rounded">"เมืองสงขลาฝั่งแหลมสน"</strong></p>
             </div>
 
-            <h3 class="text-2xl font-black text-yellow-700 mb-5 px-2 flex items-center gap-3"><i data-lucide="users" class="w-6 h-6"></i> การเริ่มต้นสายสกุล ณ สงขลา</h3>
-            <div class="bg-white p-8 rounded-[2rem] border-2 border-yellow-100 shadow-sm">
+            <h3 class="text-2xl font-bold text-yellow-700 mb-5 px-2 flex items-center gap-3"><i data-lucide="users" class="w-6 h-6"></i> การเริ่มต้นสายสกุล ณ สงขลา</h3>
+            <div class="bg-white p-8 rounded-2xl border-2 border-yellow-100 shadow-sm">
                 <ul class="space-y-6 text-gray-700">
                     <li class="flex gap-5 items-start"><div class="bg-gradient-to-br from-yellow-100 to-orange-100 p-3 rounded-2xl text-yellow-600 mt-1 shadow-sm"><i data-lucide="history" class="w-6 h-6"></i></div><div><strong>พ.ศ. 2317 (สมัยกรุงธนบุรี):</strong> พระเจ้าตากสินทรงโปรดเกล้าให้ <strong>นายเหยี่ยง แซ่เฮา</strong> เลื่อนยศเป็น <strong class="text-orange-600">"หลวงสุวรรณคีรีสมบัติ"</strong> ปกครองเมืองสงขลาแหลมสนแทน</div></li>
                     <li class="flex gap-5 items-start"><div class="bg-gradient-to-br from-yellow-100 to-orange-100 p-3 rounded-2xl text-yellow-600 mt-1 shadow-sm"><i data-lucide="git-branch" class="w-6 h-6"></i></div><div>เหตุการณ์นี้นับว่าเป็นการเริ่มต้น <strong class="text-orange-600">สายสกุล ณ สงขลา</strong> ซึ่งต่อมาได้ปกครองเมืองสงขลา มาถึง 18 รุ่น</div></li>
@@ -467,34 +464,34 @@
     },
     2: { title: 'บทที่ 2', subtitle: 'ความเจริญทางเศรษฐกิจ และการย้ายเมือง', color: '#f97316',
         content: `
-            <div class="bg-orange-50/80 p-8 rounded-[2rem] border border-orange-200 mb-8">
-                <h3 class="text-2xl font-black text-orange-700 mb-4 flex items-center gap-3"><i data-lucide="trending-up" class="w-6 h-6"></i> การเติบโตและการผูกขาดเศรษฐกิจ</h3>
+            <div class="bg-orange-50/80 p-8 rounded-2xl border border-orange-200 mb-8">
+                <h3 class="text-2xl font-bold text-orange-700 mb-4 flex items-center gap-3"><i data-lucide="trending-up" class="w-6 h-6"></i> การเติบโตและการผูกขาดเศรษฐกิจ</h3>
                 <p class="leading-relaxed text-gray-700">สมัย <strong>พระยาวิเชียรคีรี (เกี้ยนเส้ง)</strong> ตระกูล ณ สงขลา ขยายฐานอำนาจทางเศรษฐกิจจากการส่งเสริมชาวจีนอพยพ และเริ่มมีผลประโยชน์จากภาษี โดยการผูกขาดโดยคนในตระกูล ตั้งแต่อากรรังนก สุรา บ่อนเบี้ย</p>
             </div>
-            <div class="bg-white p-8 rounded-[2rem] border-2 border-orange-100 shadow-sm">
-                <h3 class="text-2xl font-black text-orange-700 mb-4 flex items-center gap-3"><i data-lucide="arrow-right-left" class="w-6 h-6"></i> การย้ายเมืองสู่บ่อยาง</h3>
+            <div class="bg-white p-8 rounded-2xl border-2 border-orange-100 shadow-sm">
+                <h3 class="text-2xl font-bold text-orange-700 mb-4 flex items-center gap-3"><i data-lucide="arrow-right-left" class="w-6 h-6"></i> การย้ายเมืองสู่บ่อยาง</h3>
                 <p class="leading-relaxed text-gray-700">เมื่อเมืองเจริญขึ้น พื้นที่ที่แหลมสนคับแคบ <strong>พระบาทสมเด็จพระนั่งเกล้าเจ้าอยู่หัว (ร.3)</strong> จึงโปรดเกล้าฯ ให้ย้ายเมืองสงขลา ไปตั้งบนสันทรายฝั่งตรงข้าม เรียกว่า <strong class="text-orange-600 bg-orange-100 px-2 py-1 rounded">"บ่อยาง"</strong></p>
             </div>`
     },
     3: { title: 'บทที่ 3', subtitle: 'หลักฐานทางโบราณคดีที่สำคัญ', color: '#d97706',
         content: `
-            <h3 class="text-2xl font-black text-amber-800 mb-6 px-2 flex items-center gap-3"><i data-lucide="landmark" class="w-6 h-6"></i> แหล่งโบราณคดีฝั่งแหลมสน</h3>
+            <h3 class="text-2xl font-bold text-amber-800 mb-6 px-2 flex items-center gap-3"><i data-lucide="landmark" class="w-6 h-6"></i> แหล่งโบราณคดีฝั่งแหลมสน</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-2">
-                <div class="bg-amber-50/60 p-8 rounded-[2rem] border border-amber-100 hover:shadow-md transition-all">
-                    <div class="w-16 h-16 bg-white rounded-[1.5rem] flex items-center justify-center text-amber-600 mb-4 shadow-sm"><i data-lucide="torii-gate" class="w-8 h-8"></i></div>
-                    <h4 class="font-black text-amber-900 text-xl mb-3">ซุ้มประตูบ่อเก๋ง</h4><p class="text-gray-600 text-base leading-relaxed">สถาปัตยกรรมหมิ่นหนาน (จีน) และมีบ่อน้ำจืดที่ชาวบ้านใช้อุปโภคบริโภค</p>
+                <div class="bg-amber-50/60 p-8 rounded-2xl border border-amber-100 hover:shadow-md transition">
+                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-amber-600 mb-4 shadow-sm"><i data-lucide="torii-gate" class="w-8 h-8"></i></div>
+                    <h4 class="font-bold text-amber-900 text-xl mb-3">ซุ้มประตูบ่อเก๋ง</h4><p class="text-gray-600 text-base leading-relaxed">สถาปัตยกรรมหมิ่นหนาน (จีน) และมีบ่อน้ำจืดที่ชาวบ้านใช้อุปโภคบริโภค</p>
                 </div>
-                <div class="bg-amber-50/60 p-8 rounded-[2rem] border border-amber-100 hover:shadow-md transition-all">
-                    <div class="w-16 h-16 bg-white rounded-[1.5rem] flex items-center justify-center text-amber-600 mb-4 shadow-sm"><i data-lucide="droplet" class="w-8 h-8"></i></div>
-                    <h4 class="font-black text-amber-900 text-xl mb-3">วัดสุวรรณคีรี (วัดออก)</h4><p class="text-gray-600 text-base leading-relaxed">ใช้ทำพิธีถือน้ำสาบาน (น้ำพิพัฒน์สัตยาอธิษฐาน) ในปี พ.ศ. 2379</p>
+                <div class="bg-amber-50/60 p-8 rounded-2xl border border-amber-100 hover:shadow-md transition">
+                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-amber-600 mb-4 shadow-sm"><i data-lucide="droplet" class="w-8 h-8"></i></div>
+                    <h4 class="font-bold text-amber-900 text-xl mb-3">วัดสุวรรณคีรี (วัดออก)</h4><p class="text-gray-600 text-base leading-relaxed">ใช้ทำพิธีถือน้ำสาบาน (น้ำพิพัฒน์สัตยาอธิษฐาน) ในปี พ.ศ. 2379</p>
                 </div>
-                <div class="bg-amber-50/60 p-8 rounded-[2rem] border border-amber-100 hover:shadow-md transition-all">
-                    <div class="w-16 h-16 bg-white rounded-[1.5rem] flex items-center justify-center text-amber-600 mb-4 shadow-sm"><i data-lucide="database" class="w-8 h-8"></i></div>
-                    <h4 class="font-black text-amber-900 text-xl mb-3">วัดบ่อทรัพย์</h4><p class="text-gray-600 text-base leading-relaxed">มีกรุอิฐขนาดใหญ่หน้าวัด เรียกว่า "บ่อซับ"</p>
+                <div class="bg-amber-50/60 p-8 rounded-2xl border border-amber-100 hover:shadow-md transition">
+                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-amber-600 mb-4 shadow-sm"><i data-lucide="database" class="w-8 h-8"></i></div>
+                    <h4 class="font-bold text-amber-900 text-xl mb-3">วัดบ่อทรัพย์</h4><p class="text-gray-600 text-base leading-relaxed">มีกรุอิฐขนาดใหญ่หน้าวัด เรียกว่า "บ่อซับ"</p>
                 </div>
-                <div class="bg-amber-50/60 p-8 rounded-[2rem] border border-amber-100 hover:shadow-md transition-all">
-                    <div class="w-16 h-16 bg-white rounded-[1.5rem] flex items-center justify-center text-amber-600 mb-4 shadow-sm"><i data-lucide="monument" class="w-8 h-8"></i></div>
-                    <h4 class="font-black text-amber-900 text-xl mb-3">สุสานตระกูล ณ สงขลา</h4><p class="text-gray-600 text-base leading-relaxed">ตั้งอยู่ในบริเวณเดียวกับวัดภูผาเบิก</p>
+                <div class="bg-amber-50/60 p-8 rounded-2xl border border-amber-100 hover:shadow-md transition">
+                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-amber-600 mb-4 shadow-sm"><i data-lucide="monument" class="w-8 h-8"></i></div>
+                    <h4 class="font-bold text-amber-900 text-xl mb-3">สุสานตระกูล ณ สงขลา</h4><p class="text-gray-600 text-base leading-relaxed">ตั้งอยู่ในบริเวณเดียวกับวัดภูผาเบิก</p>
                 </div>
             </div>`
     }
@@ -512,8 +509,8 @@
   function updateNavButtons() {
     const prevBtn = document.getElementById('prevBtn'); const nextBtn = document.getElementById('nextBtn');
     prevBtn.disabled = currentLessonId === 1; prevBtn.style.opacity = currentLessonId === 1 ? '0.4' : '1';
-    if (currentLessonId === 3) { nextBtn.innerHTML = `<span>ศึกษาจบแล้ว</span> <i data-lucide="check-circle" class="w-6 h-6"></i>`; nextBtn.className = "flex-1 max-w-[250px] bg-green-500 text-white py-4 px-6 rounded-full hover:bg-green-600 shadow-md transition-all font-black flex items-center justify-center gap-3 text-lg"; }
-    else { nextBtn.innerHTML = `<span>บทถัดไป</span> <i data-lucide="chevron-right" class="w-6 h-6"></i>`; nextBtn.className = "flex-1 max-w-[250px] bg-[#f59e0b] text-white py-4 px-6 rounded-full hover:bg-[#d97706] shadow-[0_8px_20px_rgba(245,158,11,0.3)] hover:-translate-y-1 transition-all font-black flex items-center justify-center gap-3 text-lg"; }
+    if (currentLessonId === 3) { nextBtn.innerHTML = `<span>ศึกษาจบแล้ว</span> <i data-lucide="check-circle" class="w-6 h-6"></i>`; nextBtn.className = "flex-1 max-w-[250px] bg-green-500 text-white py-3 px-4 rounded-xl hover:bg-green-600 shadow-md transition font-bold flex items-center justify-center gap-2"; }
+    else { nextBtn.innerHTML = `<span>บทถัดไป</span> <i data-lucide="chevron-right" class="w-6 h-6"></i>`; nextBtn.className = "flex-1 max-w-[250px] bg-[#f59e0b] text-white py-3 px-4 rounded-xl hover:bg-[#d97706] shadow-md transition font-bold flex items-center justify-center gap-2"; }
     lucide.createIcons();
   }
 
@@ -539,13 +536,13 @@
       document.getElementById('quizIntro').classList.add('hidden'); document.getElementById('quizResult').classList.add('hidden'); document.getElementById('quizContainer').classList.remove('hidden'); loadQuizQuestion();
   }
   function loadQuizQuestion() {
-      selectedQuizOption = -1; let nextBtn = document.getElementById('nextQuizBtn'); nextBtn.disabled = true; nextBtn.className = "bg-gray-200 text-gray-400 px-12 py-4 rounded-full font-black transition-all cursor-not-allowed text-xl flex items-center justify-end ml-auto gap-2";
+      selectedQuizOption = -1; let nextBtn = document.getElementById('nextQuizBtn'); nextBtn.disabled = true; nextBtn.className = "bg-gray-300 text-gray-500 px-8 py-3 rounded-lg font-bold transition cursor-not-allowed flex items-center justify-end gap-2";
       const q = quizData[currentQuizIndex]; document.getElementById('quizProgress').innerText = `ข้อที่ ${currentQuizIndex + 1}/${quizData.length}`; document.getElementById('quizQuestionText').innerText = q.q;
-      document.getElementById('quizOptions').innerHTML = q.options.map((opt, i) => `<button id="quizOpt-${i}" onclick="selectQuizOption(${i})" class="quiz-btn w-full text-left p-6 rounded-2xl border-2 border-gray-200 text-gray-700 hover:border-emerald-400 hover:bg-emerald-50 hover:-translate-y-1 transition-all text-lg md:text-xl bg-white shadow-sm font-bold">${opt}</button>`).join('');
+      document.getElementById('quizOptions').innerHTML = q.options.map((opt, i) => `<button id="quizOpt-${i}" onclick="selectQuizOption(${i})" class="quiz-btn w-full text-left p-4 rounded-xl border-2 border-gray-200 text-gray-700 hover:border-emerald-400 hover:bg-emerald-50 transition text-lg bg-white">${opt}</button>`).join('');
   }
   function selectQuizOption(idx) {
       selectedQuizOption = idx; for(let i=0; i<4; i++) { let btn = document.getElementById(`quizOpt-${i}`); btn.classList.remove('selected'); if(i === idx) btn.classList.add('selected'); }
-      let nextBtn = document.getElementById('nextQuizBtn'); nextBtn.disabled = false; nextBtn.className = "bg-emerald-500 text-white px-12 py-4 rounded-full font-black hover:bg-emerald-600 hover:-translate-y-1 transition-all shadow-[0_8px_20px_rgba(16,185,129,0.3)] text-xl flex items-center justify-end ml-auto gap-2";
+      let nextBtn = document.getElementById('nextQuizBtn'); nextBtn.disabled = false; nextBtn.className = "bg-emerald-500 text-white px-8 py-3 rounded-lg font-bold hover:bg-emerald-600 transition shadow-md flex items-center justify-end gap-2";
   }
   function nextQuizQuestion() { if(selectedQuizOption === quizData[currentQuizIndex].ans) quizScore++; currentQuizIndex++; if(currentQuizIndex < quizData.length) loadQuizQuestion(); else finishQuiz(); }
   function finishQuiz() {
