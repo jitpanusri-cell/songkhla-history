@@ -2,7 +2,7 @@
 <html lang="th" class="h-full">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>บทเรียนออนไลน์ประวัติศาสตร์เมืองสงขลา</title>
   
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
@@ -59,12 +59,12 @@
               <option value="ม.3/17">ม.3/17</option>
           </select>
 
-          <div class="flex justify-center gap-1.5 sm:gap-2 mb-6 flex-wrap" id="otpContainer">
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
-              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+          <div class="flex justify-center gap-2 mb-6" id="otpContainer">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-12 h-14 text-center text-2xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-12 h-14 text-center text-2xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-12 h-14 text-center text-2xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-12 h-14 text-center text-2xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-12 h-14 text-center text-2xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
           </div>
 
           <button id="loginBtn" onclick="loginUser()" class="w-full bg-[#E85D5D] text-white py-3 rounded-lg font-bold hover:bg-[#d04a4a] transition shadow-md flex justify-center items-center gap-2 mt-2">
@@ -90,6 +90,15 @@
          <a href="#" onclick="showSection('video')" class="whitespace-nowrap hover:text-[#E85D5D] transition menu-link" data-target="video">สื่อวิดีทัศน์</a>
      </nav>
      <div class="flex items-center gap-2">
+         <a href="https://jitpanusri-cell.github.io/songkhla-history/laemson-lesson/" target="_blank" class="hidden lg:flex shrink-0 whitespace-nowrap items-center bg-yellow-100 text-yellow-800 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-yellow-200 transition">
+             <i data-lucide="map-pin" class="w-3.5 h-3.5 mr-1"></i> ฝั่งแหลมสน
+         </a>
+         <a href="https://jitpanusri-cell.github.io/songkhla-history/boyang-lesson/" target="_blank" class="hidden lg:flex shrink-0 whitespace-nowrap items-center bg-blue-100 text-blue-800 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-200 transition">
+             <i data-lucide="building-2" class="w-3.5 h-3.5 mr-1"></i> ฝั่งบ่อยาง
+         </a>
+         <a href="https://jitpanusri-cell.github.io/songkhla-history/profile/" title="บัตรนักเรียน/ตรวจสอบคะแนน" class="flex shrink-0 whitespace-nowrap items-center bg-purple-100 text-purple-800 px-2.5 py-1.5 rounded-lg text-xs font-bold hover:bg-purple-200 transition">
+             <i data-lucide="id-card" class="w-3.5 h-3.5 lg:mr-1"></i> <span class="hidden lg:inline">บัตรนักเรียน</span>
+         </a>
          <div class="hidden sm:block text-right text-xs bg-gray-50 px-3 py-1 rounded-lg border ml-1">
              <div class="text-gray-500" id="displayClass">ห้องเรียน</div>
              <div id="displayName" class="font-bold text-[#E85D5D]"></div>
@@ -108,6 +117,20 @@
          <a href="#" onclick="showSection('quiz')" class="block py-2 hover:text-[#E85D5D] border-b">แบบทดสอบ</a>
          <a href="#" onclick="showSection('video')" class="block py-2 hover:text-[#E85D5D] border-b">สื่อวิดีทัศน์</a>
          
+         <div class="pt-2 pb-1 text-xs font-bold text-gray-400">ข้ามไปศึกษายุคอื่น:</div>
+         <a href="https://jitpanusri-cell.github.io/songkhla-history/laemson-lesson/" target="_blank" class="block py-2 text-yellow-700 border-b font-bold flex justify-between items-center">
+             <span><i data-lucide="map-pin" class="w-4 h-4 inline mr-1"></i> ไปฝั่งแหลมสน (ยุคที่ 2)</span>
+             <i data-lucide="external-link" class="w-4 h-4"></i>
+         </a>
+         <a href="https://jitpanusri-cell.github.io/songkhla-history/boyang-lesson/" target="_blank" class="block py-2 text-blue-700 border-b font-bold flex justify-between items-center">
+             <span><i data-lucide="building-2" class="w-4 h-4 inline mr-1"></i> ไปฝั่งบ่อยาง (ยุคที่ 3)</span>
+             <i data-lucide="external-link" class="w-4 h-4"></i>
+         </a>
+         <a href="https://jitpanusri-cell.github.io/songkhla-history/profile/" class="block py-2 text-purple-700 border-b font-bold flex justify-between items-center">
+             <span><i data-lucide="id-card" class="w-4 h-4 inline mr-1"></i> บัตรนักเรียน/ตรวจสอบคะแนน</span>
+             <i data-lucide="external-link" class="w-4 h-4"></i>
+         </a>
+
          <a href="#" onclick="logoutUser()" class="block py-2 text-red-500 font-bold pt-3">ออกจากระบบ</a>
     </div>
    </header>
@@ -347,19 +370,16 @@
    </div>
 
    <footer class="bg-gray-800 text-white/70 text-center py-6 px-4 text-sm mt-auto shrink-0 border-t-4 border-[#E85D5D]">
-    <div id="era-nav-footer" class="flex flex-wrap items-center justify-center gap-2 mb-4"></div>
     <p class="font-bold text-white/90 mb-1">Copyright © 2026 ประวัติศาสตร์เมืองสงขลา</p>
     <p class="text-white/50 text-xs">ครูผู้สอน/ผู้พัฒนา : นายจิตรภาณุ ศรีหวัง</p>
    </footer>
   </div>
 
-  <script src="../shared/nav-links.js"></script>
   <script>
   let studentName = "";
   let studentIdStr = "";
   let studentClass = "";
   lucide.createIcons();
-  initEraNav('kaodaeng');
 
   const API_BASE_URL = "https://script.google.com/macros/s/AKfycbwAfmqJTXPhRP1WSV2_EyYoqSs0b_4C3rL5_EwW8EryTpIDkmBU6Sx4UM8TJ9ndYrGX/exec";
   let jsonpCounter = 0;
