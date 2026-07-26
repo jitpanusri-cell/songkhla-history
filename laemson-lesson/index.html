@@ -87,7 +87,7 @@
      <nav class="hidden xl:flex shrink-0 gap-8 text-sm text-gray-500 font-bold tracking-wide">
          <a href="#" onclick="showSection('home')" class="whitespace-nowrap hover:text-orange-500 transition menu-link active-nav py-2" data-target="home">หน้าแรก</a>
          <a href="#" onclick="showSection('knowledge')" class="whitespace-nowrap hover:text-orange-500 transition menu-link py-2" data-target="knowledge">ใบความรู้</a>
-         <a href="#" onclick="showSection('activity')" class="whitespace-nowrap hover:text-orange-500 transition menu-link py-2 flex items-center gap-1.5" data-target="activity"><i data-lucide="crosshair" class="w-4 h-4 text-orange-400"></i> เล็งยิงตอบคำถาม</a>
+         <a href="#" onclick="showSection('activity')" class="whitespace-nowrap hover:text-orange-500 transition menu-link py-2 flex items-center gap-1.5" data-target="activity"><i data-lucide="gamepad-2" class="w-4 h-4 text-orange-400"></i> ตะลุยด่านผจญภัย</a>
          <a href="#" onclick="showSection('quiz')" class="whitespace-nowrap hover:text-orange-500 transition menu-link py-2" data-target="quiz">แบบทดสอบ</a>
      </nav>
      <div class="flex items-center gap-4">
@@ -109,7 +109,7 @@
     <div id="mobileMenu" class="hidden xl:hidden border-t bg-white px-4 pb-4 pt-2 space-y-2 text-sm text-gray-600 font-medium absolute w-full shadow-lg z-40">
          <a href="#" onclick="showSection('home')" class="block py-3.5 hover:text-orange-500 border-b border-gray-50 flex items-center gap-3"><i data-lucide="home" class="w-5 h-5"></i> หน้าแรก</a>
          <a href="#" onclick="showSection('knowledge')" class="block py-3.5 hover:text-orange-500 border-b border-gray-50 flex items-center gap-3"><i data-lucide="book-open-check" class="w-5 h-5"></i> ใบความรู้</a>
-         <a href="#" onclick="showSection('activity')" class="block py-3.5 text-orange-500 hover:text-orange-600 border-b border-gray-50 flex items-center gap-3 bg-orange-50/50 rounded-xl px-3"><i data-lucide="crosshair" class="w-5 h-5"></i> เล่นเกมปืนใหญ่เล็งตอบ</a>
+         <a href="#" onclick="showSection('activity')" class="block py-3.5 text-orange-500 hover:text-orange-600 border-b border-gray-50 flex items-center gap-3 bg-orange-50/50 rounded-xl px-3"><i data-lucide="gamepad-2" class="w-5 h-5"></i> เล่นเกมตะลุยด่านผจญภัย</a>
          <a href="#" onclick="showSection('quiz')" class="block py-3.5 hover:text-orange-500 border-b border-gray-50 flex items-center gap-3"><i data-lucide="file-check-2" class="w-5 h-5"></i> แบบทดสอบ</a>
          <a href="https://jitpanusri-cell.github.io/songkhla-history/profile/" class="block py-3.5 text-purple-600 border-b border-gray-50 flex items-center gap-3"><i data-lucide="id-card" class="w-5 h-5"></i> บัตรนักเรียน/ตรวจสอบคะแนน</a>
          <a href="#" onclick="logoutUser()" class="block py-3.5 text-red-500 flex items-center gap-3 mt-2"><i data-lucide="log-out" class="w-5 h-5"></i> ออกจากระบบ</a>
@@ -159,9 +159,9 @@
                 </div>
                 <div onclick="showSection('activity')" class="bg-white p-6 md:p-8 rounded-2xl shadow-sm hover:shadow-md transition cursor-pointer text-center group border border-gray-100 relative overflow-hidden">
                     <div class="absolute -right-10 -top-10 w-40 h-40 bg-orange-50 rounded-full blur-2xl group-hover:bg-orange-100 transition"></div>
-                    <div class="w-16 h-16 mx-auto mb-4 bg-orange-100 rounded-full flex items-center justify-center group-hover:bg-orange-500 transition duration-300 relative z-10"><i data-lucide="crosshair" class="w-12 h-12 text-orange-600 group-hover:text-white transition"></i></div>
-                    <h3 class="font-bold text-gray-800 text-2xl mb-3 relative z-10">เกมปืนใหญ่เล็งตอบ</h3>
-                    <p class="text-base text-gray-500 font-medium leading-relaxed relative z-10">เล็งยิงตอบคำถามประวัติศาสตร์ สนุกเต็มจอ!</p>
+                    <div class="w-16 h-16 mx-auto mb-4 bg-orange-100 rounded-full flex items-center justify-center group-hover:bg-orange-500 transition duration-300 relative z-10"><i data-lucide="gamepad-2" class="w-12 h-12 text-orange-600 group-hover:text-white transition"></i></div>
+                    <h3 class="font-bold text-gray-800 text-2xl mb-3 relative z-10">เกมตะลุยด่านผจญภัย</h3>
+                    <p class="text-base text-gray-500 font-medium leading-relaxed relative z-10">วิ่งกระโดดตอบคำถามประวัติศาสตร์ สนุกเต็มจอ!</p>
                 </div>
                 <div onclick="showSection('quiz')" class="bg-white p-6 md:p-8 rounded-2xl shadow-sm hover:shadow-md transition cursor-pointer text-center group border border-gray-100">
                     <div class="w-16 h-16 mx-auto mb-4 bg-emerald-100 rounded-full flex items-center justify-center group-hover:bg-emerald-500 transition duration-300"><i data-lucide="file-check-2" class="w-12 h-12 text-emerald-600 group-hover:text-white transition"></i></div>
@@ -209,15 +209,15 @@
 
                <div class="relative z-10">
                    <div class="w-32 h-32 bg-gradient-to-tr from-yellow-400 to-orange-500 rounded-full mx-auto flex items-center justify-center mb-8 shadow-lg">
-                       <i data-lucide="crosshair" class="w-16 h-16 text-white drop-shadow-md"></i>
+                       <i data-lucide="gamepad-2" class="w-16 h-16 text-white drop-shadow-md"></i>
                    </div>
 
                    <h2 class="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight drop-shadow-lg">
-                       พร้อมเล็งปืนใหญ่ลุยเมืองสงขลา<br class="hidden md:block">แล้วหรือยัง?
+                       พร้อมลุยด่านผจญภัยเมืองสงขลา<br class="hidden md:block">แล้วหรือยัง?
                    </h2>
 
                    <p class="text-slate-300 text-lg md:text-xl font-bold mb-12 max-w-2xl mx-auto leading-relaxed">
-                       ลากเพื่อเล็ง ปล่อยเพื่อยิงป้ายคำตอบที่ถูกต้อง ลุ้นเซียมซี เก็บคะแนนให้ครบ 10 ข้อ <br class="hidden md:block">
+                       เดินหน้า กระโดดชนกล่องคำถาม ตอบให้ถูกเพื่อสะสมคะแนน ฝ่าด่านให้ถึงเส้นชัย <br class="hidden md:block">
                        ระบบได้แยกตัวเกมไปเปิดในหน้าจอใหม่ (Full Screen) เพื่อประสบการณ์การเล่นที่ลื่นไหลและเต็มตา
                    </p>
 
@@ -410,7 +410,7 @@
 
   function logoutUser() { localStorage.removeItem('studentName'); localStorage.removeItem('studentIdStr'); localStorage.removeItem('studentClass'); location.reload(); }
 
-  // เปิดเกม "ปืนใหญ่เล็งตอบ" ในแท็บใหม่ พร้อมแนบข้อมูลนักเรียนไปกับ URL
+  // เปิดเกม "ตะลุยด่านผจญภัย" ในแท็บใหม่ พร้อมแนบข้อมูลนักเรียนไปกับ URL
   // เพื่อให้ตัวเกม (โฮสต์บน GitHub Pages) ส่งคะแนนกลับมาบันทึกที่ Google Sheet ผ่าน API ?api=saveScore ได้เอง
   function openGame() {
       const base = "https://jitpanusri-cell.github.io/songkhla-history/laemson-game/";
