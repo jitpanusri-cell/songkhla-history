@@ -128,7 +128,7 @@
              <!-- รูปนักเรียน -->
              <div class="flex flex-col items-center shrink-0">
                <div class="relative w-32 h-32 md:w-36 md:h-36 rounded-2xl overflow-hidden border-4 border-[#EEF0FC] shadow-md bg-gray-100">
-                 <img id="studentPhoto" src="" alt="รูปนักเรียน" class="w-full h-full object-cover opacity-40" onerror="this.onerror=null; this.src='https://api.dicebear.com/7.x/thumbs/svg?seed=student&backgroundColor=e5e7eb'; this.classList.add('opacity-40');">
+                 <img id="studentPhoto" src="" alt="รูปนักเรียน" class="w-full h-full object-cover opacity-40" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22%3E%3Crect%20width=%22100%22%20height=%22100%22%20fill=%22%23e5e7eb%22/%3E%3Ccircle%20cx=%2250%22%20cy=%2238%22%20r=%2218%22%20fill=%22%23cbd5e1%22/%3E%3Cpath%20d=%22M50%2062c-22%200-34%2012-34%2030v8h68v-8c0-18-12-30-34-30z%22%20fill=%22%23cbd5e1%22/%3E%3C/svg%3E'; this.classList.add('opacity-40');">
                  <button id="uploadPhotoBtn" onclick="document.getElementById('photoInput').click()" class="absolute bottom-0 inset-x-0 bg-black/50 hover:bg-black/70 transition text-white text-xs py-1.5 font-bold flex items-center justify-center gap-1">
                    <i data-lucide="camera" class="w-3.5 h-3.5"></i> อัปโหลดรูป
                  </button>
@@ -454,6 +454,42 @@
       });
   }
 
+  var PHOTO_PLACEHOLDER_SVG = 'data:image/svg+xml,' +
+      '%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22%3E' +
+      '%3Crect%20width=%22100%22%20height=%22100%22%20fill=%22%23e5e7eb%22/%3E' +
+      '%3Ccircle%20cx=%2250%22%20cy=%2238%22%20r=%2218%22%20fill=%22%23cbd5e1%22/%3E' +
+      '%3Cpath%20d=%22M50%2062c-22%200-34%2012-34%2030v8h68v-8c0-18-12-30-34-30z%22%20fill=%22%23cbd5e1%22/%3E%3C/svg%3E';
+
+  function setStudentPhoto(photoUrl) {
+      const photoEl = document.getElementById('studentPhoto');
+      photoEl.onerror = null;
+
+      if (!photoUrl) {
+          photoEl.src = PHOTO_PLACEHOLDER_SVG;
+          photoEl.classList.add('opacity-40');
+          return;
+      }
+
+      // ลิงก์รูปจาก Google Drive บางครั้งโหลดตรงๆ ผ่าน uc?export=view ไม่สำเร็จ
+      // จึงลองรูปแบบสำรอง lh3.googleusercontent.com/d/{fileId} ก่อน แล้วค่อย fallback เป็นรูปจางๆ
+      const idMatch = photoUrl.match(/[?&]id=([^&]+)/);
+      const altUrl = idMatch ? ('https://lh3.googleusercontent.com/d/' + idMatch[1]) : null;
+      let step = 0;
+
+      photoEl.onerror = function() {
+          step++;
+          if (step === 1 && altUrl) {
+              photoEl.src = altUrl;
+          } else {
+              photoEl.onerror = null;
+              photoEl.src = PHOTO_PLACEHOLDER_SVG;
+              photoEl.classList.add('opacity-40');
+          }
+      };
+      photoEl.classList.remove('opacity-40');
+      photoEl.src = photoUrl;
+  }
+
   function renderProfile(data) {
       document.getElementById('cardName').innerText = data.name || '-';
       document.getElementById('cardId').innerText = data.studentId || '-';
@@ -479,14 +515,7 @@
       document.getElementById('scoreQuizBoyang').innerText = num(data.maxQuizBoyang) + ' / 10';
       document.getElementById('scoreTotal').innerText = num(data.total);
 
-      const photoEl = document.getElementById('studentPhoto');
-      if (data.photoUrl) {
-          photoEl.src = data.photoUrl;
-          photoEl.classList.remove('opacity-40');
-      } else {
-          photoEl.src = 'https://api.dicebear.com/7.x/thumbs/svg?seed=' + encodeURIComponent(data.studentId || 'student') + '&backgroundColor=e5e7eb';
-          photoEl.classList.add('opacity-40');
-      }
+      setStudentPhoto(data.photoUrl);
 
       const qrData = PROFILE_PAGE_URL + '?studentId=' + encodeURIComponent(data.studentId) + '&className=' + encodeURIComponent(data.className);
       document.getElementById('qrImage').src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(qrData);
