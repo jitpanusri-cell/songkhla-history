@@ -1,826 +1,469 @@
-<!doctype html>
-<html lang="th" class="h-full">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>ปืนใหญ่เล็งตอบ: เมืองสงขลา</title>
-
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
-
-  <style>
-    * { font-family: 'Noto Sans Thai', sans-serif; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
-    .font-nunito { font-family: 'Nunito', sans-serif; }
-
-    html, body {
-      position: fixed; inset: 0; width: 100%; height: 100%;
-      overflow: hidden; overscroll-behavior: none; touch-action: none; -ms-touch-action: none;
-      background: linear-gradient(160deg, #bfe3f5 0%, #ffe8b8 100%);
-    }
-    #section-activity { touch-action: none; }
-    #gameCanvas { display: block; touch-action: none; }
-
-    @keyframes springBounce { 0% { transform: scale(0.8); opacity: 0; } 50% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
-    .animate-spring { animation: springBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
-    @keyframes popPulse { 0% { transform: scale(1); } 40% { transform: scale(1.35); } 100% { transform: scale(1); } }
-    .pop-pulse { animation: popPulse 0.35s ease-out; }
-    @keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
-    .float-slow { animation: floaty 3.5s ease-in-out infinite; }
-
-    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.02); border-radius: 10px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #f4a261; border-radius: 10px; }
-
-    .glass-panel { background: rgba(255, 255, 255, 0.88); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.7); }
-    .glass-panel-tint { background: rgba(255, 249, 240, 0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 2px solid rgba(255,255,255,0.85); }
-
-    @keyframes shakeAnimation {
-        0%, 100% { transform: translate(0, 0) rotate(0deg); }
-        25% { transform: translate(-3px, -3px) rotate(-8deg); }
-        50% { transform: translate(3px, 3px) rotate(8deg); }
-        75% { transform: translate(-3px, 3px) rotate(-8deg); }
-    }
-    .shake-active { animation: shakeAnimation 0.3s infinite; }
-
-    /* เป้าคำตอบ (DOM overlay เหนือ canvas เพื่อให้ตัดคำภาษาไทยสวยและคมชัด) */
-    #targetsLayer { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
-    .target-card {
-      position: absolute; width: 148px; min-height: 76px;
-      background: linear-gradient(160deg, #f8e0ae, #e3b877);
-      border: 3px solid #c9974c; border-radius: 18px;
-      display: flex; align-items: center; justify-content: center;
-      padding: 10px 8px; text-align: center; font-weight: 800; color: #5a3d1f;
-      font-size: 0.82rem; line-height: 1.25;
-      box-shadow: 0 10px 18px rgba(90, 61, 31, 0.25);
-      transform: translate(-50%, -50%);
-      transition: opacity 0.28s ease, transform 0.28s ease;
-    }
-    .target-card::before {
-      content: ''; position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
-      width: 4px; height: 16px; background: #8a6a3d; border-radius: 2px;
-    }
-    .target-pop { opacity: 0 !important; transform: translate(-50%, -50%) scale(1.5) !important; }
-    .target-fade { opacity: 0 !important; transform: translate(-50%, -50%) scale(0.7) !important; }
-
-    /* ตัวเลือกสีปืนใหญ่ */
-    .cannon-swatch { width: 42px; height: 42px; border-radius: 14px; border: 3px solid transparent; cursor: pointer; transition: all 0.2s; }
-    .cannon-swatch.active { border-color: #fff; box-shadow: 0 0 0 3px #f97316; transform: scale(1.1); }
-
-    #gameControls { position: absolute; left: 0; right: 0; bottom: max(1rem, env(safe-area-inset-bottom)); z-index: 20; display: flex; justify-content: center; pointer-events: none; }
-    .hud-pill { transition: transform 0.15s ease; }
-  </style>
- </head>
- <body class="w-screen h-screen overflow-hidden select-none" style="background: linear-gradient(160deg, #bfe3f5 0%, #ffe8b8 100%);">
-   <div id="section-activity" class="w-full h-full flex flex-col relative overflow-hidden">
-
-       <canvas id="gameCanvas" class="absolute inset-0 w-full h-full"></canvas>
-       <div id="targetsLayer"></div>
-
-       <!-- HUD -->
-       <div id="gameHud" class="hidden absolute top-6 left-6 right-6 flex justify-between z-10 pointer-events-none">
-           <div class="hud-pill glass-panel px-5 py-2.5 rounded-full font-black text-slate-700 shadow-lg flex items-center gap-2 md:gap-3">
-               <span class="text-rose-400 text-xl md:text-2xl drop-shadow-sm">💗</span> <span id="uiHearts" class="font-nunito text-lg md:text-xl">3</span>
-           </div>
-           <div class="hud-pill glass-panel px-5 py-2.5 rounded-full font-black text-slate-700 shadow-lg flex items-center gap-2 md:gap-3">
-               <span class="text-amber-400 text-xl md:text-2xl drop-shadow-sm">⭐</span> <span id="uiScore" class="font-nunito text-lg md:text-xl">0</span>
-           </div>
-           <div class="hud-pill glass-panel px-5 py-2.5 rounded-full font-black text-slate-700 shadow-lg flex items-center gap-2 md:gap-3">
-               <span class="text-red-500 text-xl md:text-2xl drop-shadow-sm">🎯</span> <span id="uiQuestions" class="font-nunito text-lg md:text-xl">0/10</span>
-           </div>
-       </div>
-
-       <!-- ป้ายคำถาม -->
-       <div id="questionBanner" class="hidden absolute top-20 left-4 right-4 md:left-1/4 md:right-1/4 z-10 glass-panel rounded-3xl px-5 py-3 text-center shadow-lg">
-           <p class="text-[10px] font-black text-red-500 uppercase tracking-widest mb-0.5">🎯 เล็งยิงคำตอบที่ถูกต้อง</p>
-           <p id="questionText" class="text-sm md:text-lg font-black text-slate-700 leading-snug"></p>
-       </div>
-
-       <div id="gameControls" class="hidden"></div>
-
-       <!-- Overlay เริ่มเกม -->
-       <div id="gameIntroOverlay" class="absolute inset-0 z-20 flex flex-col pointer-events-none p-4 md:p-8 justify-end items-center">
-           <div class="w-full max-w-md glass-panel-tint border-2 rounded-[3rem] shadow-2xl p-6 md:p-8 pointer-events-auto flex flex-col items-center text-center">
-               <h3 class="text-2xl md:text-3xl font-black text-red-500 drop-shadow-sm mb-1">🎯 ปืนใหญ่เล็งตอบ</h3>
-               <p class="text-base md:text-lg font-black text-orange-500 mb-2">เมืองสงขลา</p>
-               <p class="text-xs md:text-sm text-slate-500 font-bold mb-5 leading-relaxed">ลากบนจอเพื่อเล็ง ปล่อยนิ้วเพื่อยิง<br>ยิงป้ายคำตอบที่ถูกต้องให้ครบ 10 ข้อ!</p>
-
-               <p class="text-xs font-black text-slate-400 mb-2">เลือกสีปืนใหญ่</p>
-               <div class="flex gap-3 mb-6" id="cannonSwatches">
-                   <div onclick="setCannonColor(0)" id="swatch-0" class="cannon-swatch active" style="background:#ef4444"></div>
-                   <div onclick="setCannonColor(1)" id="swatch-1" class="cannon-swatch" style="background:#3b82f6"></div>
-                   <div onclick="setCannonColor(2)" id="swatch-2" class="cannon-swatch" style="background:#22c55e"></div>
-               </div>
-
-               <button onclick="startGame()" class="w-full bg-gradient-to-r from-orange-400 to-red-500 text-white px-10 py-4 rounded-full font-black text-xl md:text-2xl shadow-[0_15px_30px_rgba(239,68,68,0.4)] hover:scale-105 transition flex items-center justify-center gap-3 border-2 border-white/50 animate-spring">
-                   <i data-lucide="crosshair" class="w-7 h-7"></i> เริ่มเกม!
-               </button>
-           </div>
-       </div>
-
-       <!-- Screen สรุปผลเกม -->
-       <div id="gameResult" class="hidden absolute inset-0 z-40 bg-white/95 backdrop-blur-3xl h-full overflow-y-auto w-full flex flex-col">
-           <div class="p-8 text-center pt-16">
-               <div class="w-28 h-28 bg-gradient-to-br from-amber-100 to-orange-100 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-white shadow-xl float-slow">
-                   <i data-lucide="trophy" class="w-14 h-14 text-orange-500"></i>
-               </div>
-               <h3 id="resultTitle" class="text-4xl font-black text-slate-700 mb-2 tracking-tight">จบเกม!</h3>
-               <p id="saveStatus" class="text-slate-400 font-bold text-sm mb-4"></p>
-
-               <div class="flex justify-center gap-6 mb-8 max-w-sm mx-auto">
-                   <div class="bg-white px-6 py-4 rounded-[2rem] flex-1 border border-rose-100 shadow-[0_8px_20px_rgba(251,113,133,0.08)] relative overflow-hidden">
-                       <div class="absolute top-0 left-0 w-full h-1.5 bg-rose-300"></div>
-                       <div class="text-rose-400 font-bold text-xs mb-1 uppercase tracking-widest">หัวใจเหลือ</div>
-                       <div class="text-4xl font-nunito font-black text-rose-400" id="resultHearts">0</div>
-                   </div>
-                   <div class="bg-white px-6 py-4 rounded-[2rem] flex-1 border border-sky-100 shadow-[0_8px_20px_rgba(56,189,248,0.08)] relative overflow-hidden">
-                       <div class="absolute top-0 left-0 w-full h-1.5 bg-sky-300"></div>
-                       <div class="text-sky-500 font-bold text-xs mb-1 uppercase tracking-widest">คะแนนรวม</div>
-                       <div class="text-4xl font-nunito font-black text-sky-600" id="resultScore">0</div>
-                   </div>
-               </div>
-               <button onclick="prepareGamePreview()" class="bg-gradient-to-r from-orange-400 to-red-500 text-white px-10 py-4 rounded-full font-black text-lg hover:scale-105 transition-all shadow-xl flex items-center gap-3 mx-auto">
-                   <i data-lucide="rotate-ccw" class="w-5 h-5"></i> เล็งยิงใหม่อีกครั้ง
-               </button>
-           </div>
-
-           <div class="px-5 pb-12 max-w-md mx-auto w-full flex-grow">
-               <div class="bg-white rounded-[2.5rem] shadow-[0_10px_30px_rgba(0,0,0,0.05)] border border-orange-50 p-6">
-                   <h4 class="font-black text-center text-slate-700 mb-6 flex items-center justify-center gap-2 text-xl"><i data-lucide="award" class="w-6 h-6 text-orange-400"></i> สถิติคะแนนสูงสุดของคุณ</h4>
-                   <ul id="gameLeaderboardList" class="space-y-3"></ul>
-               </div>
-           </div>
-       </div>
-
-       <!-- Modal ยิงผิดเป้า -->
-       <div id="wrongModal" class="hidden fixed inset-0 bg-slate-900/50 z-[300] flex items-center justify-center p-5 backdrop-blur-xl transition-opacity">
-           <div class="bg-white rounded-[3rem] max-w-lg w-full overflow-hidden shadow-2xl border border-white">
-               <div class="bg-gradient-to-r from-rose-400 to-red-500 p-6 md:p-8 text-center relative">
-                   <div class="w-16 h-16 bg-white rounded-[1.5rem] mx-auto flex items-center justify-center text-3xl shadow-xl mb-3 transform -rotate-6">❌</div>
-                   <h3 class="text-2xl font-black text-white drop-shadow-md">ยิงผิดเป้า!</h3>
-               </div>
-               <div class="p-6 md:p-8 text-center">
-                   <div class="text-xl font-black mb-4 text-rose-500">-1 หัวใจ 💗</div>
-                   <div class="bg-rose-50 p-4 rounded-2xl mb-5 border border-rose-100 text-left">
-                       <p class="text-rose-500 font-bold mb-1 text-xs">เฉลยความรู้:</p>
-                       <p id="qWrongExp" class="text-rose-700 text-sm font-bold leading-relaxed"></p>
-                   </div>
-                   <button onclick="resumeGame()" class="bg-rose-400 text-white px-8 py-3.5 rounded-full font-black hover:bg-rose-500 transition w-full shadow-lg text-lg flex justify-center items-center gap-2">เล็งยิงต่อ 🎯</button>
-               </div>
-           </div>
-       </div>
-       <!-- Modal สุ่มเซียมซี -->
-       <div id="siemsiModal" class="hidden fixed inset-0 bg-slate-900/50 z-[350] flex items-center justify-center p-5 backdrop-blur-xl transition-opacity">
-           <div class="bg-white rounded-[3rem] max-w-md w-full overflow-hidden shadow-2xl text-center p-6 md:p-8 border-4 border-amber-200 relative">
-               <h3 class="text-2xl md:text-3xl font-black text-amber-600 mb-2">ยิงโดนเป้า! 🎉</h3>
-               <p class="text-slate-400 font-bold text-sm mb-6">รับสิทธิ์เสี่ยงทายเซียมซีลุ้นโชค</p>
-
-               <div id="siemsiCylinder" class="w-24 h-32 mx-auto bg-gradient-to-b from-red-500 to-red-800 rounded-b-[2rem] rounded-t-sm relative mb-8 shadow-[inset_0_-10px_20px_rgba(0,0,0,0.4)] border-t-8 border-yellow-400">
-                   <div class="w-2.5 h-20 bg-yellow-200 absolute top-[-15px] left-[30%] rotate-[-12deg] rounded-full"></div>
-                   <div class="w-2.5 h-24 bg-yellow-400 absolute top-[-25px] left-[50%] rounded-full"></div>
-                   <div class="w-2.5 h-16 bg-yellow-100 absolute top-[-8px] left-[70%] rotate-[15deg] rounded-full"></div>
-                   <div class="absolute inset-0 flex items-center justify-center text-yellow-300 font-black text-4xl opacity-20">福</div>
-               </div>
-               <div id="siemsiWaiting">
-                   <button onclick="playSiemSiAnim()" class="bg-gradient-to-r from-amber-400 to-orange-500 text-white px-8 py-4 rounded-full font-black text-xl shadow-lg hover:scale-105 transition-all w-full animate-bounce flex justify-center items-center gap-2 border border-white/50">
-                       <i data-lucide="sparkles" class="w-6 h-6"></i> กดเสี่ยงทาย!
-                   </button>
-               </div>
-               <div id="siemsiResult" class="hidden">
-                   <div id="siemsiRewardText" class="text-xl font-black text-amber-600 mb-4 bg-amber-50 py-4 border border-amber-200 rounded-2xl"></div>
-                   <div class="bg-sky-50 p-4 rounded-2xl mb-5 border border-sky-100 text-left">
-                       <p class="text-sky-600 text-xs font-black mb-1 uppercase tracking-wider">เกร็ดความรู้เพิ่มเติม</p>
-                       <p id="qCorrectExp" class="text-sky-800 text-sm font-bold leading-relaxed"></p>
-                   </div>
-                   <button onclick="resumeGame()" class="bg-orange-500 text-white px-8 py-3.5 rounded-full font-black hover:bg-orange-600 transition w-full shadow-lg text-lg flex justify-center items-center gap-2">เล็งยิงต่อ 🎯</button>
-               </div>
-           </div>
-       </div>
-   </div>
-  <!-- JavaScript Engine -->
-  <script>
-  lucide.createIcons();
-
-  document.addEventListener('touchmove', function(e){ e.preventDefault(); }, { passive: false });
-  document.addEventListener('gesturestart', function(e){ e.preventDefault(); });
-  document.addEventListener('dblclick', function(e){ e.preventDefault(); }, { passive: false });
-
-  if (!CanvasRenderingContext2D.prototype.roundRect) {
-    CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
-      this.beginPath();
-      this.moveTo(x + r, y);
-      this.arcTo(x + w, y, x + w, y + h, r);
-      this.arcTo(x + w, y + h, x, y + h, r);
-      this.arcTo(x, y + h, x, y, r);
-      this.arcTo(x, y, x + w, y, r);
-      this.closePath();
-      return this;
-    };
-  }
-
-  // --- CANNON QUIZ ENGINE ---
-  const canvas = document.getElementById('gameCanvas');
-  const ctx = canvas.getContext('2d');
-  const container = document.getElementById('section-activity');
-  const targetsLayer = document.getElementById('targetsLayer');
-
-  // ===== เชื่อมต่อกับระบบบทเรียน (รับข้อมูลนักเรียนจาก URL แล้วส่งคะแนนกลับ Google Sheet) =====
-  const SCORE_API_URL = "https://script.google.com/macros/s/AKfycbwAfmqJTXPhRP1WSV2_EyYoqSs0b_4C3rL5_EwW8EryTpIDkmBU6Sx4UM8TJ9ndYrGX/exec";
-  const urlParams = new URLSearchParams(window.location.search);
-  const studentInfo = {
-      studentId: urlParams.get('studentId') || '',
-      name: urlParams.get('name') || '',
-      className: urlParams.get('className') || ''
-  };
-  const hasStudentInfo = !!(studentInfo.studentId && studentInfo.className);
-  function saveScoreToServer(score) {
-      if (!hasStudentInfo) return;
-      const params = new URLSearchParams({
-          api: 'saveScore',
-          studentId: studentInfo.studentId,
-          name: studentInfo.name,
-          className: studentInfo.className,
-          action: 'เล่นเกมแหลมสน',
-          score: score
-      });
-      // ใช้ mode:'no-cors' เพราะ Apps Script ไม่ได้ตั้งค่า CORS header ให้อ่าน response ข้ามโดเมนได้
-      // แต่คำขอ GET ยังคงถูกประมวลผลและบันทึกลงชีตตามปกติ
-      fetch(SCORE_API_URL + '?' + params.toString(), { method: 'GET', mode: 'no-cors' }).catch(() => {});
-  }
-  let W = 0, H = 0, seaTop = 0, seaBottom = 0;
-  let mReqAnimFrame; let gameRunning = false; let gameState = 'PREVIEW';
-  let frameCount = 0;
-
-  let cannonColorIndex = 0;
-  const cannonColors = ['#ef4444', '#3b82f6', '#22c55e'];
-  const cannonDarkColors = ['#b91c1c', '#1d4ed8', '#15803d'];
-
-  let player = { hearts: 3, score: 0 };
-  let crosshair = { x: 0, y: 0 };
-  let isAiming = false;
-  let cannonRecoil = 0;
-  let cannonball = { active: false, t: 0, startX: 0, startY: 0, endX: 0, endY: 0 };
-
-  let targets = [];
-  let clouds = [];
-  let skylineBuildings = [];
-  let particles = [];
-  let floatingTexts = [];
-
-  let correctAnswersCount = 0;
-  let currentQ = null;
-  let triviaPool = [];
-
-  const gameQuestionsSource = [
-      { q: "แหลมสนถูกตั้งขึ้นเมื่อใด?", options: ["ก่อนกรุงศรีอยุธยา", "พ.ศ. 2223 หลังเขาแดงถูกทำลาย", "สมัยรัชกาลที่ 5", "พ.ศ. 2500"], ans: "พ.ศ. 2223 หลังเขาแดงถูกทำลาย", exp: "พ.ศ. 2223 ชาวเมืองบางส่วนโยกย้ายมาตั้งชุมชนใหม่ที่แหลมสน" },
-      { q: "ใครเริ่มต้นสายสกุล 'ณ สงขลา'?", options: ["ดะโต๊ะ โมกอล", "นายบุญหุ้ย", "นายวิเถียน", "นายเหยี่ยง แซ่เฮา"], ans: "นายเหยี่ยง แซ่เฮา", exp: "พระเจ้าตากสินตั้งให้นายเหยี่ยง แซ่เฮา เป็นหลวงสุวรรณคีรีสมบัติ" },
-      { q: "สาเหตุที่ต้องย้ายเมืองไป 'บ่อยาง' คือ?", options: ["เกิดโรคระบาด", "พื้นที่คับแคบ", "โจรสลัดปล้น", "น้ำท่วม"], ans: "พื้นที่คับแคบ", exp: "พื้นที่แหลมสนคับแคบ เป็นที่ราบแคบๆ ระหว่างเชิงเขากับทะเล" },
-      { q: "สถาปัตยกรรมหมิ่นหนาน (จีน) ปรากฏที่ใด?", options: ["วัดบ่อทรัพย์", "หอระฆัง", "ซุ้มประตูบ่อเก๋ง", "กุฏิเรือนไทย"], ans: "ซุ้มประตูบ่อเก๋ง", exp: "ซุ้มประตูบ่อเก๋งแสดงให้เห็นถึงชาวจีนฮกเกี้ยนที่อพยพเข้ามา" },
-      { q: "วัดใดใช้ทำพิธี 'ถือน้ำสาบาน'?", options: ["วัดศิริวรรณาวาส", "วัดบ่อทรัพย์", "วัดภูผาเบิก", "วัดสุวรรณคีรี (วัดออก)"], ans: "วัดสุวรรณคีรี (วัดออก)", exp: "วัดออก หรือวัดสุวรรณคีรี ใช้ประกอบพิธีน้ำพิพัฒน์สัตยาอธิษฐาน" },
-      { q: "ซุ้มประตูบ่อเก๋ง นอกจากสถาปัตยกรรมจีนแล้ว ยังมีสิ่งใดที่ชาวบ้านใช้อุปโภคบริโภค?", options: ["บ่อน้ำจืด", "นาข้าว", "สวนผลไม้", "บ่อเกลือ"], ans: "บ่อน้ำจืด", exp: "ซุ้มประตูบ่อเก๋งมีบ่อน้ำจืดอยู่ด้วย ซึ่งชาวบ้านในย่านนั้นใช้อุปโภคบริโภคกันมาแต่เดิม" },
-      { q: "พิธีถือน้ำสาบานที่วัดสุวรรณคีรี (วัดออก) จัดขึ้นในปี พ.ศ. ใด?", options: ["พ.ศ. 2223", "พ.ศ. 2317", "พ.ศ. 2379", "พ.ศ. 2450"], ans: "พ.ศ. 2379", exp: "วัดออกใช้ประกอบพิธีน้ำพิพัฒน์สัตยาอธิษฐานในปี พ.ศ. 2379" },
-      { q: "วัดบ่อทรัพย์มีกรุอิฐขนาดใหญ่อยู่หน้าวัด เรียกว่าอะไร?", options: ["บ่อเก๋ง", "บ่อซับ", "บ่อทอง", "บ่อเงิน"], ans: "บ่อซับ", exp: "หน้าวัดบ่อทรัพย์มีกรุอิฐขนาดใหญ่ ชาวบ้านเรียกกันว่า 'บ่อซับ'" },
-      { q: "สุสานตระกูล ณ สงขลา ตั้งอยู่ในบริเวณเดียวกับวัดใด?", options: ["วัดบ่อทรัพย์", "วัดศิริวรรณาวาส", "วัดภูผาเบิก", "วัดสุวรรณคีรี"], ans: "วัดภูผาเบิก", exp: "สุสานของตระกูล ณ สงขลา ตั้งอยู่ในบริเวณเดียวกับวัดภูผาเบิก" },
-      { q: "พระมหากษัตริย์พระองค์ใดโปรดเกล้าฯ ให้ย้ายเมืองสงขลาไปตั้งที่ 'บ่อยาง'?", options: ["พระบาทสมเด็จพระพุทธยอดฟ้าจุฬาโลก (ร.1)", "พระบาทสมเด็จพระพุทธเลิศหล้านภาลัย (ร.2)", "พระบาทสมเด็จพระนั่งเกล้าเจ้าอยู่หัว (ร.3)", "พระบาทสมเด็จพระจอมเกล้าเจ้าอยู่หัว (ร.4)"], ans: "พระบาทสมเด็จพระนั่งเกล้าเจ้าอยู่หัว (ร.3)", exp: "พระบาทสมเด็จพระนั่งเกล้าเจ้าอยู่หัว (ร.3) โปรดเกล้าฯ ให้ย้ายเมืองไปตั้งบนสันทรายฝั่งตรงข้าม เรียกว่า 'บ่อยาง'" }
-  ];
-
-  function shuffleArray(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [array[i], array[j]] = [array[j], array[i]];
-      }
-      return array;
-  }
-
-  window.onload = function () {
-      resizeCanvas();
-      initClouds();
-      initSkyline();
-      crosshair = { x: W / 2, y: H * 0.4 };
-      prepareGamePreview();
-  };
-  window.addEventListener('resize', resizeCanvas);
-
-  function resizeCanvas() {
-      const dpr = window.devicePixelRatio || 1;
-      const rect = container.getBoundingClientRect();
-      W = rect.width; H = rect.height;
-      canvas.width = W * dpr;
-      canvas.height = H * dpr;
-      canvas.style.width = W + 'px';
-      canvas.style.height = H + 'px';
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      seaTop = H * 0.42;
-      seaBottom = H * 0.72;
-  }
-
-  function initClouds() {
-      clouds = [];
-      for (let i = 0; i < 5; i++) {
-          clouds.push({ x: Math.random() * W, y: 30 + Math.random() * (seaTop * 0.6), scale: 0.6 + Math.random() * 0.7, speed: 0.1 + Math.random() * 0.15 });
-      }
-  }
-  function initSkyline() {
-      skylineBuildings = [];
-      const colors = ['#f4a89c', '#f6c28b', '#f2e2a1', '#c9e4b8', '#a9d3e5'];
-      let x = -20;
-      let i = 0;
-      while (x < W + 20) {
-          const w = 46 + Math.random() * 30;
-          const h = 40 + Math.random() * 55;
-          skylineBuildings.push({ x, w, h, color: colors[i % colors.length] });
-          x += w - 4;
-          i++;
-      }
-  }
-
-  function setCannonColor(idx) {
-      cannonColorIndex = idx;
-      document.querySelectorAll('.cannon-swatch').forEach(el => el.classList.remove('active'));
-      document.getElementById('swatch-' + idx).classList.add('active');
-  }
-
-  function prepareGamePreview() {
-      document.getElementById('gameResult').classList.add('hidden');
-      document.getElementById('gameHud').classList.add('hidden');
-      document.getElementById('questionBanner').classList.add('hidden');
-      document.getElementById('gameIntroOverlay').classList.remove('hidden');
-      clearTargets();
-      gameState = 'PREVIEW';
-      gameRunning = true;
-      if (!mReqAnimFrame) loop();
-  }
-
-  function startGame() {
-      document.getElementById('gameIntroOverlay').classList.add('hidden');
-      document.getElementById('gameResult').classList.add('hidden');
-      document.getElementById('gameHud').classList.remove('hidden');
-      document.getElementById('questionBanner').classList.remove('hidden');
-
-      player.hearts = 3; player.score = 0;
-      correctAnswersCount = 0;
-      particles = []; floatingTexts = [];
-      // สลับลำดับคำถามทั้ง 10 ข้อใหม่ทุกครั้งที่เริ่มเกม (ไม่ซ้ำ ยกเว้นตอบผิดจะถูกใส่กลับเข้ากองสุ่มใหม่)
-      triviaPool = shuffleArray([...gameQuestionsSource]);
-
-      updateHUD();
-      loadNextQuestion();
-  }
-
-  function loadNextQuestion() {
-      clearTargets();
-      currentQ = triviaPool.shift();
-      document.getElementById('questionText').innerText = currentQ.q;
-
-      const opts = shuffleArray(currentQ.options.map(o => ({ text: o, isCorrect: o === currentQ.ans })));
-      const positions = [
-          { fx: 0.24, fy: 0.30 }, { fx: 0.76, fy: 0.28 },
-          { fx: 0.28, fy: 0.52 }, { fx: 0.72, fy: 0.52 }
-      ];
-      targets = opts.map((o, i) => createTarget(o, positions[i]));
-      gameState = 'PLAYING';
-  }
-
-  function createTarget(opt, posFrac) {
-      const el = document.createElement('div');
-      el.className = 'target-card';
-      const rot = (Math.random() * 6 - 3).toFixed(1);
-      el.style.setProperty('--rot', rot + 'deg');
-      el.textContent = opt.text;
-      targetsLayer.appendChild(el);
-      const x = posFrac.fx * W, y = posFrac.fy * H;
-      el.style.left = x + 'px';
-      el.style.top = y + 'px';
-      return { x, y, baseX: x, baseY: y, phase: Math.random() * 10, isCorrect: opt.isCorrect, alive: true, el };
-  }
-
-  function clearTargets(hitEl) {
-      const toRemove = targets.map(t => t.el).filter(Boolean);
-      toRemove.forEach(el => {
-          if (el === hitEl) el.classList.add('target-pop');
-          else el.classList.add('target-fade');
-      });
-      setTimeout(() => toRemove.forEach(el => el.remove()), 320);
-      targets = [];
-  }
-
-  function updateHUD() {
-      document.getElementById('uiHearts').innerText = player.hearts;
-      document.getElementById('uiScore').innerText = player.score;
-      document.getElementById('uiQuestions').innerText = correctAnswersCount + "/10";
-  }
-  function pulseHud(elId) {
-      const el = document.getElementById(elId);
-      if (!el) return;
-      el.classList.remove('pop-pulse');
-      void el.offsetWidth;
-      el.classList.add('pop-pulse');
-  }
-
-  // ===== การเล็ง / ยิง =====
-  function updateCrosshairFromEvent(e) {
-      const rect = container.getBoundingClientRect();
-      let x = e.clientX - rect.left;
-      let y = e.clientY - rect.top;
-      if (e.pointerType === 'touch') y -= 70; // ยกเป้าเล็งขึ้นไม่ให้นิ้วบัง
-      crosshair.x = Math.max(30, Math.min(W - 30, x));
-      crosshair.y = Math.max(H * 0.12, Math.min(seaBottom - 10, y));
-  }
-  container.addEventListener('pointerdown', e => {
-      if (gameState !== 'PLAYING') return;
-      isAiming = true;
-      updateCrosshairFromEvent(e);
-  });
-  window.addEventListener('pointermove', e => {
-      if (!isAiming) return;
-      updateCrosshairFromEvent(e);
-  });
-  window.addEventListener('pointerup', e => {
-      if (!isAiming) return;
-      isAiming = false;
-      if (gameState === 'PLAYING') fireCannon();
-  });
-  window.addEventListener('pointercancel', () => { isAiming = false; });
-
-  function fireCannon() {
-      if (gameState !== 'PLAYING') return;
-      gameState = 'FIRING';
-      cannonRecoil = 1;
-      const pivot = getCannonPivot();
-      const angle = Math.atan2(crosshair.y - (pivot.y - 14), crosshair.x - pivot.x);
-      cannonball.active = true;
-      cannonball.startX = pivot.x + Math.cos(angle) * 40;
-      cannonball.startY = (pivot.y - 14) + Math.sin(angle) * 40;
-      cannonball.endX = crosshair.x;
-      cannonball.endY = crosshair.y;
-      cannonball.t = 0;
-  }
-
-  function getCannonPivot() {
-      return { x: W / 2, y: seaBottom + (H - seaBottom) * 0.42 };
-  }
-
-  function resolveShot(x, y) {
-      let hit = null;
-      for (let i = 0; i < targets.length; i++) {
-          const t = targets[i];
-          if (!t.alive) continue;
-          if (Math.abs(x - t.x) < 78 && Math.abs(y - t.y) < 44) { hit = t; break; }
-      }
-      if (!hit) {
-          spawnFloatText(x, y, 'พลาด!', '#94a3b8');
-          gameState = 'PLAYING';
-          return;
-      }
-      hit.alive = false;
-      if (hit.isCorrect) {
-          handleCorrectHit(hit);
-      } else {
-          handleWrongHit(hit);
-      }
-  }
-
-  function handleCorrectHit(hit) {
-      player.score += 10;
-      correctAnswersCount++;
-      updateHUD();
-      pulseHud('uiQuestions'); pulseHud('uiScore');
-      spawnConfetti(hit.x, hit.y);
-      spawnFloatText(hit.x, hit.y - 20, '+10 ถูกต้อง!', '#16a34a');
-      clearTargets(hit.el);
-      gameState = 'PAUSED';
-      setTimeout(openSiemSi, 450);
-  }
-  function handleWrongHit(hit) {
-      player.hearts--;
-      updateHUD();
-      pulseHud('uiHearts');
-      spawnFloatText(hit.x, hit.y - 20, '-1 หัวใจ', '#f43f5e');
-      clearTargets(hit.el);
-      document.getElementById('qWrongExp').innerText = currentQ.exp;
-      // ตอบผิด: ใส่คำถามข้อนี้กลับเข้ากองแล้วสลับตำแหน่งใหม่ จะได้ถูกถามซ้ำอีกจนกว่าจะตอบถูก (ข้ออื่นจะไม่ซ้ำ)
-      triviaPool.push(currentQ);
-      triviaPool = shuffleArray(triviaPool);
-      gameState = 'PAUSED';
-      setTimeout(() => document.getElementById('wrongModal').classList.remove('hidden'), 400);
-      if (player.hearts <= 0) setTimeout(() => gameOverRun("Game Over!"), 1800);
-  }
-
-  function resumeGame() {
-      document.getElementById('wrongModal').classList.add('hidden');
-      document.getElementById('siemsiModal').classList.add('hidden');
-      if (player.hearts <= 0) return; // กำลังจะจบเกมอยู่แล้ว
-      if (correctAnswersCount >= 10) {
-          gameOverRun("เก่งมาก! ชนะแล้ว 🎉", "text-orange-500");
-      } else {
-          loadNextQuestion();
-      }
-  }
-
-  // ===== เอฟเฟกต์ =====
-  function spawnFloatText(x, y, text, color) {
-      floatingTexts.push({ x, y, text, color, alpha: 1, vy: -1.1 });
-  }
-  function spawnConfetti(x, y) {
-      const colors = ['#f97316', '#fbbf24', '#22c55e', '#38bdf8', '#f472b6'];
-      for (let i = 0; i < 16; i++) {
-          const ang = Math.random() * Math.PI * 2;
-          const spd = 2 + Math.random() * 3.5;
-          particles.push({ x, y, vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd - 2, color: colors[i % colors.length], life: 1, size: 4 + Math.random() * 3 });
-      }
-  }
-
-  // ===== อัปเดตเกม =====
-  function updateGame() {
-      if (cannonRecoil > 0) cannonRecoil = Math.max(0, cannonRecoil - 0.08);
-
-      if (cannonball.active) {
-          cannonball.t += 0.062;
-          if (cannonball.t >= 1) {
-              cannonball.active = false;
-              resolveShot(cannonball.endX, cannonball.endY);
-          }
-      }
-
-      particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += 0.15; p.life -= 0.022; });
-      particles = particles.filter(p => p.life > 0);
-
-      floatingTexts.forEach(f => { f.y += f.vy; f.alpha -= 0.018; });
-      floatingTexts = floatingTexts.filter(f => f.alpha > 0);
-  }
-
-  function updateBob() {
-      targets.forEach(t => {
-          if (!t.alive || !t.el) return;
-          const bob = Math.sin(frameCount * 0.05 + t.phase) * 8;
-          t.y = t.baseY + bob;
-          t.el.style.transform = `translate(-50%, -50%) translateY(${bob}px) rotate(var(--rot))`;
-      });
-      clouds.forEach(c => { c.x -= c.speed; if (c.x < -80) c.x = W + 80; });
-  }
-
-  // ===== การวาด =====
-  function drawCloudShape(c) {
-      ctx.fillStyle = 'rgba(255,255,255,0.92)';
-      ctx.beginPath();
-      ctx.ellipse(c.x, c.y, 30 * c.scale, 18 * c.scale, 0, 0, Math.PI * 2);
-      ctx.ellipse(c.x + 22 * c.scale, c.y + 4 * c.scale, 20 * c.scale, 14 * c.scale, 0, 0, Math.PI * 2);
-      ctx.ellipse(c.x - 22 * c.scale, c.y + 4 * c.scale, 20 * c.scale, 14 * c.scale, 0, 0, Math.PI * 2);
-      ctx.fill();
-  }
-  function drawSkyline() {
-      skylineBuildings.forEach(b => {
-          ctx.fillStyle = b.color;
-          ctx.beginPath(); ctx.roundRect(b.x, seaTop - b.h, b.w, b.h + 6, 4); ctx.fill();
-          ctx.fillStyle = 'rgba(255,255,255,0.35)';
-          for (let wy = seaTop - b.h + 10; wy < seaTop - 8; wy += 16) {
-              for (let wx = b.x + 8; wx < b.x + b.w - 8; wx += 14) {
-                  ctx.fillRect(wx, wy, 6, 8);
-              }
-          }
-      });
-  }
-  function drawWaveShimmer() {
-      ctx.strokeStyle = 'rgba(255,255,255,0.35)';
-      ctx.lineWidth = 2;
-      for (let row = 0; row < 3; row++) {
-          const y = seaTop + 20 + row * 22;
-          ctx.beginPath();
-          for (let x = 0; x <= W; x += 14) {
-              const yy = y + Math.sin(x * 0.05 + frameCount * 0.03 + row) * 3;
-              if (x === 0) ctx.moveTo(x, yy); else ctx.lineTo(x, yy);
-          }
-          ctx.stroke();
-      }
-  }
-  function drawMermaidStatue() {
-      const x = W * 0.85, y = seaBottom - 6;
-      ctx.fillStyle = '#94a3b8';
-      ctx.beginPath(); ctx.ellipse(x, y, 30, 16, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#eab308';
-      ctx.beginPath(); ctx.ellipse(x + 6, y - 22, 20, 26, -0.3, 0, Math.PI * 2); ctx.fill(); // หาง
-      ctx.fillStyle = '#fbbf77';
-      ctx.beginPath(); ctx.ellipse(x - 6, y - 38, 9, 12, 0.2, 0, Math.PI * 2); ctx.fill(); // ลำตัว
-      ctx.beginPath(); ctx.ellipse(x - 9, y - 50, 6, 6, 0, 0, Math.PI * 2); ctx.fill(); // หัว
-      ctx.fillStyle = '#78350f';
-      ctx.beginPath(); ctx.ellipse(x - 9, y - 54, 6.5, 4, 0, Math.PI, Math.PI * 2); ctx.fill(); // ผม
-  }
-  function drawScene() {
-      const sky = ctx.createLinearGradient(0, 0, 0, seaTop);
-      sky.addColorStop(0, '#8ecbf0'); sky.addColorStop(1, '#d9f1ff');
-      ctx.fillStyle = sky; ctx.fillRect(0, 0, W, seaTop);
-      clouds.forEach(drawCloudShape);
-      drawSkyline();
-
-      const sea = ctx.createLinearGradient(0, seaTop, 0, seaBottom);
-      sea.addColorStop(0, '#5fb6d9'); sea.addColorStop(1, '#3d94bd');
-      ctx.fillStyle = sea; ctx.fillRect(0, seaTop, W, seaBottom - seaTop);
-      drawWaveShimmer();
-      drawMermaidStatue();
-
-      const sand = ctx.createLinearGradient(0, seaBottom, 0, H);
-      sand.addColorStop(0, '#ffe8b8'); sand.addColorStop(1, '#f6cf87');
-      ctx.fillStyle = sand; ctx.fillRect(0, seaBottom, W, H - seaBottom);
-  }
-  function drawCannon() {
-      const pivot = getCannonPivot();
-      ctx.save();
-      ctx.translate(pivot.x, pivot.y);
-
-      ctx.fillStyle = '#6b4f3a';
-      ctx.beginPath(); ctx.ellipse(-34, 12, 22, 15, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.ellipse(34, 12, 22, 15, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#4b3627';
-      ctx.beginPath(); ctx.ellipse(-34, 12, 9, 9, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.ellipse(34, 12, 9, 9, 0, 0, Math.PI * 2); ctx.fill();
-
-      let angle;
-      if (gameState === 'PLAYING' || gameState === 'FIRING') {
-          angle = Math.atan2(crosshair.y - (pivot.y - 14), crosshair.x - pivot.x);
-      } else {
-          angle = -Math.PI / 2 + Math.sin(frameCount * 0.02) * 0.25;
-      }
-
-      ctx.save();
-      ctx.translate(0, -14);
-      ctx.rotate(angle);
-      const recoilOffset = -cannonRecoil * 14;
-      ctx.fillStyle = '#475569';
-      ctx.beginPath(); ctx.roundRect(recoilOffset - 4, -13, 68, 26, 11); ctx.fill();
-      ctx.fillStyle = '#1e293b';
-      ctx.beginPath(); ctx.ellipse(recoilOffset + 64, 0, 9, 13, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.restore();
-
-      ctx.fillStyle = cannonColors[cannonColorIndex];
-      ctx.beginPath(); ctx.roundRect(-42, -12, 84, 28, 13); ctx.fill();
-      ctx.strokeStyle = cannonDarkColors[cannonColorIndex];
-      ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.roundRect(-42, -12, 84, 28, 13); ctx.stroke();
-
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath(); ctx.ellipse(-9, -1, 6, 7, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.ellipse(9, -1, 6, 7, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#1e293b';
-      ctx.beginPath(); ctx.ellipse(-9, 0, 2.8, 3.4, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.ellipse(9, 0, 2.8, 3.4, 0, 0, Math.PI * 2); ctx.fill();
-
-      ctx.restore();
-  }
-  function drawCrosshair() {
-      if (gameState !== 'PLAYING' && gameState !== 'FIRING') return;
-      const pulse = isAiming ? 1 : 0.85 + Math.sin(frameCount * 0.08) * 0.05;
-      ctx.save();
-      ctx.globalAlpha = 0.92;
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.arc(crosshair.x, crosshair.y, 26 * pulse, 0, Math.PI * 2); ctx.stroke();
-      ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2.5;
-      ctx.beginPath(); ctx.arc(crosshair.x, crosshair.y, 26 * pulse, 0, Math.PI * 2); ctx.stroke();
-      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(crosshair.x - 38, crosshair.y); ctx.lineTo(crosshair.x - 16, crosshair.y);
-      ctx.moveTo(crosshair.x + 16, crosshair.y); ctx.lineTo(crosshair.x + 38, crosshair.y);
-      ctx.moveTo(crosshair.x, crosshair.y - 38); ctx.lineTo(crosshair.x, crosshair.y - 16);
-      ctx.moveTo(crosshair.x, crosshair.y + 16); ctx.lineTo(crosshair.x, crosshair.y + 38);
-      ctx.stroke();
-      ctx.fillStyle = '#ef4444';
-      ctx.beginPath(); ctx.arc(crosshair.x, crosshair.y, 3, 0, Math.PI * 2); ctx.fill();
-      ctx.restore();
-  }
-  function drawCannonball() {
-      if (!cannonball.active) return;
-      const t = cannonball.t;
-      const x = cannonball.startX + (cannonball.endX - cannonball.startX) * t;
-      const yLinear = cannonball.startY + (cannonball.endY - cannonball.startY) * t;
-      const arc = -Math.sin(t * Math.PI) * 60;
-      const y = yLinear + arc;
-      ctx.fillStyle = 'rgba(30,41,59,0.25)';
-      ctx.beginPath(); ctx.ellipse(x, y - arc * 0.3, 8, 4, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#1e293b';
-      ctx.beginPath(); ctx.ellipse(x, y, 9, 9, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = 'rgba(255,255,255,0.5)';
-      ctx.beginPath(); ctx.ellipse(x - 3, y - 3, 2.5, 2.5, 0, 0, Math.PI * 2); ctx.fill();
-  }
-  function drawParticles() {
-      particles.forEach(p => {
-          ctx.save();
-          ctx.globalAlpha = Math.max(0, p.life);
-          ctx.fillStyle = p.color;
-          ctx.beginPath(); ctx.rect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size); ctx.fill();
-          ctx.restore();
-      });
-  }
-  function drawFloatingTexts() {
-      floatingTexts.forEach(f => {
-          ctx.save();
-          ctx.globalAlpha = Math.max(0, f.alpha);
-          ctx.fillStyle = f.color;
-          ctx.font = 'bold 22px Nunito, sans-serif';
-          ctx.textAlign = 'center';
-          ctx.strokeStyle = 'rgba(255,255,255,0.9)';
-          ctx.lineWidth = 4;
-          ctx.strokeText(f.text, f.x, f.y);
-          ctx.fillText(f.text, f.x, f.y);
-          ctx.restore();
-      });
-  }
-
-  function render() {
-      drawScene();
-      drawCannon();
-      drawCannonball();
-      drawCrosshair();
-      drawParticles();
-      drawFloatingTexts();
-  }
-
-  function loop() {
-      if (!gameRunning) return;
-      frameCount++;
-      updateBob();
-      if (gameState === 'PLAYING' || gameState === 'FIRING') {
-          updateGame();
-      } else {
-          // ยังอัปเดตอนุภาค/ข้อความแม้จะหยุดชั่วคราว เพื่อความลื่นไหล
-          particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += 0.15; p.life -= 0.022; });
-          particles = particles.filter(p => p.life > 0);
-          floatingTexts.forEach(f => { f.y += f.vy; f.alpha -= 0.018; });
-          floatingTexts = floatingTexts.filter(f => f.alpha > 0);
-      }
-      render();
-      mReqAnimFrame = requestAnimationFrame(loop);
-  }
-
-  // ===== เซียมซี =====
-  function openSiemSi() {
-      document.getElementById('siemsiModal').classList.remove('hidden');
-      document.getElementById('siemsiResult').classList.add('hidden');
-      document.getElementById('siemsiWaiting').classList.remove('hidden');
-      document.getElementById('siemsiCylinder').classList.remove('shake-active');
-  }
-  function playSiemSiAnim() {
-      document.getElementById('siemsiWaiting').classList.add('hidden');
-      document.getElementById('siemsiCylinder').classList.add('shake-active');
-      setTimeout(() => { triggerSiemSiReward(); }, 1200);
-  }
-  function triggerSiemSiReward() {
-      document.getElementById('siemsiCylinder').classList.remove('shake-active');
-      const rewards = [
-          { text: "ได้คะแนนพิเศษ +5 แต้ม", effect: () => player.score += 5 },
-          { text: "โชคดีสุดๆ +10 แต้ม!", effect: () => player.score += 10 },
-          { text: "ฟื้นฟูหัวใจ +1 ดวง", effect: () => player.hearts++ },
-          { text: "ฟื้นฟูหัวใจ +1 ดวง", effect: () => player.hearts++ }
-      ];
-      let r = rewards[Math.floor(Math.random() * rewards.length)];
-      r.effect(); updateHUD();
-      pulseHud('uiScore');
-      document.getElementById('siemsiRewardText').innerText = r.text;
-      document.getElementById('qCorrectExp').innerText = currentQ.exp;
-      document.getElementById('siemsiResult').classList.remove('hidden');
-  }
-
-  function gameOverRun(title, color = "text-rose-400") {
-      gameRunning = false;
-      document.getElementById('gameHud').classList.add('hidden');
-      document.getElementById('questionBanner').classList.add('hidden');
-      document.getElementById('gameResult').classList.remove('hidden');
-      document.getElementById('resultTitle').className = `text-3xl md:text-4xl font-black mb-4 tracking-tight ${color}`;
-      document.getElementById('resultTitle').innerText = title;
-      document.getElementById('resultHearts').innerText = player.hearts;
-      document.getElementById('resultScore').innerText = player.score;
-      saveLocalScore(player.score);
-      saveScoreToServer(player.score);
-      updateSaveStatus();
-  }
-  function updateSaveStatus() {
-      const el = document.getElementById('saveStatus');
-      if (!el) return;
-      if (hasStudentInfo) {
-          el.textContent = `📤 บันทึกคะแนนให้ ${studentInfo.name} (${studentInfo.className}) เรียบร้อยแล้ว`;
-          el.className = 'text-emerald-600 font-bold text-sm mb-4';
-      } else {
-          el.textContent = 'เล่นแบบไม่ระบุตัวตน — คะแนนบันทึกไว้ในเครื่องนี้เท่านั้น';
-          el.className = 'text-slate-400 font-bold text-sm mb-4';
-      }
-  }
-  function saveLocalScore(newScore) {
-      let scores = JSON.parse(localStorage.getItem('songkhla_cannon_scores') || '[]');
-      scores.push({ score: newScore, date: new Date().toLocaleDateString('th-TH') });
-      scores.sort((a, b) => b.score - a.score);
-      scores = scores.slice(0, 5);
-      localStorage.setItem('songkhla_cannon_scores', JSON.stringify(scores));
-      let listHtml = scores.map((item, index) => {
-          let badge = index === 0 ? '🏆' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`;
-          return `<li class="flex justify-between items-center p-3 bg-orange-50/60 border border-orange-100 rounded-2xl">
-              <span class="font-bold text-slate-600">${badge} สถิติล่าสุด (${item.date})</span>
-              <span class="bg-orange-500 text-white px-3 py-1 rounded-xl font-black font-nunito text-sm">${item.score} แต้ม</span>
-          </li>`;
-      }).join('');
-      document.getElementById('gameLeaderboardList').innerHTML = listHtml;
-  }
-  </script>
- </body>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>เกมผจญภัยแหลมสน (Mario Style)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700;900&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans Thai', sans-serif; margin: 0; padding: 0; overflow: hidden; touch-action: none; background-color: #e0f2fe; }
+        #gameCanvas { display: block; outline: none; }
+        .mario-btn { transition: all 0.1s; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+        .mario-btn:active { transform: scale(0.9); }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col items-center bg-blue-50">
+    <!-- หน้าเริ่มเกม -->
+    <div id="marioIntro" class="absolute inset-0 z-50 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center p-4">
+        <div class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl text-center max-w-lg w-full border-4 border-blue-100 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-blue-400 to-emerald-400"></div>
+            <h1 class="text-4xl md:text-5xl font-black text-blue-600 mb-4 tracking-tight drop-shadow-sm">ตะลุยด่านแหลมสน</h1>
+            <p class="text-gray-600 mb-8 text-lg">โหม่งกล่องคำถาม ตอบให้ถูกเพื่อสะสมคะแนน<br>(ถ้าตอบผิด ต้องเล่นจนกว่าจะตอบถูกนะ!)</p>
+
+            <div class="grid grid-cols-2 gap-4 text-sm text-gray-500 mb-8 bg-blue-50 p-4 rounded-xl">
+                <div class="flex flex-col items-center"><i data-lucide="arrow-left-right" class="w-8 h-8 text-blue-400 mb-2"></i><span>เดินซ้าย/ขวา</span></div>
+                <div class="flex flex-col items-center"><i data-lucide="arrow-up-circle" class="w-8 h-8 text-blue-400 mb-2"></i><span>กระโดด (กด 2 ครั้ง = กระโดดสูง)</span></div>
+            </div>
+            <button onclick="startMarioGame()" class="w-full bg-blue-500 text-white text-2xl font-black py-4 rounded-2xl hover:bg-blue-600 hover:-translate-y-1 transition shadow-[0_4px_12px_rgba(59,130,246,0.4)]">
+                PLAY GAME
+            </button>
+        </div>
+    </div>
+    <!-- ส่วนของตัวเกมแบบเต็มหน้าจอ -->
+    <div id="marioGameWrapper" class="hidden w-full h-full flex flex-col max-w-[1200px] mx-auto bg-gradient-to-b from-[#60a5fa] to-[#e0f2fe] relative shadow-2xl">
+
+        <!-- UI แสดงสถานะมุมซ้ายบน -->
+        <div class="absolute top-4 left-4 flex gap-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-full shadow-sm border border-white/50 font-black text-sm md:text-lg">
+            <div class="flex items-center gap-1 text-red-500"><i data-lucide="heart" class="w-5 h-5 fill-current"></i> <span id="uiHearts">3</span></div>
+            <div class="flex items-center gap-1 text-blue-600"><i data-lucide="star" class="w-5 h-5 fill-current"></i> <span id="uiScore">0</span></div>
+            <div class="flex items-center gap-1 text-amber-500"><i data-lucide="help-circle" class="w-5 h-5 fill-current"></i> <span id="uiQuestions">0/10</span></div>
+        </div>
+        <!-- พื้นที่ Canvas สำหรับวาดเกม -->
+        <div id="canvasContainer" class="flex-grow w-full relative overflow-hidden">
+            <canvas id="gameCanvas" class="absolute inset-0 w-full h-full block"></canvas>
+        </div>
+        <!-- ปุ่มคุมบนมือถือ (ติดขอบล่าง) -->
+        <div id="marioControls" class="flex justify-between items-center px-4 md:px-8 pb-6 pt-4 shrink-0 bg-white shadow-[0_-10px_20px_rgba(0,0,0,0.1)] z-20 border-t-2 border-gray-100">
+            <div class="flex gap-3 md:gap-6">
+                <button id="btnLeft" class="mario-btn bg-gray-100 active:bg-blue-200 w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center border-b-4 border-gray-300 active:border-b-0 active:translate-y-1"><i data-lucide="arrow-left" class="w-10 h-10 md:w-12 md:h-12 text-gray-700"></i></button>
+                <button id="btnRight" class="mario-btn bg-gray-100 active:bg-blue-200 w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center border-b-4 border-gray-300 active:border-b-0 active:translate-y-1"><i data-lucide="arrow-right" class="w-10 h-10 md:w-12 md:h-12 text-gray-700"></i></button>
+            </div>
+            <button id="btnJump" class="mario-btn bg-blue-500 active:bg-blue-600 w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center border-b-8 border-blue-700 active:border-b-0 active:translate-y-2 shadow-lg"><i data-lucide="arrow-up" class="w-12 h-12 md:w-14 md:h-14 text-white"></i></button>
+        </div>
+    </div>
+    <!-- Modal คำถามระหว่างเกม -->
+    <div id="marioQuizModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 md:p-10 w-full max-w-2xl shadow-2xl transform scale-100 relative">
+            <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-yellow-400 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-4xl font-black text-yellow-800">?</div>
+            <h2 id="mQuestionText" class="text-2xl md:text-3xl font-bold text-gray-800 mb-8 mt-6 text-center leading-relaxed">คำถาม?</h2>
+
+            <div id="mOptions" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- ปุ่มตัวเลือก (จะสุ่มตำแหน่ง) -->
+            </div>
+            <div id="mExplanationArea" class="hidden text-center">
+                <div id="mResultStatus" class="text-2xl font-black mb-4"></div>
+                <div class="bg-blue-50 text-blue-800 p-6 rounded-2xl text-lg font-medium mb-6" id="mExplanationText">คำอธิบาย...</div>
+                <button onclick="resumeMarioGame()" class="bg-blue-500 text-white px-10 py-4 rounded-2xl font-black text-xl hover:bg-blue-600 transition shadow-lg w-full md:w-auto">ลุยต่อ!</button>
+            </div>
+        </div>
+    </div>
+    <!-- หน้าสรุปผลเกม -->
+    <div id="marioResult" class="hidden absolute inset-0 z-50 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center p-4">
+        <div class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl text-center max-w-lg w-full border-4 border-blue-100">
+            <h1 id="resultTitle" class="text-4xl md:text-5xl font-black tracking-tight mb-3">จบเกม!</h1>
+            <p class="text-gray-500 text-lg mb-8">เยี่ยมมาก! คุณฝ่าด่านจนถึงเส้นชัยแล้ว</p>
+
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="bg-red-50 p-6 rounded-2xl border-2 border-red-100">
+                    <i data-lucide="heart" class="w-10 h-10 text-red-500 fill-current mx-auto mb-2"></i>
+                    <div class="text-sm text-red-600 font-bold mb-1">หัวใจเหลือ</div>
+                    <div class="text-4xl font-black text-red-700" id="resultHearts">0</div>
+                </div>
+                <div class="bg-blue-50 p-6 rounded-2xl border-2 border-blue-100">
+                    <i data-lucide="star" class="w-10 h-10 text-blue-500 fill-current mx-auto mb-2"></i>
+                    <div class="text-sm text-blue-600 font-bold mb-1">คะแนนที่ได้</div>
+                    <div class="text-4xl font-black text-blue-700" id="resultScore">0</div>
+                </div>
+            </div>
+
+            <p id="saveStatus" class="text-sm text-gray-400 mb-6"></p>
+
+            <button onclick="location.reload()" class="w-full bg-gray-800 text-white text-xl font-bold py-4 rounded-2xl hover:bg-gray-900 transition">เล่นใหม่อีกครั้ง</button>
+        </div>
+    </div>
+    <script>
+        lucide.createIcons();
+
+        // ===== รับข้อมูลนักเรียนจาก URL (ส่งมาจากหน้าเว็บบทเรียนตอนกดเปิดเกม) =====
+        // และบันทึกคะแนนกลับไปที่ Google Sheet ผ่าน Apps Script API เมื่อเกมจบ (แพ้หรือชนะก็บันทึก)
+        const SCORE_API_URL = "https://script.google.com/macros/s/AKfycbwAfmqJTXPhRP1WSV2_EyYoqSs0b_4C3rL5_EwW8EryTpIDkmBU6Sx4UM8TJ9ndYrGX/exec";
+        const urlParams = new URLSearchParams(window.location.search);
+        const studentInfo = {
+            studentId: urlParams.get('studentId') || '',
+            name: urlParams.get('name') || '',
+            className: urlParams.get('className') || ''
+        };
+        const hasStudentInfo = !!(studentInfo.studentId && studentInfo.className);
+        function saveScoreToServer(score) {
+            if (!hasStudentInfo) return;
+            const params = new URLSearchParams({
+                api: 'saveScore', studentId: studentInfo.studentId, name: studentInfo.name,
+                className: studentInfo.className, action: 'เล่นเกมแหลมสน', score: score
+            });
+            fetch(SCORE_API_URL + '?' + params.toString(), { method: 'GET', mode: 'no-cors' }).catch(() => {});
+        }
+        function updateSaveStatus() {
+            const el = document.getElementById('saveStatus');
+            if (!el) return;
+            if (hasStudentInfo) {
+                el.innerText = `📤 บันทึกคะแนนให้ ${studentInfo.name} (${studentInfo.className}) เรียบร้อยแล้ว`;
+            } else {
+                el.innerText = 'เล่นแบบไม่ระบุตัวตน (คะแนนจะไม่ถูกบันทึกลงชีต เข้าเกมผ่านหน้าบทเรียนเพื่อให้บันทึกคะแนนได้)';
+            }
+        }
+
+        CanvasRenderingContext2D.prototype.roundRectCustom = function (x, y, w, h, r) {
+            if (typeof r === 'undefined') r = 0;
+            if (typeof r === 'number') r = {tl: r, tr: r, br: r, bl: r};
+            else if (Array.isArray(r)) r = {tl: r[0], tr: r[1], br: r[2], bl: r[3]};
+            this.beginPath();
+            this.moveTo(x + r.tl, y);
+            this.lineTo(x + w - r.tr, y);
+            this.quadraticCurveTo(x + w, y, x + w, y + r.tr);
+            this.lineTo(x + w, y + h - r.br);
+            this.quadraticCurveTo(x + w, y + h, x + w - r.br, y + h);
+            this.lineTo(x + r.bl, y + h);
+            this.quadraticCurveTo(x, y + h, x, y + h - r.bl);
+            this.lineTo(x, y + r.tl);
+            this.quadraticCurveTo(x, y, x + r.tl, y);
+            this.closePath();
+            this.fill();
+        }
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let gameRunning = false, mReqAnimFrame, mState = 'IDLE';
+        let player, platforms, boxes, enemies, clouds;
+        let camera = { x: 0, y: 0 };
+        const keys = { left: false, right: false, up: false };
+        const GRAVITY = 0.5, JUMP_POWER = -10, DOUBLE_JUMP_POWER = -11;
+        const HOLD_JUMP_THRESHOLD = 150;
+        let jumpRequested = false, jumpEffects = [], jumpPressStartTime = 0, jumpHoldBoostApplied = false;
+
+        let availableQuestions = [], currentBoxIndex = -1;
+        let nextMapX = 0, goalSpawned = false, goal = { x: -1000, y: 0, w: 0, h: 0 };
+        const mQuestions = [
+            { q: "1. การตั้งเมืองสงขลาฝั่งแหลมสน เกิดขึ้นหลังจากเหตุการณ์ใด?", options: ["สงครามโลกครั้งที่ 2", "กองทัพอยุธยาตีกรุงธนบุรี", "สมเด็จพระนารายณ์ตีเมืองสงขลาเขาแดงแตก", "โรคระบาดครั้งใหญ่ในภาคใต้"], ans: 2, exp: "หลังเมืองสงขลาเชิงเขาแดงถูกกองทัพสมเด็จพระนารายณ์ตีแตกในปี พ.ศ. 2223 ชาวเมืองบางส่วนได้โยกย้ายมาตั้งชุมชนใหม่ที่บ้านแหลมสน" },
+            { q: "2. เมืองสงขลาฝั่งแหลมสนมีสภาพภูมิประเทศเป็นอย่างไร?", options: ["เป็นภูเขาสูงชัน", "เป็นที่ราบแคบๆ บริเวณปลายคาบสมุทร", "เป็นเกาะกลางทะเลสาบ", "เป็นที่ราบลุ่มแม่น้ำขนาดใหญ่"], ans: 1, exp: "แหลมสนตั้งอยู่ปลายสุดของคาบสมุทรสทิงพระ เป็นที่ราบแคบๆ ตรงข้ามฝั่งใต้ของเมืองสงขลาเชิงเขาแดง" },
+            { q: "3. ข้อใดคือผู้ที่พระเจ้าตากสินทรงแต่งตั้งให้เป็น 'หลวงสุวรรณคีรีสมบัติ'?", options: ["พระสงขลา (โยม)", "นายวิเถียน", "นายบุญหุ้ย", "นายเหยี่ยง แซ่เฮา"], ans: 3, exp: "พ.ศ. 2317 สมัยกรุงธนบุรี พระเจ้าตากสินทรงโปรดเกล้าฯ ให้นายเหยี่ยง แซ่เฮา เป็นหลวงสุวรรณคีรีสมบัติ ปกครองเมืองสงขลาฝั่งแหลมสน" },
+            { q: "4. ตระกูล ณ สงขลา ปกครองเมืองสงขลาสืบต่อกันมากี่รุ่น?", options: ["9 รุ่น", "12 รุ่น", "15 รุ่น", "18 รุ่น"], ans: 3, exp: "นับแต่นายเหยี่ยง แซ่เฮา เป็นต้นสายสกุล ตระกูล ณ สงขลา ได้สืบทอดการปกครองเมืองสงขลาต่อเนื่องมาถึง 18 รุ่น" },
+            { q: "5. 'ซุ้มประตูบ่อเก๋ง' สะท้อนให้เห็นถึงการอพยพเข้ามาของชนกลุ่มใด?", options: ["ชาวอาหรับ", "ชาวมลายู", "ชาวจีนฮกเกี้ยน", "ชาวยุโรป"], ans: 2, exp: "ซุ้มประตูบ่อเก๋งเป็นสถาปัตยกรรมแบบหมิ่นหนาน (จีน) สะท้อนให้เห็นการอพยพเข้ามาตั้งถิ่นฐานของชาวจีนฮกเกี้ยนในย่านแหลมสน" },
+            { q: "6. วัดใดที่มีการค้นพบสถาปัตยกรรมแบบพื้นเมืองภาคใต้และปัจจุบันเป็นวัดร้าง?", options: ["วัดบ่อทรัพย์", "วัดศิริวรรณาวาส", "วัดภูผาเบิก", "วัดสุวรรณคีรี"], ans: 1, exp: "วัดศิริวรรณาวาสเป็นหนึ่งในวัดโบราณย่านแหลมสนที่มีสถาปัตยกรรมแบบพื้นเมืองภาคใต้ ปัจจุบันกลายเป็นวัดร้าง" },
+            { q: "7. ในยุคของพระยาวิเชียรคีรี (เกี้ยนเส้ง) เมืองสงขลามีรายได้หลักจากการผูกขาดสิ่งใด?", options: ["การประมง", "อากรรังนก สุรา และบ่อนเบี้ย", "การเก็บค่าเทียบท่าเรือ", "การทำนาข้าว"], ans: 1, exp: "สมัยพระยาวิเชียรคีรี (เกี้ยนเส้ง) ตระกูล ณ สงขลา ผูกขาดผลประโยชน์ทางเศรษฐกิจ ตั้งแต่อากรรังนก สุรา และบ่อนเบี้ย" },
+            { q: "8. พิธีน้ำพิพัฒน์สัตยาอธิษฐาน ของข้าราชการสงขลา จัดขึ้นที่ใด?", options: ["ศาลหลักเมือง", "หน้าซุ้มประตูบ่อเก๋ง", "วัดสุวรรณคีรี (วัดออก)", "วัดบ่อทรัพย์"], ans: 2, exp: "พิธีถือน้ำสาบาน หรือน้ำพิพัฒน์สัตยาอธิษฐาน ของข้าราชการเมืองสงขลา จัดขึ้นที่วัดสุวรรณคีรี หรือวัดออก ในปี พ.ศ. 2379" },
+            { q: "9. ทำไมเมืองสงขลาจึงเกิดนโยบายแบ่งแยกและปกครองเมืองปัตตานีในยุคแหลมสน?", options: ["เพราะปัตตานียกทัพมารุกราน", "เพราะสงขลาเข้มแข็งจนเป็นศูนย์กลางการเมืองใหม่แทนปัตตานี", "เพราะต้องการทรัพยากรจากปัตตานี", "เพราะได้รับคำสั่งจากชาติตะวันตก"], ans: 1, exp: "เมืองสงขลาฝั่งแหลมสนเติบโตจนกลายเป็นศูนย์กลางอำนาจทางการเมืองแทนที่ปัตตานี ทำให้เกิดนโยบายแบ่งแยกและถ่วงดุลอำนาจ" },
+            { q: "10. ที่ตั้งเมืองสงขลาแห่งใหม่ (แห่งที่ 3) ที่ถูกย้ายไปจากแหลมสน คือพื้นที่ใด?", options: ["เขาแดง", "บ่อยาง", "เกาะยอ", "สิงหนคร"], ans: 1, exp: "เมื่อพื้นที่แหลมสนคับแคบ รัชกาลที่ 3 โปรดเกล้าฯ ให้ย้ายเมืองสงขลาไปตั้งบนสันทรายฝั่งตรงข้าม เรียกว่า บ่อยาง" }
+        ];
+        function resizeCanvas() {
+            const container = document.getElementById('canvasContainer');
+            if(container) {
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+            }
+        }
+        window.addEventListener('resize', () => {
+            if (mState === 'PLAYING' || mState === 'PAUSED') resizeCanvas();
+        });
+        function initMap() {
+            platforms = []; boxes = []; enemies = []; clouds = [];
+            availableQuestions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+            nextMapX = 0; goalSpawned = false; goal = { x: -1000, y: 0, w: 0, h: 0 };
+
+            // h: 1000 ทำให้พื้นดินวาดลงไปลึกๆ รองรับหน้าจอมือถือแนวยาว
+            platforms.push({x: 0, y: 350, w: 1000, h: 1000});
+            nextMapX = 1000;
+
+            for(let i=0; i<30; i++) { clouds.push({x: Math.random()*5000, y: Math.random()*150+20, w: Math.random()*60+60, speed: Math.random()*0.2+0.1}); }
+
+            generateNextSegment(); generateNextSegment(); generateNextSegment();
+        }
+        function generateNextSegment() {
+            let startX = nextMapX + 150;
+
+            if (availableQuestions.length === 0 && !goalSpawned) {
+                platforms.push({x: startX, y: 350, w: 2500, h: 1000});
+                goal = { x: startX + 800, y: 100, w: 100, h: 250 };
+                goalSpawned = true;
+                nextMapX = startX + 2500;
+                return;
+            }
+
+            if (goalSpawned) {
+                platforms.push({x: startX, y: 350, w: 2000, h: 1000});
+                nextMapX = startX + 2000;
+                return;
+            }
+
+            let type = Math.floor(Math.random() * 3);
+            if (type === 0) {
+                platforms.push({x: startX, y: 350, w: 1000, h: 1000});
+                platforms.push({x: startX + 300, y: 220, w: 150, h: 30});
+                boxes.push({x: startX + 350, y: 120, w: 46, h: 46, used: false, bounceY: 0});
+                enemies.push({x: startX + 500, y: 306, w: 44, h: 44, vx: 2, minX: startX + 400, maxX: startX + 800});
+                nextMapX = startX + 1000;
+            } else if (type === 1) {
+                platforms.push({x: startX, y: 350, w: 1200, h: 1000});
+                platforms.push({x: startX + 250, y: 240, w: 120, h: 30});
+                platforms.push({x: startX + 600, y: 180, w: 120, h: 30});
+                boxes.push({x: startX + 280, y: 140, w: 46, h: 46, used: false, bounceY: 0});
+                boxes.push({x: startX + 630, y: 80, w: 46, h: 46, used: false, bounceY: 0});
+                enemies.push({x: startX + 400, y: 306, w: 44, h: 44, vx: -1.5, minX: startX + 100, maxX: startX + 800});
+                nextMapX = startX + 1200;
+            } else {
+                platforms.push({x: startX, y: 350, w: 900, h: 1000});
+                platforms.push({x: startX + 350, y: 200, w: 200, h: 30});
+                boxes.push({x: startX + 425, y: 100, w: 46, h: 46, used: false, bounceY: 0});
+                enemies.push({x: startX + 200, y: 306, w: 44, h: 44, vx: 1.5, minX: startX + 100, maxX: startX + 350});
+                enemies.push({x: startX + 700, y: 306, w: 44, h: 44, vx: -2, minX: startX + 600, maxX: startX + 850});
+                nextMapX = startX + 900;
+            }
+        }
+        function startMarioGame() {
+            document.getElementById('marioIntro').classList.add('hidden');
+            document.getElementById('marioResult').classList.add('hidden');
+            document.getElementById('marioGameWrapper').classList.remove('hidden');
+
+            resizeCanvas();
+
+            player = { x: 50, y: 200, w: 44, h: 44, vx: 0, vy: 0, speed: 5.5, jumpPower: JUMP_POWER, grounded: false, hearts: 3, score: 0, invincibleTimer: 0, faceRight: true, jumpsUsed: 0, maxJumps: 2 };
+            jumpRequested = false; jumpEffects = []; jumpPressStartTime = 0; jumpHoldBoostApplied = false;
+
+            initMap(); updateUI(); gameRunning = true; mState = 'PLAYING';
+            if(mReqAnimFrame) cancelAnimationFrame(mReqAnimFrame);
+            gameLoop();
+        }
+        function updateUI() {
+            document.getElementById('uiHearts').innerText = player.hearts;
+            document.getElementById('uiScore').innerText = player.score;
+            document.getElementById('uiQuestions').innerText = (10 - availableQuestions.length) + "/10";
+        }
+
+        function AABB(rect1, rect2) { return rect1.x < rect2.x + rect2.w && rect1.x + rect1.w > rect2.x && rect1.y < rect2.y + rect2.h && rect1.y + rect1.h > rect2.y; }
+        function gameLoop() {
+            if(!gameRunning) return;
+            if(mState === 'PLAYING') updateGame();
+            renderGame();
+            mReqAnimFrame = requestAnimationFrame(gameLoop);
+        }
+        function updateGame() {
+            if (player.x + 2000 > nextMapX) generateNextSegment();
+            if (keys.left) { player.vx = -player.speed; player.faceRight = false; }
+            else if (keys.right) { player.vx = player.speed; player.faceRight = true; }
+            else player.vx = 0;
+            player.x += player.vx;
+
+            // ตายถ้าตกเหว (ปรับให้ต่ำลงเพื่อให้รองรับความสูงมือถือ)
+            if(player.y > 1500) {
+                player.hearts--; updateUI();
+                if(player.hearts <= 0) { checkGameOver(); }
+                else {
+                    player.y = 50; player.vy = 0; player.vx = 0; player.jumpsUsed = 0; jumpHoldBoostApplied = false;
+                    let safePlatform = platforms.find(p => p.y === 350 && p.x < player.x && p.x + p.w > player.x - 400);
+                    if(safePlatform) player.x = safePlatform.x + (safePlatform.w / 2);
+                    else player.x = camera.x + 100;
+                    player.invincibleTimer = 120;
+                }
+                return;
+            }
+            platforms.forEach(p => { if(AABB(player, p)) { if(player.vx > 0) player.x = p.x - player.w; else if(player.vx < 0) player.x = p.x + p.w; }});
+            player.vy += GRAVITY; player.y += player.vy; player.grounded = false;
+            platforms.forEach(p => {
+                if(AABB(player, p)) {
+                    if(player.vy > 0) { player.y = p.y - player.h; player.vy = 0; player.grounded = true; player.jumpsUsed = 0; jumpHoldBoostApplied = false; }
+                    else if(player.vy < 0) { player.y = p.y + p.h; player.vy = 0; }
+                }
+            });
+            if (jumpRequested) {
+                jumpRequested = false;
+                if (player.grounded) {
+                    player.vy = JUMP_POWER; player.grounded = false; player.jumpsUsed = 1;
+                } else if (player.jumpsUsed < player.maxJumps) {
+                    player.vy = DOUBLE_JUMP_POWER; player.jumpsUsed = player.maxJumps; spawnJumpEffect(player.x + player.w/2, player.y + player.h);
+                }
+            }
+            if (keys.up && !jumpHoldBoostApplied && player.jumpsUsed < player.maxJumps && player.vy < 0) {
+                if (Date.now() - jumpPressStartTime >= HOLD_JUMP_THRESHOLD) {
+                    player.vy = DOUBLE_JUMP_POWER; player.jumpsUsed = player.maxJumps; jumpHoldBoostApplied = true; spawnJumpEffect(player.x + player.w/2, player.y + player.h);
+                }
+            }
+            boxes.forEach((b) => {
+                if(b.bounceY > 0) b.bounceY -= 1;
+                if(AABB(player, b)) {
+                    if(player.vy > 0 && player.y + player.h - player.vy <= b.y) { player.y = b.y - player.h; player.vy = 0; player.grounded = true; player.jumpsUsed = 0; jumpHoldBoostApplied = false; }
+                    else if (player.vy < 0 && player.y - player.vy >= b.y + b.h) {
+                        player.y = b.y + b.h; player.vy = 0; b.bounceY = 10;
+                        if(!b.used) {
+                            b.used = true;
+                            if (availableQuestions.length > 0) {
+                                let rIdx = Math.floor(Math.random() * availableQuestions.length);
+                                currentBoxIndex = availableQuestions[rIdx];
+                                availableQuestions.splice(rIdx, 1);
+                                triggerQuiz(currentBoxIndex);
+                            }
+                        }
+                    } else { if(player.vx > 0) player.x = b.x - player.w; else if(player.vx < 0) player.x = b.x + b.w; }
+                }
+            });
+            enemies.forEach(e => {
+                e.x += e.vx; if(e.x <= e.minX || e.x >= e.maxX) e.vx *= -1;
+                if(player.invincibleTimer <= 0 && AABB(player, e)) {
+                    player.hearts--; player.invincibleTimer = 90; updateUI(); checkGameOver();
+                }
+            });
+            if(player.invincibleTimer > 0) player.invincibleTimer--;
+            jumpEffects.forEach(fx => { fx.life--; fx.y -= 1.2; });
+            jumpEffects = jumpEffects.filter(fx => fx.life > 0);
+            if (goalSpawned && AABB(player, goal)) { mState = 'CLEAR'; showGameResult("จบการผจญภัย!", "text-blue-600"); }
+            camera.x = player.x - canvas.width / 2.5; if (camera.x < 0) camera.x = 0;
+            // คำนวณแกน Y ให้พื้นเกมอยู่สูงจากขอบล่าง Canvas เสมอ (ประมาณ 180px)
+            camera.y = 350 - (canvas.height - 180);
+
+            clouds.forEach(c => { c.x -= c.speed; if(c.x + c.w < camera.x) c.x = camera.x + canvas.width + Math.random()*500; });
+        }
+        function spawnJumpEffect(x, y) {
+            for(let i=0; i<6; i++) jumpEffects.push({ x: x + (Math.random()*30-15), y: y, life: 24, r: Math.random()*3+2 });
+        }
+        function renderGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            clouds.forEach(c => {
+                ctx.beginPath(); ctx.arc(c.x - camera.x, c.y - camera.y, c.w/2, 0, Math.PI*2);
+                ctx.arc(c.x - camera.x + c.w*0.4, c.y - camera.y - c.w*0.2, c.w/2.5, 0, Math.PI*2);
+                ctx.arc(c.x - camera.x + c.w*0.8, c.y - camera.y, c.w/2.2, 0, Math.PI*2); ctx.fill();
+            });
+            if (goalSpawned) {
+                ctx.fillStyle = '#fbcfe8'; ctx.roundRectCustom(goal.x - camera.x, goal.y - camera.y, goal.w, goal.h, 40);
+                ctx.fillStyle = '#fce7f3'; ctx.roundRectCustom(goal.x - camera.x + 10, goal.y - camera.y + 10, goal.w - 20, goal.h - 20, 30);
+                ctx.fillStyle = '#be185d'; ctx.font = "900 24px Noto Sans Thai"; ctx.textAlign = "center"; ctx.fillText("เส้นชัย", goal.x - camera.x + goal.w/2, goal.y - camera.y - 15);
+            }
+            platforms.forEach(p => {
+                ctx.fillStyle = '#d97706'; ctx.roundRectCustom(p.x - camera.x, p.y - camera.y + 15, p.w, p.h - 15, 12);
+                ctx.fillStyle = '#4ade80'; ctx.roundRectCustom(p.x - camera.x, p.y - camera.y, p.w, 20, 12);
+            });
+            ctx.font = "900 28px Nunito"; ctx.textAlign = "center";
+            boxes.forEach(b => {
+                let by = b.y - b.bounceY - camera.y;
+                ctx.fillStyle = b.used ? '#e7e5e4' : '#fde047'; ctx.roundRectCustom(b.x - camera.x, by, b.w, b.h, 12);
+                ctx.fillStyle = b.used ? '#d6d3d1' : '#fef08a'; ctx.roundRectCustom(b.x - camera.x + 4, by + 4, b.w - 8, b.h - 8, 8);
+                ctx.fillStyle = b.used ? '#a8a29e' : '#ca8a04'; ctx.fillText("?", b.x - camera.x + b.w/2, by + 32);
+            });
+            enemies.forEach(e => {
+                let ex = e.x - camera.x; let ey = e.y + (e.vx > 0 && Math.floor(Date.now()/150)%2===0 ? -2 : 0) - camera.y;
+                ctx.fillStyle = '#fb7185';
+                ctx.roundRectCustom(ex, ey, e.w, e.h, [22, 22, 10, 10]);
+                ctx.fillStyle = '#881337';
+                ctx.fillRect(ex + 10 + (e.vx>0?4:0), ey + 18, 6, 6); ctx.fillRect(ex + 24 + (e.vx>0?4:0), ey + 18, 6, 6);
+                ctx.beginPath(); ctx.moveTo(ex + 8 + (e.vx>0?4:0), ey + 12); ctx.lineTo(ex + 18 + (e.vx>0?4:0), ey + 16); ctx.lineWidth = 3; ctx.strokeStyle = '#881337'; ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(ex + 30 + (e.vx>0?4:0), ey + 12); ctx.lineTo(ex + 20 + (e.vx>0?4:0), ey + 16); ctx.stroke();
+            });
+            if (player.invincibleTimer === 0 || Math.floor(Date.now() / 100) % 2 === 0) {
+                let px = player.x - camera.x; let py = player.y - camera.y;
+
+                ctx.fillStyle = '#60a5fa'; ctx.roundRectCustom(px, py, player.w, player.h, 16);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'; ctx.roundRectCustom(px + 4, py + 4, player.w - 16, 12, 6);
+
+                let eyeOffset = player.faceRight ? 22 : 10;
+                if(player.vx === 0) eyeOffset = 16;
+                ctx.fillStyle = '#1e3a8a';
+                ctx.beginPath(); ctx.arc(px + eyeOffset, py + 18, 4, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(px + eyeOffset + 12, py + 18, 4, 0, Math.PI*2); ctx.fill();
+
+                ctx.fillStyle = '#fbcfe8';
+                ctx.beginPath(); ctx.arc(px + eyeOffset - 5, py + 24, 3.5, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(px + eyeOffset + 17, py + 24, 3.5, 0, Math.PI*2); ctx.fill();
+
+                if (player.vx !== 0 && player.grounded && Math.floor(Date.now() / 100) % 2 === 0) {
+                    ctx.fillStyle = '#3b82f6'; ctx.roundRectCustom(px + 8, py + player.h - 2, 10, 6, 3); ctx.roundRectCustom(px + 26, py + player.h - 2, 10, 6, 3);
+                }
+            }
+            jumpEffects.forEach(fx => {
+                ctx.globalAlpha = Math.max(fx.life / 24, 0); ctx.fillStyle = '#fde047';
+                ctx.beginPath(); ctx.arc(fx.x - camera.x, fx.y - camera.y, fx.r, 0, Math.PI*2); ctx.fill(); ctx.globalAlpha = 1;
+            });
+        }
+        function triggerQuiz(idx) {
+            mState = 'PAUSED'; keys.left = false; keys.right = false; keys.up = false; jumpRequested = false; currentBoxIndex = idx;
+            let q = mQuestions[idx];
+
+            document.getElementById('mQuestionText').innerText = q.q;
+
+            // สร้าง Array ตัวเลือกแล้วสุ่มตำแหน่ง (Shuffle)
+            let opts = q.options.map((opt, i) => ({ text: opt, isCorrect: (i === q.ans) }));
+            opts.sort(() => Math.random() - 0.5);
+
+            document.getElementById('mOptions').innerHTML = opts.map((opt) =>
+                `<button onclick="answerMarioQuiz(${opt.isCorrect})" class="w-full bg-white border-2 border-yellow-200 p-4 md:p-5 rounded-2xl text-gray-700 font-bold hover:bg-yellow-50 hover:border-yellow-400 hover:-translate-y-1 transition text-left text-lg shadow-sm">${opt.text}</button>`
+            ).join('');
+
+            document.getElementById('mExplanationArea').classList.add('hidden');
+            document.getElementById('mOptions').classList.remove('hidden');
+            document.getElementById('marioQuizModal').classList.remove('hidden');
+        }
+        function answerMarioQuiz(isCorrect) {
+            let q = mQuestions[currentBoxIndex];
+            let statusEl = document.getElementById('mResultStatus');
+
+            if(isCorrect) {
+                player.score++; player.hearts++;
+                statusEl.innerHTML = `<span class="text-green-500 flex justify-center items-center gap-2"><i data-lucide="check-circle" class="w-8 h-8"></i> ถูกต้อง! (+1 หัวใจ, +1 คะแนน)</span>`;
+            } else {
+                player.score--;
+                // ถ้าตอบผิด ให้ยัดคำถามข้อนี้กลับเข้ากองสุ่มใหม่ จะได้โดนถามอีกจนกว่าจะถูก
+                availableQuestions.push(currentBoxIndex);
+                statusEl.innerHTML = `<span class="text-red-500 flex justify-center items-center gap-2"><i data-lucide="x-circle" class="w-8 h-8"></i> ผิดครับ! ข้อนี้จะกลับมาถามใหม่นะ</span>`;
+            }
+            updateUI(); lucide.createIcons();
+            document.getElementById('mOptions').classList.add('hidden');
+            document.getElementById('mExplanationText').innerText = q.exp;
+            document.getElementById('mExplanationArea').classList.remove('hidden');
+        }
+        function resumeMarioGame() { document.getElementById('marioQuizModal').classList.add('hidden'); mState = 'PLAYING'; }
+
+        function checkGameOver() { if(player.hearts <= 0) { mState = 'OVER'; showGameResult("Game Over!", "text-red-500"); } }
+        function showGameResult(title, colorClass) {
+            gameRunning = false;
+            document.getElementById('marioResult').classList.remove('hidden');
+            document.getElementById('resultTitle').className = `text-4xl md:text-5xl font-black tracking-tight mb-3 ${colorClass}`;
+            document.getElementById('resultTitle').innerText = title;
+            document.getElementById('resultHearts').innerText = player.hearts;
+            document.getElementById('resultScore').innerText = player.score;
+            saveScoreToServer(player.score);
+            updateSaveStatus();
+        }
+        window.addEventListener('keydown', e => {
+            if(mState !== 'PLAYING') return;
+            if(e.code === 'ArrowLeft') keys.left = true;
+            if(e.code === 'ArrowRight') keys.right = true;
+            if(e.code === 'ArrowUp' && !keys.up) { keys.up = true; jumpRequested = true; jumpPressStartTime = Date.now(); jumpHoldBoostApplied = false; }
+        });
+        window.addEventListener('keyup', e => {
+            if(e.code === 'ArrowLeft') keys.left = false;
+            if(e.code === 'ArrowRight') keys.right = false;
+            if(e.code === 'ArrowUp') keys.up = false;
+        });
+
+        const bindTouch = (id, key) => {
+            const el = document.getElementById(id);
+            el.addEventListener('touchstart', (e) => { e.preventDefault(); if(mState==='PLAYING') keys[key] = true; });
+            el.addEventListener('touchend', (e) => { e.preventDefault(); keys[key] = false; });
+        };
+        bindTouch('btnLeft', 'left'); bindTouch('btnRight', 'right');
+        const btnJump = document.getElementById('btnJump');
+        btnJump.addEventListener('touchstart', (e) => { e.preventDefault(); if(mState === 'PLAYING') { keys.up = true; jumpRequested = true; jumpPressStartTime = Date.now(); jumpHoldBoostApplied = false; } });
+        btnJump.addEventListener('touchend', (e) => { e.preventDefault(); keys.up = false; });
+
+    </script>
+</body>
 </html>
