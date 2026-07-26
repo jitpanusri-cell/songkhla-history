@@ -1,13 +1,13 @@
 // shared/nav-links.js
-// ปุ่มนำทาง 3 ปุ่มคงที่ (เขาแดง=หน้าหลัก / แหลมสน / บ่อยาง) — โค้ดชุดเดียว ใช้ร่วมกันทุกหน้า
+// ปุ่มนำทาง 4 ปุ่มคงที่ (เขาแดง=หน้าหลัก / แหลมสน / บ่อยาง / ตรวจสอบคะแนน) — โค้ดชุดเดียว ใช้ร่วมกันทุกหน้า
 // วางไว้ที่ท้ายหน้า (ในส่วน footer) ของทุกหน้าเหมือนกันหมด
 // หมายเหตุ: เขาแดงคือหน้าหลักของเว็บนี้ (ไม่มีหน้า Home แยกต่างหาก) ปุ่มเขาแดงจึงมีความหมายเป็น "กลับหน้าหลัก" ในตัว
-// ปุ่มทั้ง 3 จะแสดงเหมือนกันทุกหน้าเสมอ ปุ่มของหน้าที่กำลังเปิดอยู่จะถูกไฮไลต์และกดไม่ได้ (ไม่ใช่ลิงก์)
+// ปุ่มทั้ง 4 จะแสดงเหมือนกันทุกหน้าเสมอ ปุ่มของหน้าที่กำลังเปิดอยู่จะถูกไฮไลต์และกดไม่ได้ (ไม่ใช่ลิงก์)
 //
 // วิธีใช้ในแต่ละหน้า:
 //   1) ใส่ <script src="../shared/nav-links.js"></script> ในหน้า
 //   2) ใส่ <div id="era-nav-footer" class="flex flex-wrap items-center justify-center gap-2 mb-4"></div> ไว้ในส่วน <footer> ของหน้า (ท้ายสุดของหน้า)
-//   3) เรียก initEraNav('kaodaeng' | 'laemson' | 'boyang') หลัง lucide.createIcons() ตอนโหลดหน้า
+//   3) เรียก initEraNav('kaodaeng' | 'laemson' | 'boyang' | 'profile') หลัง lucide.createIcons() ตอนโหลดหน้า
 //
 // ถ้าต้องแก้ลิงก์ ข้อความ สี หรือไอคอนของปุ่มเหล่านี้ แก้ที่ไฟล์นี้ไฟล์เดียว จะมีผลกับทุกหน้าทันที
 
@@ -38,24 +38,33 @@
       url: BASE + '/boyang-lesson/',
       icon: 'building-2',
       pill: 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+    },
+    {
+      id: 'profile',
+      label: 'ตรวจสอบคะแนน',
+      mobileLabel: 'บัตรนักเรียน/ตรวจสอบคะแนน',
+      url: BASE + '/profile/',
+      icon: 'id-card',
+      pill: 'bg-purple-100 text-purple-800 hover:bg-purple-200'
     }
   ];
 
   window.initEraNav = function (currentPageId) {
     // ปุ่มนำทางที่ท้ายหน้า (footer) — ออกแบบให้ใช้ได้กับพื้นหลังสีเข้มของ footer ทุกหน้า
+    // ปรับขนาด padding/ตัวอักษรให้เล็กลงเล็กน้อยเทียบกับเดิม เพื่อให้ 4 ปุ่มไม่ดูอัดแน่นเกินไปบนจอมือถือ
     var footerEl = document.getElementById('era-nav-footer');
     if (footerEl) {
       footerEl.innerHTML = PAGES.map(function (p) {
         var isCurrent = p.id === currentPageId;
         if (isCurrent) {
           return '<span title="กำลังอยู่หน้านี้" ' +
-            'class="flex shrink-0 whitespace-nowrap items-center bg-white text-gray-900 px-4 py-2 rounded-full text-xs sm:text-sm font-bold cursor-default shadow-sm">' +
-            '<i data-lucide="' + p.icon + '" class="w-4 h-4 mr-1.5"></i> ' + p.label +
+            'class="flex shrink-0 whitespace-nowrap items-center bg-white text-gray-900 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-sm font-bold cursor-default shadow-sm">' +
+            '<i data-lucide="' + p.icon + '" class="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-1.5"></i> ' + p.label +
             '</span>';
         }
         return '<a href="' + p.url + '" ' +
-          'class="flex shrink-0 whitespace-nowrap items-center bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition border border-white/20">' +
-          '<i data-lucide="' + p.icon + '" class="w-4 h-4 mr-1.5"></i> ' + p.label +
+          'class="flex shrink-0 whitespace-nowrap items-center bg-white/10 hover:bg-white/20 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-sm font-bold transition border border-white/20">' +
+          '<i data-lucide="' + p.icon + '" class="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-1.5"></i> ' + p.label +
           '</a>';
       }).join('');
     }
