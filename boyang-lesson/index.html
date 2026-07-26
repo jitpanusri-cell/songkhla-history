@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>บทเรียนออนไลน์ประวัติศาสตร์เมืองสงขลาฝั่งบ่อยาง</title>
-    
+
     <!-- External Scripts & Libraries -->
     <script src="https://cdn.tailwindcss.com/3.4.17"></script>
     <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
-    
+
     <!-- Typography: Noto Sans Thai ทั้งหัวข้อและเนื้อหา (ให้ตรงกับหน้าเขาแดง/แหลมสน), Nunito สำหรับตัวเลข -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,8 +23,8 @@
             --font-nunito: 'Nunito', sans-serif;
         }
 
-        * { 
-            font-family: var(--font-body); 
+        * {
+            font-family: var(--font-body);
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -32,28 +32,28 @@
             font-family: var(--font-heading);
         }
 
-        .font-nunito { 
-            font-family: var(--font-nunito); 
+        .font-nunito {
+            font-family: var(--font-nunito);
         }
 
         /* Smooth Section Transitions */
-        .page-section { 
-            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
+        .page-section {
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        @keyframes fadeIn { 
-            from { opacity: 0; transform: translateY(12px); } 
-            to { opacity: 1; transform: translateY(0); } 
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes bounceIn { 
-            0% { transform: scale(0.88); opacity: 0; } 
-            60% { transform: scale(1.02); opacity: 1; } 
-            100% { transform: scale(1); opacity: 1; } 
+        @keyframes bounceIn {
+            0% { transform: scale(0.88); opacity: 0; }
+            60% { transform: scale(1.02); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
-        .animate-bounce-in { 
-            animation: bounceIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+        .animate-bounce-in {
+            animation: bounceIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
 
         /* Scrollbar Styling */
@@ -63,10 +63,10 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
         /* Navigation Links */
-        .active-nav { 
-            color: #4f46e5 !important; 
-            font-weight: 700; 
-            border-bottom: 3px solid #4f46e5; 
+        .active-nav {
+            color: #4f46e5 !important;
+            font-weight: 700;
+            border-bottom: 3px solid #4f46e5;
             padding-bottom: 4px;
         }
 
@@ -74,10 +74,10 @@
         .quiz-btn {
             transition: all 0.2s ease-in-out;
         }
-        .quiz-btn.selected { 
-            border-color: #6366f1 !important; 
-            background-color: #eef2ff !important; 
-            color: #4338ca !important; 
+        .quiz-btn.selected {
+            border-color: #6366f1 !important;
+            background-color: #eef2ff !important;
+            color: #4338ca !important;
             font-weight: 700;
             box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
         }
@@ -112,16 +112,21 @@
             </div>
             <h2 class="text-3xl font-extrabold text-slate-800 mb-1 tracking-tight font-heading">บทเรียนเมืองสงขลา</h2>
             <p class="text-indigo-600 font-semibold mb-6 text-base">( ตอน ฝั่งบ่อยาง )</p>
-            
+
             <div class="space-y-4">
                 <div class="relative">
                     <select id="studentClassInput" class="w-full px-5 py-4 rounded-2xl border-2 border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none transition text-center font-bold text-slate-700 bg-white shadow-sm appearance-none cursor-pointer">
                         <option value="">-- เลือกระดับชั้นเรียน --</option>
+                        <option value="ม.3/1">ม.3/1</option>
+                        <option value="ม.3/5">ม.3/5</option>
+                        <option value="ม.3/7">ม.3/7</option>
+                        <option value="ม.3/10">ม.3/10</option>
                         <option value="ม.3/12">ม.3/12</option>
                         <option value="ม.3/13">ม.3/13</option>
                         <option value="ม.3/14">ม.3/14</option>
                         <option value="ม.3/15">ม.3/15</option>
                         <option value="ม.3/16">ม.3/16</option>
+                        <option value="ม.3/17">ม.3/17</option>
                     </select>
                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
                         <i data-lucide="chevron-down" class="w-5 h-5"></i>
@@ -141,7 +146,7 @@
                     <i data-lucide="arrow-right" class="w-5 h-5"></i>
                 </button>
             </div>
-            
+
             <p id="loginError" class="text-rose-600 text-sm mt-4 hidden font-semibold bg-rose-50 border border-rose-200 py-2.5 px-4 rounded-xl"></p>
         </div>
     </div>
@@ -171,7 +176,7 @@
                 </nav>
 
                 <div class="flex items-center gap-3">
-                    
+
                     <div class="hidden sm:flex items-center gap-3 bg-indigo-50/80 px-4 py-2 rounded-2xl border border-indigo-100 shadow-sm">
                         <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs font-nunito">
                             <i data-lucide="user" class="w-4 h-4"></i>
@@ -191,7 +196,7 @@
                     </button>
                 </div>
             </div>
-            
+
             <!-- Mobile Navigation Menu -->
             <div id="mobileMenu" class="hidden xl:hidden border-t border-slate-100 bg-white px-5 pb-5 pt-3 space-y-2 text-sm text-slate-700 font-semibold absolute w-full shadow-2xl z-40 rounded-b-3xl">
                 <a href="#" onclick="showSection('home')" class="py-3 hover:text-indigo-600 border-b border-slate-100 flex items-center gap-3">
@@ -219,11 +224,11 @@
                 <section class="bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800 py-16 md:py-24 text-center text-white relative overflow-hidden shadow-md">
                     <div class="absolute top-10 left-10 w-40 h-40 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
                     <div class="absolute bottom-10 right-10 w-48 h-48 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
-                    
+
                     <div class="relative z-10 max-w-4xl mx-auto px-4">
                         <div class="flex justify-center mb-6">
                             <div class="w-20 h-20 bg-white/15 backdrop-blur-md rounded-3xl flex items-center justify-center border border-white/30 shadow-xl transform rotate-3 hover:rotate-0 transition-transform">
-                                <i data-lucide="landmark" class="w-10 h-10 text-white"></i> 
+                                <i data-lucide="landmark" class="w-10 h-10 text-white"></i>
                             </div>
                         </div>
                         <h1 id="welcomeText" class="text-4xl md:text-6xl font-black mb-4 leading-tight drop-shadow-md tracking-tight font-heading">
@@ -233,7 +238,7 @@
                             บทเรียนออนไลน์ รายวิชา มหาวชิราวุธ 1
                         </p>
                         <button onclick="showSection('knowledge')" class="bg-white text-indigo-700 px-10 py-4 rounded-full font-black text-lg shadow-xl shadow-indigo-900/20 hover:shadow-2xl hover:bg-indigo-50 hover:-translate-y-1 transition-all flex items-center gap-3 mx-auto font-heading">
-                            <span>เริ่มเรียนกันเลย</span> 
+                            <span>เริ่มเรียนกันเลย</span>
                             <i data-lucide="arrow-right" class="w-5 h-5"></i>
                         </button>
                     </div>
@@ -317,28 +322,28 @@
                             <i data-lucide="camera" class="w-10 h-10 text-indigo-600"></i>
                         </div>
                         <h3 class="text-2xl font-black text-slate-800 mb-4 font-heading">เปิดกล้อง แล้วขยับมือขึ้น-ลง!</h3>
-                        
+
                         <div class="bg-indigo-50/80 p-5 rounded-2xl text-left text-sm text-slate-600 font-medium space-y-3 mb-8 border border-indigo-100">
                             <p class="flex items-start gap-2.5">
-                                <span class="text-xl shrink-0">✋</span> 
+                                <span class="text-xl shrink-0">✋</span>
                                 <span>ขยับมือ<b class="text-indigo-700">ขึ้น-ลง</b>ตรงหน้ากล้องให้ไวที่สุด ยิ่งขยับแรง/ไกล ยิ่งได้คะแนนเยอะ (<b class="text-indigo-600">+1</b> หรือ <b class="text-emerald-600">+2</b>)</span>
                             </p>
                             <p class="flex items-start gap-2.5">
-                                <span class="text-xl shrink-0">🎯</span> 
+                                <span class="text-xl shrink-0">🎯</span>
                                 <span>ทำคะแนนให้ถึง <b class="text-indigo-700">67 คะแนน</b> ก่อนเวลาหมด เพื่อปลดล็อกด่านคำถาม 10 ข้อ (เลือก 2 ตัวเลือก)</span>
                             </p>
                             <p class="flex items-start gap-2.5">
-                                <span class="text-xl shrink-0">🤚</span> 
+                                <span class="text-xl shrink-0">🤚</span>
                                 <span>ตอบคำถามได้ทั้งกดปุ่ม หรือ <b class="text-indigo-700">ยกมือค้างไว้ฝั่งซ้ายจอ = A / ขวาจอ = B</b></span>
                             </p>
                             <p class="flex items-start gap-2.5">
-                                <span class="text-xl shrink-0">🏁</span> 
+                                <span class="text-xl shrink-0">🏁</span>
                                 <span>ตอบผิด = ขยับมือให้ครบ 67 ใหม่แล้ววนมาตอบข้อเดิม / ตอบถูกครบ 10 ข้อ = ชนะ!</span>
                             </p>
                         </div>
-                        
+
                         <button onclick="openBoYangGame()" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-black text-xl hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg shadow-indigo-500/30 flex items-center justify-center gap-3 font-heading active:scale-[0.98]">
-                            <i data-lucide="video" class="w-6 h-6"></i> 
+                            <i data-lucide="video" class="w-6 h-6"></i>
                             <span>เปิดกล้อง & เริ่มเกม (หน้าต่างใหม่)</span>
                         </button>
                         <p class="text-xs text-slate-400 mt-4">ต้องอนุญาตให้เว็บนี้เข้าถึงกล้องของอุปกรณ์ และเปิดผ่าน HTTPS</p>
@@ -358,7 +363,7 @@
                         </div>
                         <div class="p-10 md:p-12 bg-white">
                             <button onclick="startQuiz()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-12 py-4 rounded-full font-black text-xl transition-all shadow-lg shadow-emerald-600/30 w-full sm:w-auto flex items-center justify-center gap-3 mx-auto font-heading active:scale-[0.98]">
-                                <i data-lucide="play-circle" class="w-6 h-6"></i> 
+                                <i data-lucide="play-circle" class="w-6 h-6"></i>
                                 <span>เข้าสู่แบบทดสอบ</span>
                             </button>
                         </div>
@@ -370,14 +375,14 @@
                             <div class="font-black text-emerald-700 bg-emerald-100/80 px-5 py-2 rounded-xl text-sm font-nunito" id="quizProgress">ข้อที่ 1/10</div>
                             <div class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Songkhla History Test</div>
                         </div>
-                        
+
                         <h3 id="quizQuestionText" class="text-xl md:text-2xl font-bold text-slate-800 mb-8 leading-relaxed font-heading"></h3>
-                        
+
                         <div id="quizOptions" class="space-y-4"></div>
-                        
+
                         <div class="mt-10 pt-6 border-t border-slate-200 text-right">
                             <button id="nextQuizBtn" disabled onclick="nextQuizQuestion()" class="bg-slate-200 text-slate-400 px-10 py-4 rounded-2xl font-bold transition-all text-lg font-heading cursor-not-allowed">
-                                <span>ถัดไป</span> 
+                                <span>ถัดไป</span>
                                 <i data-lucide="arrow-right" class="inline w-5 h-5 ml-1"></i>
                             </button>
                         </div>
@@ -395,7 +400,7 @@
                         </div>
                         <div class="p-8 md:p-10 max-w-lg mx-auto bg-white rounded-b-3xl">
                             <h3 class="text-lg font-black text-slate-800 border-b border-slate-100 pb-4 mb-6 text-left flex items-center gap-2 font-heading">
-                                <i data-lucide="medal" class="w-5 h-5 text-amber-500"></i> 
+                                <i data-lucide="medal" class="w-5 h-5 text-amber-500"></i>
                                 Leaderboard (ห้อง <span class="board-class-name"></span>)
                             </h3>
                             <ul id="quizLeaderboardList" class="text-left space-y-3"></ul>
@@ -413,20 +418,20 @@
                         <span id="lessonBadge" class="bg-white/20 backdrop-blur-sm px-4 py-1.5 rounded-full text-xs font-bold tracking-wider mb-2 inline-block uppercase font-nunito">บทที่ 1</span>
                         <h2 id="lessonSubtitle" class="text-2xl md:text-3xl font-black leading-tight drop-shadow-sm font-heading">สาเหตุการย้ายเมืองสู่บ่อยาง</h2>
                     </div>
-                    <button onclick="closeLesson()" class="w-10 h-10 bg-black/10 hover:bg-black/20 rounded-full flex items-center justify-center transition shrink-0"> 
-                        <i data-lucide="x" class="w-5 h-5"></i> 
+                    <button onclick="closeLesson()" class="w-10 h-10 bg-black/10 hover:bg-black/20 rounded-full flex items-center justify-center transition shrink-0">
+                        <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
-                
+
                 <div id="lessonContent" class="p-6 md:p-10 overflow-y-auto grow custom-scrollbar text-slate-700 leading-relaxed text-base md:text-lg"></div>
-                
+
                 <div class="border-t border-slate-100 p-4 sm:p-6 flex gap-4 bg-slate-50 shrink-0 justify-between items-center">
                     <button id="prevBtn" onclick="previousLesson()" class="flex-1 max-w-[200px] bg-white border-2 border-slate-200 text-slate-600 py-3.5 px-4 rounded-2xl hover:bg-slate-100 transition font-bold flex items-center justify-center gap-2 shadow-sm font-heading">
-                        <i data-lucide="chevron-left" class="w-5 h-5"></i> 
+                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
                         <span class="hidden sm:inline">บทก่อนหน้า</span>
-                    </button> 
+                    </button>
                     <button id="nextBtn" onclick="nextLesson()" class="flex-1 max-w-[200px] bg-amber-500 text-white py-3.5 px-4 rounded-2xl hover:bg-amber-600 transition font-bold flex items-center justify-center gap-2 shadow-md shadow-amber-500/20 font-heading">
-                        <span id="nextBtnText">บทถัดไป</span> 
+                        <span id="nextBtnText">บทถัดไป</span>
                         <i id="nextBtnIcon" data-lucide="chevron-right" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -445,12 +450,12 @@
 
     <!-- External Nav Links Helper -->
     <script src="../shared/nav-links.js"></script>
-    
+
     <script>
-    let studentName = ""; 
-    let studentIdStr = ""; 
+    let studentName = "";
+    let studentIdStr = "";
     let studentClass = "";
-    
+
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
     }
@@ -461,7 +466,7 @@
     // ===== Apps Script JSONP Connection =====
     const API_BASE_URL = "https://script.google.com/macros/s/AKfycbwAfmqJTXPhRP1WSV2_EyYoqSs0b_4C3rL5_EwW8EryTpIDkmBU6Sx4UM8TJ9ndYrGX/exec";
     let jsonpCounter = 0;
-    
+
     function jsonpRequest(baseUrl, params, onSuccess, onError) {
         const callbackName = 'jsonp_cb_' + (jsonpCounter++) + '_' + Date.now();
         const query = new URLSearchParams(Object.assign({}, params, { callback: callbackName })).toString();
@@ -476,14 +481,14 @@
         };
 
         window[callbackName] = function (data) {
-            if (settled) return; 
+            if (settled) return;
             settled = true;
             cleanup();
             onSuccess(data);
         };
 
         timeoutId = setTimeout(() => {
-            if (settled) return; 
+            if (settled) return;
             settled = true;
             cleanup();
             if (onError) onError(new Error('หมดเวลาเชื่อมต่อเซิร์ฟเวอร์ กรุณาลองใหม่'));
@@ -491,7 +496,7 @@
 
         script.src = baseUrl + '?' + query;
         script.onerror = function () {
-            if (settled) return; 
+            if (settled) return;
             settled = true;
             cleanup();
             if (onError) onError(new Error('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ'));
@@ -500,19 +505,19 @@
     }
 
     window.onload = function() {
-        let savedName = localStorage.getItem('studentName'); 
-        let savedId = localStorage.getItem('studentIdStr'); 
+        let savedName = localStorage.getItem('studentName');
+        let savedId = localStorage.getItem('studentIdStr');
         let savedClass = localStorage.getItem('studentClass');
-        
+
         if (savedName && savedId && savedClass) {
-            studentName = savedName; 
-            studentIdStr = savedId; 
+            studentName = savedName;
+            studentIdStr = savedId;
             studentClass = savedClass;
-            
+
             document.getElementById('displayClass').innerText = studentClass;
             document.getElementById('displayName').innerText = studentName;
             document.querySelectorAll('.board-class-name').forEach(el => el.innerText = studentClass);
-            
+
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('app').classList.remove('hidden');
             showSection('home');
@@ -521,20 +526,20 @@
 
     function moveToNext(current) {
         current.value = current.value.replace(/[^0-9]/g, '');
-        if (current.value.length >= 1) { 
-            current.value = current.value.slice(0,1); 
-            let next = current.nextElementSibling; 
-            if (next && next.tagName === "INPUT") next.focus(); 
+        if (current.value.length >= 1) {
+            current.value = current.value.slice(0,1);
+            let next = current.nextElementSibling;
+            if (next && next.tagName === "INPUT") next.focus();
         }
     }
 
     function handleBackspace(event, current) {
-        if (event.key === "Backspace" && current.value === "") { 
-            let prev = current.previousElementSibling; 
-            if (prev && prev.tagName === "INPUT") { 
-                prev.focus(); 
-                prev.value = ""; 
-            } 
+        if (event.key === "Backspace" && current.value === "") {
+            let prev = current.previousElementSibling;
+            if (prev && prev.tagName === "INPUT") {
+                prev.focus();
+                prev.value = "";
+            }
         }
     }
 
@@ -542,64 +547,64 @@
         const cls = document.getElementById('studentClassInput').value;
         const errorMsg = document.getElementById('loginError');
         const inputs = document.querySelectorAll('.otp-input');
-        let idInput = ""; 
+        let idInput = "";
         inputs.forEach(input => idInput += input.value);
 
-        if (cls === "") { 
-            errorMsg.innerText = "กรุณาเลือกระดับชั้นเรียนก่อนครับ"; 
-            errorMsg.classList.remove('hidden'); 
-            return; 
+        if (cls === "") {
+            errorMsg.innerText = "กรุณาเลือกระดับชั้นเรียนก่อนครับ";
+            errorMsg.classList.remove('hidden');
+            return;
         }
-        if (idInput.length < 5) { 
-            errorMsg.innerText = "กรุณากรอกรหัสนักเรียน 5 หลักให้ครบถ้วน"; 
-            errorMsg.classList.remove('hidden'); 
-            return; 
+        if (idInput.length < 5) {
+            errorMsg.innerText = "กรุณากรอกรหัสนักเรียน 5 หลักให้ครบถ้วน";
+            errorMsg.classList.remove('hidden');
+            return;
         }
 
-        document.getElementById('loginBtnText').innerText = "กำลังตรวจสอบ..."; 
+        document.getElementById('loginBtnText').innerText = "กำลังตรวจสอบ...";
         document.getElementById('loginBtn').disabled = true;
 
         jsonpRequest(API_BASE_URL, { api: 'verifyStudent', className: cls, studentId: idInput }, function(response) {
             if (response && response.status === "success") {
-                studentName = response.name; 
-                studentIdStr = idInput; 
+                studentName = response.name;
+                studentIdStr = idInput;
                 studentClass = cls;
-                
-                localStorage.setItem('studentName', studentName); 
-                localStorage.setItem('studentIdStr', studentIdStr); 
+
+                localStorage.setItem('studentName', studentName);
+                localStorage.setItem('studentIdStr', studentIdStr);
                 localStorage.setItem('studentClass', studentClass);
-                
-                document.getElementById('displayClass').innerText = studentClass; 
+
+                document.getElementById('displayClass').innerText = studentClass;
                 document.getElementById('displayName').innerText = studentName;
                 document.querySelectorAll('.board-class-name').forEach(el => el.innerText = studentClass);
 
                 document.getElementById('loginScreen').classList.add('opacity-0');
                 saveToSheet("เข้าสู่ระบบบ่อยาง", "-", null);
-                
+
                 setTimeout(() => {
-                    document.getElementById('loginScreen').classList.add('hidden'); 
-                    document.getElementById('app').classList.remove('hidden'); 
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('app').classList.remove('hidden');
                     showSection('home');
                 }, 500);
             } else {
-                errorMsg.innerText = (response && response.message) || "รหัสนักเรียนไม่ถูกต้อง"; 
+                errorMsg.innerText = (response && response.message) || "รหัสนักเรียนไม่ถูกต้อง";
                 errorMsg.classList.remove('hidden');
-                document.getElementById('loginBtnText').innerText = "เข้าสู่บทเรียน"; 
+                document.getElementById('loginBtnText').innerText = "เข้าสู่บทเรียน";
                 document.getElementById('loginBtn').disabled = false;
             }
         }, function(err) {
-            errorMsg.innerText = "เซิร์ฟเวอร์ไม่ตอบสนอง กรุณาลองใหม่"; 
+            errorMsg.innerText = "เซิร์ฟเวอร์ไม่ตอบสนอง กรุณาลองใหม่";
             errorMsg.classList.remove('hidden');
-            document.getElementById('loginBtnText').innerText = "เข้าสู่บทเรียน"; 
+            document.getElementById('loginBtnText').innerText = "เข้าสู่บทเรียน";
             document.getElementById('loginBtn').disabled = false;
         });
     }
 
-    function logoutUser() { 
-        localStorage.removeItem('studentName'); 
-        localStorage.removeItem('studentIdStr'); 
-        localStorage.removeItem('studentClass'); 
-        location.reload(); 
+    function logoutUser() {
+        localStorage.removeItem('studentName');
+        localStorage.removeItem('studentIdStr');
+        localStorage.removeItem('studentClass');
+        location.reload();
     }
 
     function saveToSheet(actionType, scoreVal, leaderboardElementId) {
@@ -622,18 +627,18 @@
     }
 
     function renderRealLeaderboard(elementId, boardData) {
-        if (!boardData || boardData.length === 0) { 
-            document.getElementById(elementId).innerHTML = "<li class='text-center text-slate-500 py-4 font-medium'>ยังไม่มีข้อมูลในห้องนี้</li>"; 
-            return; 
+        if (!boardData || boardData.length === 0) {
+            document.getElementById(elementId).innerHTML = "<li class='text-center text-slate-500 py-4 font-medium'>ยังไม่มีข้อมูลในห้องนี้</li>";
+            return;
         }
         let html = boardData.map((u, i) => {
             let medal = i===0 ? '🏆' : i===1 ? '🥈' : i===2 ? '🥉' : `<span class="w-7 inline-block text-center text-slate-400 font-black font-nunito">${i+1}</span>`;
             let isMe = (u.name === studentName);
             let bg = isMe ? 'bg-indigo-50/90 border-indigo-300 shadow-md transform scale-[1.01]' : 'bg-white border-slate-200/80 hover:bg-slate-50 transition';
             let textColor = isMe ? 'text-indigo-800 font-black' : 'text-slate-700 font-bold';
-            
+
             return `<li class="flex justify-between items-center p-4 border-2 rounded-2xl ${bg}">
-                <div class="flex items-center gap-3"><span class="text-2xl drop-shadow-sm">${medal}</span> <span class="${textColor} ml-1">${u.name}</span></div> 
+                <div class="flex items-center gap-3"><span class="text-2xl drop-shadow-sm">${medal}</span> <span class="${textColor} ml-1">${u.name}</span></div>
                 <span class="bg-slate-800 text-white px-4 py-1.5 rounded-xl text-sm font-black font-nunito shadow-sm">${u.score}/10</span>
             </li>`;
         }).join('');
@@ -643,34 +648,34 @@
     function showSection(sectionId) {
         document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
         document.getElementById('section-' + sectionId).classList.remove('hidden');
-        if (sectionId !== 'activity') { 
-            stopMotionGame(); 
+        if (sectionId !== 'activity') {
+            stopMotionGame();
         }
 
         document.querySelectorAll('.menu-link').forEach(link => {
-            link.classList.remove('active-nav'); 
+            link.classList.remove('active-nav');
             if(link.getAttribute('data-target') === sectionId) link.classList.add('active-nav');
         });
         document.getElementById('mobileMenu').classList.add('hidden');
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    document.getElementById('menuBtn').addEventListener('click', () => { 
-        document.getElementById('mobileMenu').classList.toggle('hidden'); 
+    document.getElementById('menuBtn').addEventListener('click', () => {
+        document.getElementById('mobileMenu').classList.toggle('hidden');
     });
 
     // ===== LESSONS CONTENT DATA =====
     const lessons = {
-        1: { 
-            title: 'บทที่ 1', 
-            subtitle: 'สาเหตุการย้ายเมืองสู่บ่อยาง', 
+        1: {
+            title: 'บทที่ 1',
+            subtitle: 'สาเหตุการย้ายเมืองสู่บ่อยาง',
             color: '#f59e0b',
             content: `
                 <div class="bg-amber-50/80 p-6 rounded-3xl border border-amber-200/80 mb-8">
                     <h3 class="text-xl font-extrabold text-amber-800 mb-3 flex items-center gap-2 font-heading"><i data-lucide="map-pin" class="w-5 h-5 text-amber-600"></i> ความเจริญที่นำไปสู่การย้ายเมือง</h3>
                     <p class="text-left leading-relaxed text-slate-700">ในช่วงปลายพุทธศตวรรษที่ 24 เมืองสงขลามีความเจริญรุ่งเรืองขึ้นเป็นอย่างมาก ส่งผลให้พื้นที่บริเวณเมืองเดิม (แหลมสน) คับแคบและไม่สามารถรองรับการเติบโตได้ นำไปสู่จุดเปลี่ยนสำคัญคือการย้ายเมืองเพื่อสร้างศูนย์กลางแห่งใหม่</p>
                 </div>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-white p-6 rounded-3xl border-2 border-rose-100 shadow-sm">
                         <h3 class="text-lg font-bold text-rose-600 mb-4 flex items-center gap-2 font-heading"><i data-lucide="minus-circle" class="w-5 h-5"></i> ข้อจำกัดของฝั่งแหลมสน</h3>
@@ -705,9 +710,9 @@
                     </div>
                 </div>`
         },
-        2: { 
-            title: 'บทที่ 2', 
-            subtitle: 'การสร้างเมืองและทำเนียบเจ้าเมืองสงขลาฝั่งบ่อยาง', 
+        2: {
+            title: 'บทที่ 2',
+            subtitle: 'การสร้างเมืองและทำเนียบเจ้าเมืองสงขลาฝั่งบ่อยาง',
             color: '#f97316',
             content: `
                 <div class="bg-orange-50/80 p-6 rounded-3xl border border-orange-200/80 mb-8">
@@ -776,9 +781,9 @@
                     </table>
                 </div>`
         },
-        3: { 
-            title: 'บทที่ 3', 
-            subtitle: 'การปฏิรูปการปกครองและร่องรอยประวัติศาสตร์', 
+        3: {
+            title: 'บทที่ 3',
+            subtitle: 'การปฏิรูปการปกครองและร่องรอยประวัติศาสตร์',
             color: '#10b981',
             content: `
                 <div class="bg-emerald-50/80 p-6 rounded-3xl border border-emerald-200/80 mb-8">
@@ -830,7 +835,7 @@
         // Update Prev / Next Buttons
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
-        
+
         if (id === 1) {
             prevBtn.classList.add('opacity-50', 'pointer-events-none');
         } else {
@@ -868,8 +873,15 @@
         }
     }
 
+    // เปิดเกม "ขยับมือ 67" ในแท็บใหม่ พร้อมแนบข้อมูลนักเรียนไปกับ URL
+    // เพื่อให้ตัวเกมส่งคะแนนกลับมาบันทึกที่ Google Sheet ผ่าน API ?api=saveScore ได้เอง
     function openBoYangGame() {
-        window.open('67-motion-challenge.html', '_blank');
+        const params = new URLSearchParams({
+            studentId: studentIdStr || '',
+            name: studentName || '',
+            className: studentClass || ''
+        });
+        window.open('67-motion-challenge.html?' + params.toString(), '_blank');
     }
 
     function stopMotionGame() {
@@ -958,7 +970,7 @@
             const btn = document.createElement('button');
             btn.className = 'quiz-btn w-full p-4 md:p-5 rounded-2xl border-2 border-slate-200 text-left font-semibold text-slate-700 hover:border-indigo-400 hover:bg-slate-50 transition-all flex items-center gap-4';
             btn.innerHTML = `<span class="w-8 h-8 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center font-bold font-nunito shrink-0">${String.fromCharCode(65 + idx)}</span> <span class="leading-snug">${opt}</span>`;
-            
+
             btn.onclick = () => selectOption(idx, btn);
             optionsContainer.appendChild(btn);
         });
