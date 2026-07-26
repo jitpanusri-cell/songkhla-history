@@ -17,7 +17,7 @@
   var PAGES = [
     {
       id: 'kaodaeng',
-      label: 'เขาแดง (หน้าหลัก)',
+              label: 'เขาแดง',
       mobileLabel: 'กลับหน้าหลัก (เขาแดง)',
       url: BASE + '/kaodaeng-lesson/',
       icon: 'home',
