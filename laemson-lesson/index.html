@@ -126,10 +126,23 @@
                  </div>
              </div>
              <h1 id="welcomeText" class="text-4xl md:text-6xl font-black mb-6 leading-tight drop-shadow-lg tracking-tight">ประวัติศาสตร์เมืองสงขลา<br><span class="text-yellow-100 inline-block mt-2 bg-white/10 px-6 py-2 rounded-3xl backdrop-blur-sm border border-white/20">ฝั่งแหลมสน</span></h1>
-             <p class="text-orange-50 text-xl md:text-2xl mb-12 font-medium tracking-wide">บทเรียนออนไลน์ รายวิชา มหาวชิราวุธ 1</p>
-             <button onclick="showSection('knowledge')" class="bg-white text-orange-500 px-8 py-3 rounded-full font-bold shadow-lg hover:bg-gray-100 transition transform hover:-translate-y-1 flex items-center gap-3 mx-auto">
-                 เริ่มเรียนกันเลย <i data-lucide="arrow-right" class="w-6 h-6"></i>
-             </button>
+             <p class="text-orange-50 text-xl md:text-2xl mb-8 font-medium tracking-wide">บทเรียนออนไลน์ รายวิชา มหาวชิราวุธ 1</p>
+
+             <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-5 mb-8 inline-block text-left min-w-[280px] shadow-lg">
+                 <div class="text-white/80 text-xs mb-2 border-b border-white/20 pb-2 uppercase tracking-wide font-semibold text-center">ข้อมูลประจำตัวผู้เรียน</div>
+                 <div class="font-bold text-xl text-center mb-2"><span id="homeStudentName">-</span></div>
+                 <div class="flex justify-between items-center text-sm bg-black/10 rounded-lg px-3 py-2 mt-2">
+                     <span><span class="opacity-80 font-medium">รหัสนักเรียน:</span> <span id="homeStudentId" class="font-bold">-</span></span>
+                     <span class="w-px h-4 bg-white/30 mx-2"></span>
+                     <span><i data-lucide="users" class="inline w-4 h-4 mr-1 opacity-70"></i> <span id="homeStudentClass">-</span></span>
+                 </div>
+             </div>
+
+             <div>
+                 <button onclick="showSection('knowledge')" class="bg-white text-orange-500 px-8 py-3 rounded-full font-bold shadow-lg hover:bg-gray-100 transition transform hover:-translate-y-1 flex items-center gap-3 mx-auto">
+                     เริ่มต้นเรียนรู้ <i data-lucide="arrow-right" class="w-6 h-6"></i>
+                 </button>
+             </div>
             </div>
            </section>
 
@@ -337,6 +350,9 @@
           studentName = savedName; studentIdStr = savedId; studentClass = savedClass;
           document.getElementById('displayClass').innerText = studentClass;
           document.getElementById('displayName').innerText = studentName;
+          document.getElementById('homeStudentName').innerText = studentName;
+          document.getElementById('homeStudentId').innerText = studentIdStr;
+          document.getElementById('homeStudentClass').innerText = studentClass;
           document.querySelectorAll('.board-class-name').forEach(el => el.innerText = studentClass);
           document.getElementById('loginScreen').classList.add('hidden');
           document.getElementById('app').classList.remove('hidden');
@@ -369,6 +385,9 @@
               studentName = response.name; studentIdStr = idInput; studentClass = cls;
               localStorage.setItem('studentName', studentName); localStorage.setItem('studentIdStr', studentIdStr); localStorage.setItem('studentClass', studentClass);
               document.getElementById('displayClass').innerText = studentClass; document.getElementById('displayName').innerText = studentName;
+              document.getElementById('homeStudentName').innerText = studentName;
+              document.getElementById('homeStudentId').innerText = studentIdStr;
+              document.getElementById('homeStudentClass').innerText = studentClass;
               document.querySelectorAll('.board-class-name').forEach(el => el.innerText = studentClass);
               document.getElementById('loginScreen').classList.add('opacity-0');
               saveToSheet("เข้าสู่ระบบแหลมสน", "-", null);
