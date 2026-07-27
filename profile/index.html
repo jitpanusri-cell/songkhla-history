@@ -115,59 +115,71 @@
 
        <div id="profileContent" class="hidden">
 
-         <!-- บัตรนักเรียน -->
-         <div class="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden mb-10">
-           <div class="bg-gradient-to-r from-[#4F46E5] to-indigo-400 text-white text-center py-4 relative overflow-hidden">
-             <i data-lucide="landmark" class="w-28 h-28 absolute -top-4 -right-4 opacity-10"></i>
-             <p class="font-black text-lg md:text-xl tracking-wide relative z-10">โรงเรียนมหาวชิราวุธ จังหวัดสงขลา</p>
-             <p class="text-white/80 text-xs md:text-sm relative z-10">บัตรประจำตัวนักเรียน (บทเรียนออนไลน์เมืองสงขลา)</p>
-           </div>
+         <!-- บัตรนักเรียน (ATM Card Style) -->
+         <div class="relative rounded-3xl shadow-xl overflow-hidden mb-10 bg-gradient-to-br from-[#312e81] via-[#4F46E5] to-[#6366f1]">
+           <i data-lucide="landmark" class="w-40 h-40 absolute -top-8 -right-8 text-white/10 rotate-12"></i>
+           <div class="absolute -left-10 -bottom-16 w-56 h-56 bg-white/5 rounded-full"></div>
+           <div class="absolute right-24 -bottom-10 w-32 h-32 bg-black/10 rounded-full"></div>
 
-           <div class="p-6 md:p-8 flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-10">
+           <div class="relative z-10 p-6 md:p-8">
 
-             <!-- รูปนักเรียน -->
-             <div class="flex flex-col items-center shrink-0">
-               <div class="relative w-32 h-32 md:w-36 md:h-36 rounded-2xl overflow-hidden border-4 border-[#EEF0FC] shadow-md bg-gray-100">
-                 <img id="studentPhoto" src="" alt="รูปนักเรียน" class="w-full h-full object-cover opacity-40" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22%3E%3Crect%20width=%22100%22%20height=%22100%22%20fill=%22%23e5e7eb%22/%3E%3Ccircle%20cx=%2250%22%20cy=%2238%22%20r=%2218%22%20fill=%22%23cbd5e1%22/%3E%3Cpath%20d=%22M50%2062c-22%200-34%2012-34%2030v8h68v-8c0-18-12-30-34-30z%22%20fill=%22%23cbd5e1%22/%3E%3C/svg%3E'; this.classList.add('opacity-40');">
-                 <button id="uploadPhotoBtn" onclick="document.getElementById('photoInput').click()" class="absolute bottom-0 inset-x-0 bg-black/50 hover:bg-black/70 transition text-white text-xs py-1.5 font-bold flex items-center justify-center gap-1">
-                   <i data-lucide="camera" class="w-3.5 h-3.5"></i> อัปโหลดรูป
-                 </button>
-                 <input type="file" id="photoInput" accept="image/*" class="hidden" onchange="openPhotoCropper(event)">
+             <!-- แถวบน: ชื่อโรงเรียน + ชิปบัตร -->
+             <div class="flex items-start justify-between mb-6 md:mb-8">
+               <div>
+                 <p class="font-black text-white text-base md:text-lg tracking-wide">โรงเรียนมหาวชิราวุธ จังหวัดสงขลา</p>
+                 <p class="text-white/70 text-xs md:text-sm">บัตรประจำตัวนักเรียน (บทเรียนออนไลน์เมืองสงขลา)</p>
                </div>
-               <p id="photoStatus" class="text-xs text-gray-400 mt-2 font-medium h-4"></p>
+               <div class="w-10 h-8 md:w-12 md:h-9 rounded-md bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-500 shadow-inner shrink-0"></div>
              </div>
 
-             <!-- ข้อมูลนักเรียน -->
-             <div class="flex-grow text-center md:text-left w-full">
-               <div class="font-black text-2xl md:text-3xl text-gray-800 mb-1" id="cardName">-</div>
-               <div class="flex flex-wrap justify-center md:justify-start gap-2 mb-4">
-                 <span class="bg-indigo-50 text-[#4F46E5] text-xs md:text-sm px-3 py-1 rounded-full font-bold"><i data-lucide="hash" class="w-3.5 h-3.5 inline -mt-0.5"></i> รหัส <span id="cardId">-</span></span>
-                 <span class="bg-emerald-50 text-emerald-700 text-xs md:text-sm px-3 py-1 rounded-full font-bold"><i data-lucide="users" class="w-3.5 h-3.5 inline -mt-0.5"></i> ระดับชั้น <span id="cardClass">-</span></span>
+             <div class="flex flex-col md:flex-row items-center md:items-end gap-6 md:gap-10">
+
+               <!-- รูปนักเรียน -->
+               <div class="flex flex-col items-center shrink-0">
+                 <div class="relative w-28 h-28 md:w-32 md:h-32 rounded-2xl overflow-hidden border-4 border-white/30 shadow-md bg-white/10">
+                   <img id="studentPhoto" src="" alt="รูปนักเรียน" class="w-full h-full object-cover opacity-40" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22%3E%3Crect%20width=%22100%22%20height=%22100%22%20fill=%22%23e5e7eb%22/%3E%3Ccircle%20cx=%2250%22%20cy=%2238%22%20r=%2218%22%20fill=%22%23cbd5e1%22/%3E%3Cpath%20d=%22M50%2062c-22%200-34%2012-34%2030v8h68v-8c0-18-12-30-34-30z%22%20fill=%22%23cbd5e1%22/%3E%3C/svg%3E'; this.classList.add('opacity-40');">
+                   <button id="uploadPhotoBtn" onclick="document.getElementById('photoInput').click()" class="absolute bottom-0 inset-x-0 bg-black/50 hover:bg-black/70 transition text-white text-xs py-1.5 font-bold flex items-center justify-center gap-1">
+                     <i data-lucide="camera" class="w-3.5 h-3.5"></i> อัปโหลดรูป
+                   </button>
+                   <input type="file" id="photoInput" accept="image/*" class="hidden" onchange="openPhotoCropper(event)">
+                 </div>
+                 <p id="photoStatus" class="text-xs text-white/70 mt-2 font-medium h-4"></p>
                </div>
 
-               <!-- ดาว 3 ยุค -->
-               <div class="grid grid-cols-3 gap-2 md:gap-4">
-                 <div class="bg-red-50 rounded-xl p-2 md:p-3 text-center">
-                   <div class="text-[10px] md:text-xs text-red-600 font-bold mb-1">เขาแดง</div>
-                   <div id="starKaodaeng" class="half-star-wrap w-7 h-7 md:w-8 md:h-8 mx-auto"></div>
-                 </div>
-                 <div class="bg-amber-50 rounded-xl p-2 md:p-3 text-center">
-                   <div class="text-[10px] md:text-xs text-amber-600 font-bold mb-1">แหลมสน</div>
-                   <div id="starLaemson" class="half-star-wrap w-7 h-7 md:w-8 md:h-8 mx-auto"></div>
-                 </div>
-                 <div class="bg-blue-50 rounded-xl p-2 md:p-3 text-center">
-                   <div class="text-[10px] md:text-xs text-blue-600 font-bold mb-1">บ่อยาง</div>
-                   <div id="starBoyang" class="half-star-wrap w-7 h-7 md:w-8 md:h-8 mx-auto"></div>
+               <!-- ข้อมูลนักเรียน -->
+               <div class="flex-grow text-center md:text-left w-full text-white">
+                 <div class="font-black text-2xl md:text-3xl mb-2" id="cardName">-</div>
+                 <p class="text-white/50 text-[10px] md:text-xs uppercase tracking-widest mb-1">รหัสนักเรียน</p>
+                 <p class="font-mono tracking-[0.3em] md:tracking-[0.4em] text-lg md:text-2xl font-bold mb-3" id="cardId">-</p>
+                 <div class="flex flex-wrap justify-center md:justify-start gap-2">
+                   <span class="bg-white/15 text-white text-xs md:text-sm px-3 py-1 rounded-full font-bold"><i data-lucide="users" class="w-3.5 h-3.5 inline -mt-0.5"></i> ระดับชั้น <span id="cardClass">-</span></span>
                  </div>
                </div>
+
+               <!-- QR โค้ด -->
+               <div class="shrink-0 text-center">
+                 <div class="bg-white p-2 rounded-xl shadow-sm">
+                   <img id="qrImage" src="" alt="QR โค้ดนักเรียน" class="w-20 h-20 md:w-24 md:h-24">
+                 </div>
+                 <p class="text-[10px] md:text-xs text-white/60 mt-1.5 font-medium max-w-[110px]">สแกนเพื่อเปิดบัตรนี้อีกครั้ง</p>
+               </div>
+
              </div>
 
-             <!-- QR โค้ด -->
-             <div class="shrink-0 text-center">
-               <div class="bg-white p-2 rounded-xl border-2 border-gray-100 shadow-sm">
-                 <img id="qrImage" src="" alt="QR โค้ดนักเรียน" class="w-24 h-24 md:w-28 md:h-28">
+             <!-- ดาว 3 ยุค -->
+             <div class="grid grid-cols-3 gap-2 md:gap-4 mt-6 md:mt-8">
+               <div class="bg-red-500/20 rounded-xl p-2 md:p-3 text-center">
+                 <div class="text-[10px] md:text-xs text-red-200 font-bold mb-1">เขาแดง</div>
+                 <div id="starKaodaeng" class="half-star-wrap w-7 h-7 md:w-8 md:h-8 mx-auto"></div>
                </div>
-               <p class="text-[10px] md:text-xs text-gray-400 mt-1.5 font-medium max-w-[112px]">สแกนเพื่อเปิดบัตรนี้อีกครั้ง</p>
+               <div class="bg-amber-400/20 rounded-xl p-2 md:p-3 text-center">
+                 <div class="text-[10px] md:text-xs text-amber-200 font-bold mb-1">แหลมสน</div>
+                 <div id="starLaemson" class="half-star-wrap w-7 h-7 md:w-8 md:h-8 mx-auto"></div>
+               </div>
+               <div class="bg-blue-500/20 rounded-xl p-2 md:p-3 text-center">
+                 <div class="text-[10px] md:text-xs text-blue-200 font-bold mb-1">บ่อยาง</div>
+                 <div id="starBoyang" class="half-star-wrap w-7 h-7 md:w-8 md:h-8 mx-auto"></div>
+               </div>
              </div>
 
            </div>
