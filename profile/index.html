@@ -132,7 +132,7 @@
                  <button id="uploadPhotoBtn" onclick="document.getElementById('photoInput').click()" class="absolute bottom-0 inset-x-0 bg-black/50 hover:bg-black/70 transition text-white text-xs py-1.5 font-bold flex items-center justify-center gap-1">
                    <i data-lucide="camera" class="w-3.5 h-3.5"></i> อัปโหลดรูป
                  </button>
-                 <input type="file" id="photoInput" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
+                 <input type="file" id="photoInput" accept="image/*" class="hidden" onchange="openPhotoCropper(event)">
                </div>
                <p id="photoStatus" class="text-xs text-gray-400 mt-2 font-medium h-4"></p>
              </div>
@@ -238,6 +238,26 @@
     <p class="font-bold text-white/90 mb-1">Copyright © 2026 ประวัติศาสตร์เมืองสงขลา</p>
     <p class="text-white/50 text-xs">ครูผู้สอน/ผู้พัฒนา : นายจิตรภาณุ ศรีหวัง</p>
    </footer>
+  </div>
+
+  <!-- Modal ปรับขนาด/ครอปรูปก่อนอัปโหลด -->
+  <div id="photoCropModal" class="hidden fixed inset-0 bg-black/60 z-[300] flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl">
+      <h3 class="font-black text-lg text-gray-800 mb-1 text-center">ปรับขนาดรูปภาพ</h3>
+      <p class="text-xs text-gray-400 text-center mb-4">ลากรูปเพื่อขยับตำแหน่ง เลื่อนแถบด้านล่างเพื่อซูมเข้า-ออก</p>
+      <div id="cropViewport" class="relative w-64 h-64 mx-auto rounded-2xl overflow-hidden bg-gray-100 border-4 border-[#EEF0FC] shadow-inner touch-none select-none cursor-move">
+        <img id="cropImage" src="" alt="ตัวอย่างรูปที่จะครอป" class="absolute top-0 left-0 max-w-none pointer-events-none" draggable="false">
+      </div>
+      <div class="flex items-center gap-3 mt-5 px-1">
+        <i data-lucide="zoom-out" class="w-4 h-4 text-gray-400 shrink-0"></i>
+        <input type="range" id="cropZoomRange" min="100" max="300" value="100" class="flex-grow accent-[#4F46E5]" oninput="onCropZoomChange()">
+        <i data-lucide="zoom-in" class="w-4 h-4 text-gray-400 shrink-0"></i>
+      </div>
+      <div class="flex gap-3 mt-6">
+        <button onclick="cancelPhotoCrop()" class="flex-1 border-2 border-gray-200 text-gray-600 font-bold py-2.5 rounded-xl hover:bg-gray-50 transition">ยกเลิก</button>
+        <button onclick="confirmPhotoCrop()" class="flex-1 bg-[#4F46E5] text-white font-bold py-2.5 rounded-xl hover:bg-[#4338ca] transition">ใช้รูปนี้</button>
+      </div>
+    </div>
   </div>
 
   <script src="../shared/nav-links.js"></script>
@@ -523,49 +543,169 @@
       lucide.createIcons();
   }
 
-  function handlePhotoUpload(event) {
+  // ===== ปรับขนาด/ครอปรูปก่อนอัปโหลด (crop viewport แสดงผล 256x256 px, ส่งออกจริงที่ความละเอียดสูงกว่า) =====
+  const CROP_VIEWPORT_SIZE = 256; // ต้องตรงกับ w-64 h-64 (16rem = 256px) ของ #cropViewport
+  const CROP_OUTPUT_SIZE = 480;   // ความละเอียดรูปสี่เหลี่ยมจัตุรัสที่จะส่งขึ้นไปเก็บจริง
+  let cropImg = null;             // Image() ต้นฉบับที่โหลดมาแล้ว (ใช้ naturalWidth/Height)
+  let cropBaseScale = 1;          // สเกลต่ำสุดที่ทำให้รูป "cover" เต็มกรอบ crop พอดี
+  let cropZoom = 1;               // ตัวคูณซูมเพิ่มจาก base (1.0 - 3.0)
+  let cropOffsetX = 0, cropOffsetY = 0; // ตำแหน่งซ้าย-บนของรูป (px) เทียบกับกรอบ crop
+  let cropDragging = false;
+  let cropDragStartX = 0, cropDragStartY = 0, cropStartOffsetX = 0, cropStartOffsetY = 0;
+  let cropOriginalMimeType = 'image/jpeg';
+
+  function openPhotoCropper(event) {
       const file = event.target.files && event.target.files[0];
       if (!file) return;
       if (!file.type.startsWith('image/')) {
           document.getElementById('photoStatus').innerText = 'กรุณาเลือกไฟล์รูปภาพเท่านั้น';
+          event.target.value = '';
           return;
       }
       if (file.size > 4 * 1024 * 1024) {
           document.getElementById('photoStatus').innerText = 'ไฟล์รูปใหญ่เกินไป (ไม่เกิน 4MB)';
+          event.target.value = '';
           return;
       }
+      cropOriginalMimeType = file.type;
 
       const reader = new FileReader();
       reader.onload = function() {
-          const dataUrl = reader.result;
-          const base64 = dataUrl.split(',')[1];
+          const img = new Image();
+          img.onload = function() {
+              cropImg = img;
+              cropZoom = 1;
+              cropBaseScale = CROP_VIEWPORT_SIZE / Math.min(img.naturalWidth, img.naturalHeight);
+              cropOffsetX = (CROP_VIEWPORT_SIZE - img.naturalWidth * cropBaseScale) / 2;
+              cropOffsetY = (CROP_VIEWPORT_SIZE - img.naturalHeight * cropBaseScale) / 2;
 
-          document.getElementById('studentPhoto').src = dataUrl;
-          document.getElementById('studentPhoto').classList.remove('opacity-40');
-          document.getElementById('photoStatus').innerText = 'กำลังอัปโหลด...';
+              document.getElementById('cropImage').src = img.src;
+              document.getElementById('cropZoomRange').value = 100;
+              renderCropTransform();
 
-          fetch(API_BASE_URL, {
-              method: 'POST',
-              mode: 'no-cors',
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify({
-                  api: 'uploadPhoto',
-                  className: studentClass,
-                  studentId: studentIdStr,
-                  imageBase64: base64,
-                  mimeType: file.type
-              })
-          }).then(function() {
-              document.getElementById('photoStatus').innerText = 'อัปโหลดสำเร็จ ✓';
-              setTimeout(function() {
-                  loadProfile(studentIdStr, studentClass);
-                  document.getElementById('photoStatus').innerText = '';
-              }, 2500);
-          }).catch(function() {
-              document.getElementById('photoStatus').innerText = 'อัปโหลดไม่สำเร็จ กรุณาลองใหม่';
-          });
+              document.getElementById('photoCropModal').classList.remove('hidden');
+              document.getElementById('photoCropModal').classList.add('flex');
+          };
+          img.src = reader.result;
       };
       reader.readAsDataURL(file);
+      event.target.value = ''; // ให้เลือกไฟล์เดิมซ้ำได้ถ้ากดยกเลิกแล้วเปิดใหม่
+  }
+
+  function currentCropScale() { return cropBaseScale * cropZoom; }
+
+  function clampCropOffsets() {
+      const scale = currentCropScale();
+      const dispW = cropImg.naturalWidth * scale;
+      const dispH = cropImg.naturalHeight * scale;
+      const minX = CROP_VIEWPORT_SIZE - dispW; // ค่าติดลบ (หรือ 0) เสมอ เพราะรูป cover เต็มกรอบ
+      const minY = CROP_VIEWPORT_SIZE - dispH;
+      cropOffsetX = Math.min(0, Math.max(minX, cropOffsetX));
+      cropOffsetY = Math.min(0, Math.max(minY, cropOffsetY));
+  }
+
+  function renderCropTransform() {
+      if (!cropImg) return;
+      clampCropOffsets();
+      const scale = currentCropScale();
+      const el = document.getElementById('cropImage');
+      el.style.width = (cropImg.naturalWidth * scale) + 'px';
+      el.style.height = (cropImg.naturalHeight * scale) + 'px';
+      el.style.transform = 'translate(' + cropOffsetX + 'px, ' + cropOffsetY + 'px)';
+  }
+
+  function onCropZoomChange() {
+      cropZoom = document.getElementById('cropZoomRange').value / 100;
+      renderCropTransform();
+  }
+
+  function cropPointerDown(e) {
+      if (!cropImg) return;
+      cropDragging = true;
+      cropDragStartX = e.clientX;
+      cropDragStartY = e.clientY;
+      cropStartOffsetX = cropOffsetX;
+      cropStartOffsetY = cropOffsetY;
+      e.currentTarget.setPointerCapture(e.pointerId);
+  }
+  function cropPointerMove(e) {
+      if (!cropDragging) return;
+      cropOffsetX = cropStartOffsetX + (e.clientX - cropDragStartX);
+      cropOffsetY = cropStartOffsetY + (e.clientY - cropDragStartY);
+      renderCropTransform();
+  }
+  function cropPointerUp() { cropDragging = false; }
+
+  function bindCropViewportEvents() {
+      const vp = document.getElementById('cropViewport');
+      if (!vp || vp.dataset.bound) return;
+      vp.dataset.bound = '1';
+      vp.addEventListener('pointerdown', cropPointerDown);
+      vp.addEventListener('pointermove', cropPointerMove);
+      vp.addEventListener('pointerup', cropPointerUp);
+      vp.addEventListener('pointercancel', cropPointerUp);
+  }
+  bindCropViewportEvents();
+
+  function cancelPhotoCrop() {
+      cropImg = null;
+      document.getElementById('photoCropModal').classList.add('hidden');
+      document.getElementById('photoCropModal').classList.remove('flex');
+  }
+
+  function confirmPhotoCrop() {
+      if (!cropImg) return;
+      const scale = currentCropScale();
+      const ratio = CROP_OUTPUT_SIZE / CROP_VIEWPORT_SIZE;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = CROP_OUTPUT_SIZE;
+      canvas.height = CROP_OUTPUT_SIZE;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(
+          cropImg,
+          0, 0, cropImg.naturalWidth, cropImg.naturalHeight,
+          cropOffsetX * ratio, cropOffsetY * ratio,
+          cropImg.naturalWidth * scale * ratio, cropImg.naturalHeight * scale * ratio
+      );
+
+      // ใช้ JPEG คุณภาพ 0.85 เพื่อให้ไฟล์เล็กพอส่งขึ้น Sheet ได้เร็ว และรูปยังคมชัดเพียงพอสำหรับบัตรนักเรียน
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      const base64 = dataUrl.split(',')[1];
+
+      document.getElementById('studentPhoto').src = dataUrl;
+      document.getElementById('studentPhoto').classList.remove('opacity-40');
+
+      document.getElementById('photoCropModal').classList.add('hidden');
+      document.getElementById('photoCropModal').classList.remove('flex');
+      cropImg = null;
+
+      uploadPhotoBase64(base64, 'image/jpeg');
+  }
+
+  function uploadPhotoBase64(base64, mimeType) {
+      document.getElementById('photoStatus').innerText = 'กำลังอัปโหลด...';
+
+      fetch(API_BASE_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+              api: 'uploadPhoto',
+              className: studentClass,
+              studentId: studentIdStr,
+              imageBase64: base64,
+              mimeType: mimeType
+          })
+      }).then(function() {
+          document.getElementById('photoStatus').innerText = 'อัปโหลดสำเร็จ ✓';
+          setTimeout(function() {
+              loadProfile(studentIdStr, studentClass);
+              document.getElementById('photoStatus').innerText = '';
+          }, 2500);
+      }).catch(function() {
+          document.getElementById('photoStatus').innerText = 'อัปโหลดไม่สำเร็จ กรุณาลองใหม่';
+      });
   }
   </script>
 </body>
