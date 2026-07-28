@@ -11,16 +11,28 @@
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
 
-    <!-- Typography: Noto Sans Thai ทั้งหัวข้อและเนื้อหา (ให้ตรงกับหน้าเขาแดง/แหลมสน), Nunito สำหรับตัวเลข -->
+    <!-- Typography: Noto Sans Thai ทั้งหัวข้อและเนื้อหา (ให้ตรงกับหน้าเขาแดง/แหลมสน) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- ตั้งค่า Tailwind ให้ใช้ Noto Sans Thai เป็นฟอนต์หลัก -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Noto Sans Thai"', 'sans-serif'],
+            }
+          }
+        }
+      }
+    </script>
 
     <style>
         :root {
             --font-heading: 'Noto Sans Thai', sans-serif;
             --font-body: 'Noto Sans Thai', sans-serif;
-            --font-nunito: 'Nunito', sans-serif;
+            --font-nunito: 'Noto Sans Thai', sans-serif;
         }
 
         * {
@@ -134,11 +146,11 @@
                 </div>
 
                 <div class="flex justify-center gap-1.5 sm:gap-2 py-2 flex-wrap" id="otpContainer">
-                    <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-black font-nunito rounded-2xl border-2 border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none transition bg-white shadow-sm text-indigo-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
-                    <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-black font-nunito rounded-2xl border-2 border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none transition bg-white shadow-sm text-indigo-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
-                    <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-black font-nunito rounded-2xl border-2 border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none transition bg-white shadow-sm text-indigo-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
-                    <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-black font-nunito rounded-2xl border-2 border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none transition bg-white shadow-sm text-indigo-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
-                    <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-black font-nunito rounded-2xl border-2 border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none transition bg-white shadow-sm text-indigo-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+                    <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-bold rounded-2xl border-2 border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none transition bg-white shadow-sm text-indigo-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+                    <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-bold rounded-2xl border-2 border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none transition bg-white shadow-sm text-indigo-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+                    <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-bold rounded-2xl border-2 border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none transition bg-white shadow-sm text-indigo-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+                    <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-bold rounded-2xl border-2 border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none transition bg-white shadow-sm text-indigo-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+                    <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-bold rounded-2xl border-2 border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none transition bg-white shadow-sm text-indigo-600" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
                 </div>
 
                 <button id="loginBtn" onclick="loginUser()" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-4 rounded-2xl font-bold text-lg transition-all shadow-lg shadow-indigo-500/30 flex justify-center items-center gap-2 active:scale-[0.98]">
@@ -161,12 +173,12 @@
                         <i data-lucide="map" class="w-5 h-5 text-white"></i>
                     </div>
                     <div>
-                        <span class="font-extrabold text-slate-800 text-base md:text-lg block tracking-tight font-heading leading-tight">เมืองสงขลาฝั่งบ่อยาง</span>
+                        <span class="font-semibold text-slate-800 text-xs sm:text-sm md:text-base block leading-tight">เมืองสงขลาฝั่งบ่อยาง</span>
                         <span class="text-[10px] text-indigo-600 font-bold block uppercase tracking-wider">บทเรียนออนไลน์</span>
                     </div>
                 </div>
 
-                <nav class="hidden xl:flex items-center gap-8 text-sm font-semibold text-slate-600">
+                <nav class="hidden xl:flex items-center gap-8 text-sm font-medium text-slate-600">
                     <a href="#" onclick="showSection('home')" class="hover:text-indigo-600 transition menu-link active-nav py-1 font-heading" data-target="home">หน้าแรก</a>
                     <a href="#" onclick="showSection('knowledge')" class="hover:text-indigo-600 transition menu-link py-1 font-heading" data-target="knowledge">ใบความรู้</a>
                     <a href="#" onclick="showSection('activity')" class="hover:text-indigo-600 transition menu-link py-1 flex items-center gap-1.5 font-heading" data-target="activity">
@@ -241,7 +253,7 @@
                         <h1 id="welcomeText" class="text-4xl md:text-6xl font-black mb-4 leading-tight drop-shadow-md tracking-tight font-heading">
                             เมืองสงขลา<br><span class="text-indigo-200">ฝั่งบ่อยาง</span>
                         </h1>
-                        <p class="text-indigo-100 text-lg md:text-xl mb-8 font-medium max-w-xl mx-auto">
+                        <p class="text-indigo-100 text-base md:text-lg mb-8 font-medium max-w-xl mx-auto">
                             บทเรียนออนไลน์ รายวิชา มหาวชิราวุธ 1
                         </p>
 
