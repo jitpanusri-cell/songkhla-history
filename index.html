@@ -96,7 +96,7 @@
           <h1 class="text-4xl md:text-6xl font-black mb-3 leading-tight drop-shadow-md tracking-tight">บทเรียนออนไลน์<br>ประวัติศาสตร์เมืองสงขลา</h1>
           <p class="text-white/90 text-base md:text-lg mb-6 font-medium">รายวิชา มหาวชิราวุธ 1</p>
 
-          <div class="relative w-72 sm:w-80 mx-auto mb-8 rounded-2xl overflow-hidden shadow-2xl text-left" style="aspect-ratio:1.586/1;">
+          <div class="relative w-72 sm:w-80 mx-auto mb-8 rounded-2xl overflow-hidden shadow-2xl text-left" style="min-height:196px;">
             <div class="absolute inset-0 bg-gradient-to-br from-black/40 via-black/10 to-transparent"></div>
             <div class="absolute inset-0 bg-white/10 backdrop-blur-md border border-white/20"></div>
             <div class="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full"></div>
@@ -118,11 +118,11 @@
 
               <div class="flex items-end justify-between gap-2">
                 <div class="flex items-center gap-2.5 min-w-0">
-                  <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-lg overflow-hidden border-2 border-white/40 bg-white/20 shrink-0">
-                    <img id="homeStudentPhoto" src="" class="w-full h-full object-cover" alt="รูปนักเรียน">
+                  <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden border-2 border-white/40 bg-white/20 shrink-0">
+                    <img id="homeStudentPhoto" src="" class="student-card-photo-img w-full h-full object-cover" alt="รูปนักเรียน">
                   </div>
                   <div class="min-w-0">
-                    <p class="font-bold text-sm sm:text-base leading-tight truncate" id="homeStudentName">-</p>
+                    <p class="font-bold text-base sm:text-lg leading-tight truncate" id="homeStudentName">-</p>
                     <p class="text-[10px] sm:text-xs text-white/60 flex items-center gap-1"><i data-lucide="users" class="w-3 h-3"></i> <span id="homeStudentClass">-</span></p>
                   </div>
                 </div>
@@ -234,26 +234,28 @@
         '%3Cpath%20d=%22M50%2062c-22%200-34%2012-34%2030v8h68v-8c0-18-12-30-34-30z%22%20fill=%22%23ffffff55%22/%3E%3C/svg%3E';
 
     function setHomeStudentPhoto(photoUrl) {
-      const photoEl = document.getElementById('homeStudentPhoto');
-      if (!photoEl) return;
-      photoEl.onerror = null;
-      if (!photoUrl) {
-        photoEl.src = HOME_PHOTO_PLACEHOLDER_SVG;
-        return;
-      }
-      const idMatch = photoUrl.match(/[?&]id=([^&]+)/);
+      const photoEls = document.querySelectorAll('.student-card-photo-img');
+      if (!photoEls.length) return;
+      const idMatch = photoUrl ? photoUrl.match(/[?&]id=([^&]+)/) : null;
       const altUrl = idMatch ? ('https://lh3.googleusercontent.com/d/' + idMatch[1]) : null;
-      let step = 0;
-      photoEl.onerror = function () {
-        step++;
-        if (step === 1 && altUrl) {
-          photoEl.src = altUrl;
-        } else {
-          photoEl.onerror = null;
+      photoEls.forEach(function (photoEl) {
+        photoEl.onerror = null;
+        if (!photoUrl) {
           photoEl.src = HOME_PHOTO_PLACEHOLDER_SVG;
+          return;
         }
-      };
-      photoEl.src = photoUrl;
+        let step = 0;
+        photoEl.onerror = function () {
+          step++;
+          if (step === 1 && altUrl) {
+            photoEl.src = altUrl;
+          } else {
+            photoEl.onerror = null;
+            photoEl.src = HOME_PHOTO_PLACEHOLDER_SVG;
+          }
+        };
+        photoEl.src = photoUrl;
+      });
     }
 
     function loadHomeCardPhoto(sid, cls) {
