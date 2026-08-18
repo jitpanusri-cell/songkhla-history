@@ -230,24 +230,24 @@
   const SCORE_API_URL = "https://script.google.com/macros/s/AKfycbwAfmqJTXPhRP1WSV2_EyYoqSs0b_4C3rL5_EwW8EryTpIDkmBU6Sx4UM8TJ9ndYrGX/exec";
   const urlParams = new URLSearchParams(window.location.search);
   const studentInfo = {
-    studentId: urlParams.get('studentId') || '',
-    name: urlParams.get('name') || '',
-    className: urlParams.get('className') || ''
+      studentId: urlParams.get('studentId') || '',
+      name: urlParams.get('name') || '',
+      className: urlParams.get('className') || ''
   };
   const hasStudentInfo = !!(studentInfo.studentId && studentInfo.className);
-  function saveScoreToServer(scoreVal){
-    if (!hasStudentInfo) return;
-    const params = new URLSearchParams({
-      api: 'saveScore',
-      studentId: studentInfo.studentId,
-      name: studentInfo.name,
-      className: studentInfo.className,
-      action: 'เล่นเกมขยับมือ 67 (บ่อยาง)',
-      score: scoreVal
-    });
-    // ใช้ mode:'no-cors' เพราะ Apps Script ไม่ได้ตั้งค่า CORS header ให้อ่าน response ข้ามโดเมนได้
-    // แต่คำขอ GET ยังคงถูกประมวลผลและบันทึกลงชีตตามปกติ
-    fetch(SCORE_API_URL + '?' + params.toString(), { method: 'GET', mode: 'no-cors' }).catch(() => {});
+  function saveScoreToServer(score) {
+      if (!hasStudentInfo) return;
+      const params = new URLSearchParams({
+          api: 'saveScore',
+          studentId: studentInfo.studentId,
+          name: studentInfo.name,
+          className: studentInfo.className,
+          action: 'เล่นเกมขยับมือ 67 (บ่อยาง)',
+          score: score
+      });
+      // ใช้ mode:'no-cors' เพราะ Apps Script ไม่ได้ตั้งค่า CORS header ให้อ่าน response ข้ามโดเมนได้
+      // แต่คำขอ GET ยังคงถูกประมวลผลและบันทึกลงชีตตามปกติ
+      fetch(SCORE_API_URL + '?' + params.toString(), { method: 'GET', mode: 'no-cors' }).catch(() => {});
   }
 
   // ==========================================================
@@ -306,6 +306,7 @@
   let timeLeft = STARTING_TIME;
   let tickInterval = null, lastTick = 0, gameStartTime = 0;
   let qIndex = 0;
+  let mistakeCount = 0; // นับจำนวนครั้งที่ตอบผิด ใช้หักคะแนนตอนบันทึกคะแนนสุดท้าย
   let holdSide = null, holdStart = 0;
   const gestureState = {};
   let cameraReady = false;
@@ -535,7 +536,7 @@
     allBtns.forEach(b => b.style.pointerEvents = 'none');
     const isCorrect = selectedIndex === q.answer;
     if (isCorrect) { btnEl.classList.add('correct'); }
-    else { btnEl.classList.add('wrong'); allBtns[q.answer].classList.add('correct'); }
+    else { btnEl.classList.add('wrong'); allBtns[q.answer].classList.add('correct'); mistakeCount++; }
 
     setTimeout(() => {
       questionModalEl.classList.add('hidden');
@@ -591,7 +592,7 @@
   // ▶️ วงจรเกม: เริ่ม / จบ / รีสตาร์ท
   // ==========================================================
   function beginGesturePhase(){
-    score = 0; timeLeft = STARTING_TIME; qIndex = 0;
+    score = 0; timeLeft = STARTING_TIME; qIndex = 0; mistakeCount = 0;
     gameStartTime = performance.now(); // ใช้คำนวณเวลารวมทั้งเกมตอนชนะ
     questions = buildShuffledQuestions(); // สลับคำถาม+คำตอบใหม่ทุกรอบที่เริ่มเกม
     for (const k in gestureState) delete gestureState[k];
@@ -616,12 +617,13 @@
       const timeUsed = (performance.now() - gameStartTime) / 1000;
       victoryTimeEl.textContent = timeUsed.toFixed(2) + 's';
       victoryScreenEl.classList.remove('hidden');
-      saveScoreToServer(10);
+      // คะแนนเต็ม = จำนวนข้อทั้งหมด หักคะแนนตามจำนวนครั้งที่ตอบผิดระหว่างเล่น (ไม่ต่ำกว่า 0)
+      const finalScore = Math.max(0, questions.length - mistakeCount);
+      saveScoreToServer(finalScore);
     } else {
       goReasonEl.textContent = reason || 'จบเกม';
       finalScoreEl.textContent = score;
       gameOverScreenEl.classList.remove('hidden');
-      saveScoreToServer(qIndex);
     }
   }
 
