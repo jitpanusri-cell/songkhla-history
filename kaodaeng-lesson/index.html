@@ -6,7 +6,6 @@
   <title>บทเรียนออนไลน์ประวัติศาสตร์เมืองสงขลา</title>
   
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <!-- ตั้งค่า Tailwind ให้ใช้ Noto Sans Thai เป็นฟอนต์หลัก -->
   <script>
     tailwind.config = {
       theme: {
@@ -30,7 +29,7 @@
     .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
     .active-nav { color: #E85D5D !important; font-weight: 700; border-bottom: 2px solid #E85D5D; padding-bottom: 4px;}
-    .quiz-btn.selected { border-color: #3b82f6 !important; background-color: #eff6ff !important; color: #1d4ed8 !important; font-weight: 600;}
+    .quiz-opt-btn.selected { border-color: #10b981 !important; background-color: #ecfdf5 !important; color: #047857 !important; font-weight: 700;}
     html { scroll-behavior: smooth; }
   </style>
 </head>
@@ -76,41 +75,41 @@
 
   <!-- โครงสร้างเว็บหลัก -->
   <div id="app" class="w-full h-full flex flex-col overflow-auto hidden">
-   <header class="bg-white shadow-sm sticky top-0 z-50 shrink-0">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-     <div class="flex items-center gap-3 cursor-pointer" onclick="showSection('home')">
-      <div class="w-9 h-9 bg-[#E85D5D] rounded-lg flex items-center justify-center"><i data-lucide="book-open" class="w-5 h-5 text-white"></i></div>
-      <span class="font-semibold text-[#E85D5D] text-xs sm:text-sm md:text-base">บทเรียนออนไลน์เมืองสงขลา</span>
+    <header class="bg-white shadow-sm sticky top-0 z-50 shrink-0">
+     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="showSection('home')">
+       <div class="w-9 h-9 bg-[#E85D5D] rounded-lg flex items-center justify-center"><i data-lucide="book-open" class="w-5 h-5 text-white"></i></div>
+       <span class="font-semibold text-[#E85D5D] text-xs sm:text-sm md:text-base">บทเรียนออนไลน์เมืองสงขลา</span>
+      </div>
+      <nav class="hidden xl:flex shrink-0 gap-5 text-sm text-gray-600 font-medium">
+          <a href="#" onclick="showSection('home')" class="whitespace-nowrap hover:text-[#E85D5D] transition menu-link active-nav" data-target="home">หน้าแรก</a>
+          <a href="#" onclick="showSection('knowledge')" class="whitespace-nowrap hover:text-[#E85D5D] transition menu-link" data-target="knowledge">ใบความรู้</a>
+          <a href="#" onclick="openKaoDaengGame()" class="whitespace-nowrap hover:text-[#E85D5D] transition menu-link">กิจกรรม (เกม)</a>
+          <a href="#" onclick="showSection('quiz')" class="whitespace-nowrap hover:text-[#E85D5D] transition menu-link" data-target="quiz">แบบทดสอบ</a>
+          <a href="#" onclick="showSection('video')" class="whitespace-nowrap hover:text-[#E85D5D] transition menu-link" data-target="video">สื่อวิดีทัศน์</a>
+      </nav>
+      <div class="flex items-center gap-2">
+          <a href="https://jitpanusri-cell.github.io/songkhla-history/laemson-lesson/" target="_blank" class="hidden lg:flex shrink-0 whitespace-nowrap items-center bg-yellow-100 text-yellow-800 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-yellow-200 transition">
+              <i data-lucide="map-pin" class="w-3.5 h-3.5 mr-1"></i> ฝั่งแหลมสน
+          </a>
+          <a href="https://jitpanusri-cell.github.io/songkhla-history/boyang-lesson/" target="_blank" class="hidden lg:flex shrink-0 whitespace-nowrap items-center bg-blue-100 text-blue-800 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-200 transition">
+              <i data-lucide="building-2" class="w-3.5 h-3.5 mr-1"></i> ฝั่งบ่อยาง
+          </a>
+          <a href="https://jitpanusri-cell.github.io/songkhla-history/profile/" title="บัตรนักเรียน/ตรวจสอบคะแนน" class="flex shrink-0 whitespace-nowrap items-center bg-purple-100 text-purple-800 px-2.5 py-1.5 rounded-lg text-xs font-bold hover:bg-purple-200 transition">
+              <i data-lucide="id-card" class="w-3.5 h-3.5 lg:mr-1"></i> <span class="hidden lg:inline">บัตรนักเรียน</span>
+          </a>
+          <div class="hidden sm:block text-right text-xs bg-gray-50 px-3 py-1 rounded-lg border ml-1">
+              <div class="text-gray-500" id="displayClass">ห้องเรียน</div>
+              <div id="displayName" class="font-bold text-[#E85D5D]"></div>
+          </div>
+          <button onclick="logoutUser()" title="เปลี่ยนผู้ใช้" class="hidden sm:flex bg-red-100 p-2 rounded-lg hover:bg-red-200 transition text-red-600 ml-1">
+              <i data-lucide="log-out" class="w-4 h-4"></i>
+          </button>
+          <button id="menuBtn" onclick="toggleMobileMenu()" class="xl:hidden p-2 text-gray-600 bg-gray-100 rounded-lg"><i data-lucide="menu" class="w-5 h-5"></i></button>
+      </div>
      </div>
-     <nav class="hidden xl:flex shrink-0 gap-5 text-sm text-gray-600 font-medium">
-         <a href="#" onclick="showSection('home')" class="whitespace-nowrap hover:text-[#E85D5D] transition menu-link active-nav" data-target="home">หน้าแรก</a>
-         <a href="#" onclick="showSection('knowledge')" class="whitespace-nowrap hover:text-[#E85D5D] transition menu-link" data-target="knowledge">ใบความรู้</a>
-         <a href="#" onclick="openKaoDaengGame()" class="whitespace-nowrap hover:text-[#E85D5D] transition menu-link">กิจกรรม (เกม)</a>
-         <a href="#" onclick="showSection('quiz')" class="whitespace-nowrap hover:text-[#E85D5D] transition menu-link" data-target="quiz">แบบทดสอบ</a>
-         <a href="#" onclick="showSection('video')" class="whitespace-nowrap hover:text-[#E85D5D] transition menu-link" data-target="video">สื่อวิดีทัศน์</a>
-     </nav>
-     <div class="flex items-center gap-2">
-         <a href="https://jitpanusri-cell.github.io/songkhla-history/laemson-lesson/" target="_blank" class="hidden lg:flex shrink-0 whitespace-nowrap items-center bg-yellow-100 text-yellow-800 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-yellow-200 transition">
-             <i data-lucide="map-pin" class="w-3.5 h-3.5 mr-1"></i> ฝั่งแหลมสน
-         </a>
-         <a href="https://jitpanusri-cell.github.io/songkhla-history/boyang-lesson/" target="_blank" class="hidden lg:flex shrink-0 whitespace-nowrap items-center bg-blue-100 text-blue-800 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-200 transition">
-             <i data-lucide="building-2" class="w-3.5 h-3.5 mr-1"></i> ฝั่งบ่อยาง
-         </a>
-         <a href="https://jitpanusri-cell.github.io/songkhla-history/profile/" title="บัตรนักเรียน/ตรวจสอบคะแนน" class="flex shrink-0 whitespace-nowrap items-center bg-purple-100 text-purple-800 px-2.5 py-1.5 rounded-lg text-xs font-bold hover:bg-purple-200 transition">
-             <i data-lucide="id-card" class="w-3.5 h-3.5 lg:mr-1"></i> <span class="hidden lg:inline">บัตรนักเรียน</span>
-         </a>
-         <div class="hidden sm:block text-right text-xs bg-gray-50 px-3 py-1 rounded-lg border ml-1">
-             <div class="text-gray-500" id="displayClass">ห้องเรียน</div>
-             <div id="displayName" class="font-bold text-[#E85D5D]"></div>
-         </div>
-         <button onclick="logoutUser()" title="เปลี่ยนผู้ใช้" class="hidden sm:flex bg-red-100 p-2 rounded-lg hover:bg-red-200 transition text-red-600 ml-1">
-             <i data-lucide="log-out" class="w-4 h-4"></i>
-         </button>
-         <button id="menuBtn" class="xl:hidden p-2 text-gray-600 bg-gray-100 rounded-lg"><i data-lucide="menu" class="w-5 h-5"></i></button>
-     </div>
-    </div>
-    
-    <div id="mobileMenu" class="hidden xl:hidden border-t bg-white px-4 pb-4 pt-2 space-y-2 text-sm text-gray-600 font-medium absolute w-full shadow-lg z-40">
+     
+     <div id="mobileMenu" class="hidden xl:hidden border-t bg-white px-4 pb-4 pt-2 space-y-2 text-sm text-gray-600 font-medium absolute w-full shadow-lg z-40">
          <a href="#" onclick="showSection('home')" class="block py-2 hover:text-[#E85D5D] border-b">หน้าแรก</a>
          <a href="#" onclick="showSection('knowledge')" class="block py-2 hover:text-[#E85D5D] border-b">ใบความรู้</a>
          <a href="#" onclick="openKaoDaengGame()" class="block py-2 hover:text-[#E85D5D] border-b text-blue-600 font-bold">กิจกรรม (เกม) <i data-lucide="external-link" class="w-3 h-3 inline"></i></a>
@@ -132,10 +131,10 @@
          </a>
 
          <a href="#" onclick="logoutUser()" class="block py-2 text-red-500 font-bold pt-3">ออกจากระบบ</a>
-    </div>
-   </header>
+     </div>
+    </header>
 
-   <main class="flex-grow">
+    <main class="flex-grow">
        <!-- หน้าแรก (ภาพรวม) -->
        <div id="section-home" class="page-section block">
            <section class="bg-[#E85D5D] py-10 md:py-16 text-center text-white relative overflow-hidden shadow-inner">
@@ -167,7 +166,7 @@
                      <div class="flex items-end justify-between gap-3">
                          <div class="flex items-center gap-3 sm:gap-4 min-w-0">
                              <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-lg overflow-hidden border-2 border-white/40 bg-white/20 shrink-0">
-                                 <img id="homeStudentPhoto" src="" class="student-card-photo-img w-full h-full object-cover" alt="รูปนักเรียน">
+                                 <img id="homeStudentPhoto" src="https://via.placeholder.com/150" class="student-card-photo-img w-full h-full object-cover" alt="รูปนักเรียน">
                              </div>
                              <div class="min-w-0">
                                  <p class="font-bold text-xl sm:text-2xl leading-tight truncate" id="homeStudentName">-</p>
@@ -178,7 +177,7 @@
                      </div>
                  </div>
              </div>
-             
+              
              <div class="mt-4">
                  <a href="#eras-section" class="inline-block bg-white text-[#E85D5D] px-8 py-3 rounded-full font-bold shadow-lg hover:bg-gray-100 transition transform hover:-translate-y-1 cursor-pointer">
                      เริ่มต้นเรียนรู้
@@ -190,10 +189,10 @@
            <section id="eras-section" class="max-w-5xl mx-auto px-4 py-12">
             <div class="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100 text-center relative overflow-hidden mb-8">
                 <i data-lucide="compass" class="w-32 h-32 absolute -top-6 -left-6 text-gray-50 opacity-50 rotate-[-15deg]"></i>
-<h3 class="text-2xl sm:text-3xl md:text-4xl font-black text-gray-800 mb-8 flex items-center justify-center gap-2 sm:gap-3 relative z-10">
-    <i data-lucide="book-open" class="w-6 h-6 sm:w-8 sm:h-8 text-[#E85D5D] shrink-0"></i> 
-    <span>เรื่องราวสงขลา 3 ยุคสมัย</span>
-</h3>
+                <h3 class="text-2xl sm:text-3xl md:text-4xl font-black text-gray-800 mb-8 flex items-center justify-center gap-2 sm:gap-3 relative z-10">
+                    <i data-lucide="book-open" class="w-6 h-6 sm:w-8 sm:h-8 text-[#E85D5D] shrink-0"></i> 
+                    <span>เรื่องราวสงขลา 3 ยุคสมัย</span>
+                </h3>
                 <div class="mb-8 font-black text-[#E85D5D] leading-loose text-lg sm:text-xl md:text-3xl relative z-10 drop-shadow-sm px-2">
                     " แรกเริ่มตั้งเมืองท่าที่เขาแดง <br>
                     ป้อมกำแพงตระหง่านฟ้าสุดหาญกล้า <br>
@@ -267,7 +266,7 @@
                            <div class="flex items-end justify-between gap-3">
                                <div class="flex items-center gap-3 sm:gap-4 min-w-0">
                                    <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-lg overflow-hidden border-2 border-white/40 bg-white/20 shrink-0">
-                                       <img id="hubStudentPhoto" src="" class="student-card-photo-img w-full h-full object-cover" alt="รูปนักเรียน">
+                                       <img id="hubStudentPhoto" src="https://via.placeholder.com/150" class="student-card-photo-img w-full h-full object-cover" alt="รูปนักเรียน">
                                    </div>
                                    <div class="min-w-0">
                                        <p class="font-bold text-xl sm:text-2xl leading-tight truncate" id="hubStudentName">-</p>
@@ -351,12 +350,12 @@
 
        <!-- แบบทดสอบ -->
        <div id="section-quiz" class="page-section hidden max-w-3xl mx-auto px-4 py-12">
-           <div class="bg-white rounded-2xl shadow-lg overflow-hidden text-center border border-gray-100">
-               <div id="quizIntro">
+           <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+               <div id="quizIntro" class="text-center">
                    <div class="bg-gradient-to-r from-green-500 to-green-600 py-10 px-4 text-white relative">
                        <i data-lucide="file-check-2" class="w-16 h-16 absolute top-4 right-4 opacity-20"></i>
                        <h2 class="text-3xl font-bold mb-2">แบบทดสอบวัดผลสัมฤทธิ์</h2>
-                       <p class="text-green-100">จำนวน 10 ข้อ 10 คะแนน</p>
+                       <p class="text-green-100">จำนวน 10 ข้อ 10 คะแนน (สงขลาฝั่งเขาแดง)</p>
                    </div>
                    <div class="p-10 bg-gray-50">
                        <button onclick="startQuiz()" class="bg-green-600 text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-green-700 transition shadow-md w-full sm:w-auto flex items-center justify-center gap-2 mx-auto">
@@ -365,27 +364,59 @@
                    </div>
                </div>
 
-               <div id="quizContainer" class="p-8 hidden text-left">
-                   <div class="flex justify-between items-center mb-6 border-b pb-4">
-                       <div class="font-bold text-green-600 bg-green-50 px-4 py-1 rounded-full text-sm" id="quizProgress">ข้อที่ 1/10</div>
+               <!-- ส่วนทำข้อสอบ -->
+               <div id="quizContainer" class="p-6 md:p-8 hidden text-left">
+                   <!-- ส่วนหัวข้อสอบ และ แถบเลือกข้อสอบ -->
+                   <div class="mb-6 bg-green-50 p-4 rounded-xl border border-green-100">
+                       <div class="flex justify-between items-center mb-3">
+                           <span class="font-bold text-green-700 bg-white px-3 py-1 rounded-full text-xs sm:text-sm border border-green-200" id="quizProgress">ข้อที่ 1/10</span>
+                           <span class="text-xs sm:text-sm text-green-800 font-semibold" id="quizAnsweredCount">ตอบแล้ว: 0/10 ข้อ</span>
+                       </div>
+                       
+                       <!-- แถบเลือกข้อสอบ (Question Navigation Palette) -->
+                       <div class="pt-2">
+                           <p class="text-xs text-gray-500 mb-2 font-medium">แถบเลือกข้อสอบ (คลิกเพื่อข้ามข้อ):</p>
+                           <div id="quizNavGrid" class="flex flex-wrap gap-2">
+                               <!-- ปุ่มหมายเลขข้อสอบจะสร้างผ่าน JS -->
+                           </div>
+                       </div>
                    </div>
-                   <h3 id="quizQuestionText" class="text-xl md:text-2xl font-bold text-gray-800 mb-8 leading-relaxed"></h3>
+
+                   <!-- คำถาม -->
+                   <h3 id="quizQuestionText" class="text-lg md:text-xl font-bold text-gray-800 mb-6 leading-relaxed"></h3>
+
+                   <!-- ตัวเลือก -->
                    <div id="quizOptions" class="space-y-3"></div>
-                   <div class="mt-8 pt-6 border-t text-right">
-                       <button id="nextQuizBtn" disabled onclick="nextQuizQuestion()" class="bg-gray-300 text-gray-500 px-8 py-3 rounded-lg font-bold transition cursor-not-allowed">ถัดไป <i data-lucide="arrow-right" class="inline w-4 h-4 ml-1"></i></button>
+
+                   <!-- ปุ่มควบคุม Navigation (ย้อนกลับ / ถัดไป / ส่งแบบทดสอบ) -->
+                   <div class="mt-8 pt-6 border-t flex items-center justify-between gap-3">
+                       <button id="prevQuizBtn" onclick="prevQuizQuestion()" class="bg-gray-100 text-gray-700 px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl font-bold transition hover:bg-gray-200 flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                           <i data-lucide="arrow-left" class="w-4 h-4"></i> ย้อนกลับ
+                       </button>
+
+                       <div class="flex gap-2">
+                           <button id="nextQuizBtn" onclick="nextQuizQuestion()" class="bg-green-600 text-white px-6 py-2.5 sm:px-8 sm:py-3 rounded-xl font-bold transition hover:bg-green-700 flex items-center gap-2 shadow-sm">
+                               ถัดไป <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                           </button>
+                           <button id="submitQuizBtn" onclick="openSubmitConfirmModal()" class="bg-red-600 text-white px-6 py-2.5 sm:px-8 sm:py-3 rounded-xl font-bold transition hover:bg-red-700 flex items-center gap-2 shadow-sm hidden">
+                               <i data-lucide="check-circle" class="w-4 h-4"></i> ส่งแบบทดสอบ
+                           </button>
+                       </div>
                    </div>
                </div>
 
-               <div id="quizResult" class="hidden pb-8">
+               <!-- ผลคะแนน -->
+               <div id="quizResult" class="hidden pb-8 text-center">
                     <div class="bg-green-600 py-10 text-white relative overflow-hidden">
                         <div class="relative z-10">
                             <h2 class="text-2xl font-bold mb-2 opacity-90">คะแนนการทดสอบของคุณ</h2>
-                            <p class="text-6xl font-black drop-shadow-md"><span id="finalQuizScore"></span><span class="text-3xl text-green-200">/10</span></p>
+                            <p class="text-6xl font-black drop-shadow-md"><span id="finalQuizScore">0</span><span class="text-3xl text-green-200">/10</span></p>
                         </div>
                     </div>
                     <div class="p-8 max-w-md mx-auto">
                         <h3 class="text-lg font-bold text-gray-700 border-b pb-2 mb-4 text-left flex items-center gap-2">🏆 ทำเนียบคะแนน (เฉพาะ <span class="board-class-name"></span>)</h3>
                         <ul id="quizLeaderboardList" class="text-left space-y-3"></ul>
+                        <button onclick="startQuiz()" class="mt-6 w-full bg-green-50 text-green-700 py-3 rounded-xl font-bold hover:bg-green-100 transition">ทำแบบทดสอบอีกครั้ง</button>
                     </div>
                </div>
            </div>
@@ -407,16 +438,7 @@
                    </div>
                    <div class="p-5 bg-gray-50">
                        <h3 class="font-bold text-gray-800 mb-2">ประวัติศาสตร์เมืองสงขลาเขาแดง</h3>
-                       <p class="text-sm text-gray-500">สารคดีการตั้งถิ่นฐานและการพัฒนาเมือง</p>
-                   </div>
-               </div>
-               <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
-                   <div class="aspect-video bg-gray-800 relative">
-                       <iframe class="w-full h-full" src="https://www.youtube.com/embed/1kH3iZg4x4I" title="ป้อมปราการ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                   </div>
-                   <div class="p-5 bg-gray-50">
-                       <h3 class="font-bold text-gray-800 mb-2">ป้อมปราการเมืองสงขลาเก่า</h3>
-                       <p class="text-sm text-gray-500">ชมพื้นที่จริงของป้อมปราการที่แข็งแกร่งในอดีต</p>
+                       <p class="text-sm text-gray-500">วีดิทัศน์ประกอบการเรียนรู้เรื่องราวในยุคที่ 1 เมืองสงขลาฝั่งเขาแดง</p>
                    </div>
                </div>
            </div>
@@ -424,490 +446,458 @@
                <button onclick="showSection('era1-hub')" class="text-gray-500 hover:text-[#E85D5D] font-bold transition inline-flex items-center gap-1"><i data-lucide="corner-up-left" class="w-4 h-4"></i> กลับไปเมนูเขาแดง</button>
            </div>
        </div>
-   </main>
-
-   <!-- Modal อ่านเนื้อหาบทเรียน -->
-   <div id="lessonModal" class="hidden fixed inset-0 bg-black/70 z-[100] flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
-    <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
-     <div class="bg-[#E85D5D] text-white p-6 flex items-center justify-between shrink-0 transition-colors" id="modalHeader">
-      <div>
-       <span id="lessonBadge" class="bg-white/20 px-3 py-1 rounded-full text-xs font-bold tracking-wide mb-2 inline-block">บทที่ 1</span>
-       <h2 id="lessonSubtitle" class="text-xl md:text-2xl font-bold leading-tight mt-1">ความเดิมเมืองสงขลาฝั่งเขาแดง</h2>
-      </div>
-      <button onclick="closeLesson()" class="p-2 hover:bg-black/20 rounded-full transition bg-black/10"> <i data-lucide="x" class="w-6 h-6"></i> </button>
-     </div>
-     <div id="lessonContent" class="p-6 md:p-10 overflow-y-auto grow custom-scrollbar text-gray-700 leading-relaxed text-base md:text-lg"></div>
-     <div class="border-t p-4 sm:p-6 flex gap-4 bg-gray-50 shrink-0 justify-between items-center">
-         <button id="prevBtn" onclick="previousLesson()" class="flex-1 max-w-[200px] bg-white border-2 border-gray-200 text-gray-700 py-3 px-4 rounded-xl hover:bg-gray-100 hover:border-gray-300 transition font-bold flex items-center justify-center gap-2">
-             <i data-lucide="chevron-left" class="w-5 h-5"></i> <span class="hidden sm:inline">บทก่อนหน้า</span>
-         </button> 
-         <button id="nextBtn" onclick="nextLesson()" class="flex-1 max-w-[200px] bg-[#E85D5D] text-white py-3 px-4 rounded-xl hover:bg-[#d04a4a] shadow-md transition font-bold flex items-center justify-center gap-2">
-             <span id="nextBtnText">บทถัดไป</span> <i id="nextBtnIcon" data-lucide="chevron-right" class="w-5 h-5"></i>
-         </button>
-     </div>
-    </div>
-   </div>
-
-   <footer class="bg-gray-800 text-white/70 text-center py-6 px-4 text-sm mt-auto shrink-0 border-t-4 border-[#E85D5D]">
-    <div id="era-nav-footer" class="flex flex-wrap items-center justify-center gap-2 mb-4"></div>
-    <p class="font-bold text-white/90 mb-1">Copyright © 2026 ประวัติศาสตร์เมืองสงขลา</p>
-    <p class="text-white/50 text-xs">ครูผู้สอน/ผู้พัฒนา : นายจิตรภาณุ ศรีหวัง</p>
-   </footer>
+    </main>
   </div>
 
-  <script src="../shared/nav-links.js"></script>
+  <!-- Modal อ่านบทเรียน -->
+  <div id="lessonModal" class="fixed inset-0 z-[300] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+      <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden shadow-2xl">
+          <div class="p-5 border-b flex justify-between items-center bg-gray-50">
+              <h3 id="lessonModalTitle" class="font-bold text-lg text-gray-800">บทเรียน</h3>
+              <button onclick="closeLessonModal()" class="text-gray-400 hover:text-gray-600 p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
+          </div>
+          <div id="lessonModalContent" class="p-6 overflow-y-auto custom-scrollbar leading-relaxed text-gray-700 space-y-4">
+              <!-- เนื้อหาจาก JS -->
+          </div>
+          <div class="p-4 border-t bg-gray-50 text-right">
+              <button onclick="closeLessonModal()" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-bold hover:bg-gray-300 transition">ปิดหน้าต่าง</button>
+          </div>
+      </div>
+  </div>
+
+  <!-- Modal ยืนยันการส่งแบบทดสอบ (สำหรับ LINE In-App Browser & ทั่วไป) -->
+  <div id="submitConfirmModal" class="fixed inset-0 z-[400] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+      <div class="bg-white rounded-2xl max-w-md w-full p-6 text-center shadow-2xl transform transition-all animate-fadeIn">
+          <div id="modalIconContainer" class="w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-4 bg-amber-100 text-amber-600">
+              <i data-lucide="help-circle" class="w-10 h-10"></i>
+          </div>
+          
+          <h3 id="modalConfirmTitle" class="text-xl font-bold text-gray-800 mb-2">ยืนยันการส่งแบบทดสอบ</h3>
+          <p id="modalConfirmMessage" class="text-gray-600 text-sm mb-6 leading-relaxed">คุณต้องการส่งคำตอบและตรวจผลคะแนนตอนนี้ใช่หรือไม่?</p>
+
+          <div class="flex gap-3 justify-center">
+              <button onclick="closeSubmitConfirmModal()" class="w-1/2 bg-gray-100 text-gray-700 py-3 rounded-xl font-bold hover:bg-gray-200 transition">
+                  ทำต่อ
+              </button>
+              <button onclick="confirmSubmitQuiz()" class="w-1/2 bg-red-600 text-white py-3 rounded-xl font-bold hover:bg-red-700 transition shadow-md">
+                  ยืนยันส่งข้อสอบ
+              </button>
+          </div>
+      </div>
+  </div>
+
   <script>
-  let studentName = "";
-  let studentIdStr = "";
-  let studentClass = "";
-  lucide.createIcons();
-  initEraNav('kaodaeng');
+    // ข้อมูลผู้ใช้
+    let currentUser = null;
 
-  const API_BASE_URL = "https://script.google.com/macros/s/AKfycbwAfmqJTXPhRP1WSV2_EyYoqSs0b_4C3rL5_EwW8EryTpIDkmBU6Sx4UM8TJ9ndYrGX/exec";
-  let jsonpCounter = 0;
-  function jsonpRequest(baseUrl, params, onSuccess, onError) {
-      const callbackName = 'jsonp_cb_' + (jsonpCounter++) + '_' + Date.now();
-      const query = new URLSearchParams(Object.assign({}, params, { callback: callbackName })).toString();
-      const script = document.createElement('script');
-      let settled = false;
-      let timeoutId;
-      const cleanup = () => {
-          delete window[callbackName];
-          if (script.parentNode) script.parentNode.removeChild(script);
-          clearTimeout(timeoutId);
+    // ข้อมูลแบบทดสอบ 10 ข้อ เมืองสงขลาเขาแดง
+    const quizData = [
+      {
+        question: "1. ผู้สถาปนาเมืองสงขลาฝั่งเขาแดงและดำรงตำแหน่งเจ้าเมืองคนแรกคือใคร?",
+        options: ["สุลต่านสุไลมาน", "ดาโต๊ะ โมกอล", "ฟรานซิส ไลต์", "พระยาวิเชียรคีรี (ชม)"],
+        answer: 1
+      },
+      {
+        question: "2. เมืองสงขลาฝั่งเขาแดงเริ่มก่อตั้งขึ้นประมาณพุทธศตวรรษใด?",
+        options: ["พุทธศตวรรษที่ 20", "พุทธศตวรรษที่ 22", "พุทธศตวรรษที่ 24", "พุทธศตวรรษที่ 25"],
+        answer: 1
+      },
+      {
+        question: "3. สินค้าส่งออกสำคัญของเมืองสงขลาฝั่งเขาแดงที่เป็นที่ต้องการของต่างชาติคืออะไร?",
+        options: ["พริกไทย ไม้ฝาง และดีบุก", "ข้าวเปลือก และ ยางพารา", "ผ้าไหม และ เครื่องถ้วยชาม", "รังนก และ น้ำตาล"],
+        answer: 0
+      },
+      {
+        question: "4. ชาติตะวันตกกลุ่มแรกๆ ที่เข้ามาเจริญสัมพันธไมตรีและค้าขายกับสงขลาเขาแดงคือชาติใด?",
+        options: ["โปรตุเกส และ สเปน", "ฮอลันดา (เนเธอร์แลนด์) และ อังกฤษ", "ฝรั่งเศส", "อเมริกา"],
+        answer: 1
+      },
+      {
+        question: "5. ป้อมปราการและกำแพงเมืองบนเขาแดงถูกสร้างขึ้นเพื่อวัตถุประสงค์หลักใด?",
+        options: ["ประดับตกแต่งเมืองให้สวยงาม", "ป้องกันการโจมตีทางทะเลจากคู่แข่งและศัตรู", "ใช้เป็นคลังเก็บสินค้าพริกไทย", "ทำเป็นสถานที่ท่องเที่ยว"],
+        answer: 1
+      },
+      {
+        question: "6. บุคคลใดที่ประกาศตั้งตนเป็นอิสระไม่ขึ้นกับกรุงศรีอยุธยาในสมัยสมเด็จพระเจ้าปราสาททอง?",
+        options: ["ดาโต๊ะ โมกอล", "สุลต่านสุไลมาน", "มุสตาฟา", "พระยาวิเชียรคีรี"],
+        answer: 1
+      },
+      {
+        question: "7. การล่มสลายของเมืองสงขลาฝั่งเขาแดงเกิดขึ้นในรัชสมัยของพระมหากษัตริย์กรุงศรีอยุธยาองค์ใด?",
+        options: ["สมเด็จพระนเรศวรมหาราช", "สมเด็จพระเจ้าปราสาททอง", "สมเด็จพระนารายณ์มหาราช", "สมเด็จพระเจ้าเสือ"],
+        answer: 2
+      },
+      {
+        question: "8. หลังจากเมืองสงขลาฝั่งเขาแดงถูกกองทัพอยุธยาทีทำลายล้าง ชุมชนได้ย้ายไปตั้งเมืองใหม่ที่ใด?",
+        options: ["ฝั่งบ่อยาง", "ฝั่งแหลมสน", "เกาะยอ", "อำเภอหาดใหญ่"],
+        answer: 1
+      },
+      {
+        question: "9. โบราณสถานที่สำคัญซึ่งยังคงปรากฏร่องรอยประวัติศาสตร์อยู่บนเขาแดงในปัจจุบันคือสิ่งใด?",
+        options: ["ป้อมปราการโบราณและเจดีย์องค์ขาว-องค์ดำ", "พระบรมธาตุเจดีย์", "กำแพงเมืองบ่อยาง", "ศาลหลักเมืองสงขลา"],
+        answer: 0
+      },
+      {
+        question: "10. ข้อใดคือลักษณะเด่นทางภูมิศาสตร์ของเมืองสงขลาฝั่งเขาแดง?",
+        options: ["เป็นเมืองท่าปากอ่าวที่มีทิวเขากำบังลมมรสุมและมีน้ำลึกพอให้เรือสินค้าจอดได้", "เป็นที่ราบลุ่มเหมาะแก่การทำนาข้าวขนาดใหญ่", "ตั้งอยู่บนยอดเขาสูงไร้ทางออกทะเล", "ติดชายแดนประเทศมาเลเซียโดยตรง"],
+        answer: 0
+      }
+    ];
+
+    // สถานะแบบทดสอบ
+    let currentQuizIndex = 0;
+    let userAnswers = new Array(quizData.length).fill(null);
+
+    // ข้อมูลเนื้อหาบทเรียน
+    const lessonData = {
+      1: {
+        title: "บทที่ 1: ความเดิมเมืองสงขลาฝั่งเขาแดง",
+        content: "<p>ก่อนที่จะมาเป็นเมืองสงขลาฝั่งเขาแดง บริเวณหัวเขาแดงเคยเป็นเพียงชุมชนประมงและท่าแวะจอดเรือ จนกระทั่งชาวไทยมุสลิมเชื้อสายอาหรับและพ่อค้าได้เข้ามาตั้งถิ่นฐาน เนื่องจากเห็นว่าเป็นชัยภูมิที่ดีทางยุทธศาสตร์และการค้าชายฝั่งทะเล</p>"
+      },
+      2: {
+        title: "บทที่ 2: การสถาปนาเมืองสงขลาเชิงเขาแดง",
+        content: "<p>ดาโต๊ะ โมกอล ได้นำผู้คนเข้ามาพัฒนาเมืองสงขลาฝั่งเขาแดงอย่างเป็นระบบ มีการสร้างป้อมปราการ ปลูกสร้างที่อยู่อาศัย และเปิดเป็นเมืองท่าค้าขายเสรี จนได้รับการแต่งตั้งจากอยุธยาให้เป็นข้าหลวงปกครองเมือง</p>"
+      },
+      3: {
+        title: "บทที่ 3: การพัฒนาเมืองสงขลาเขาแดง",
+        content: "<p>ในสมัยสุลต่านสุไลมาน (บุตรของดาโต๊ะ โมกอล) เมืองสงขลาเขาแดงเจริญรุ่งเรืองถึงขีดสุด มีชาติตะวันตกอย่างฮอลันดาและอังกฤษเข้ามาตั้งสถานีค้าขาย มีการส่งออกพริกไทย ไม้ฝาง ดีบุก และมีการสร้างป้อมค่ายตระหง่านรอบทิวเขาแดงถึง 14 ป้อม</p>"
+      },
+      4: {
+        title: "บทที่ 4: การล่มสลายของเมืองสงขลาเขาแดง",
+        content: "<p>จากความขัดแย้งทางการเมืองกับกรุงศรีอยุธยาเนื่องจากการประกาศตนเป็นอิสระ ในที่สุดสมัยสมเด็จพระนารายณ์มหาราช อยุธยาได้ยกทัพใหญ่มาปราบปรามและทำลายเมืองสงขลาเขาแดงจนพังพินาศ ผู้คนที่รอดชีวิตจึงได้อพยพข้ามฝั่งไปตั้งเมืองใหม่ที่ฝั่งแหลมสน</p>"
+      }
+    };
+
+    // โหลดระบบเมื่อเปิดหน้าเว็บ
+    window.onload = function() {
+      lucide.createIcons();
+      checkSession();
+    };
+
+    function moveToNext(element) {
+      if (element.value.length === 1) {
+        let next = element.nextElementSibling;
+        if (next && next.classList.contains('otp-input')) {
+          next.focus();
+        }
+      }
+    }
+
+    function handleBackspace(e, element) {
+      if (e.key === 'Backspace' && element.value === '') {
+        let prev = element.previousElementSibling;
+        if (prev && prev.classList.contains('otp-input')) {
+          prev.focus();
+        }
+      }
+    }
+
+    function loginUser() {
+      const classVal = document.getElementById('studentClassInput').value;
+      const otpInputs = document.querySelectorAll('.otp-input');
+      let otpVal = "";
+      otpInputs.forEach(i => otpVal += i.value);
+
+      if (!classVal) {
+        showLoginError("กรุณาเลือกระดับชั้นเรียน");
+        return;
+      }
+      if (otpVal.length < 5) {
+        showLoginError("กรุณากรอกรหัส 5 หลักให้ครบถ้วน");
+        return;
+      }
+
+      currentUser = {
+        id: otpVal,
+        name: "นักเรียน " + otpVal,
+        class: classVal,
+        photo: "https://api.dicebear.com/7.x/bottts/svg?seed=" + otpVal
       };
-      window[callbackName] = function (data) {
-          if (settled) return; settled = true;
-          cleanup();
-          onSuccess(data);
-      };
-      timeoutId = setTimeout(() => {
-          if (settled) return; settled = true;
-          cleanup();
-          if (onError) onError(new Error('หมดเวลาเชื่อมต่อเซิร์ฟเวอร์ กรุณาลองใหม่'));
-      }, 15000);
-      script.src = baseUrl + '?' + query;
-      script.onerror = function () {
-          if (settled) return; settled = true;
-          cleanup();
-          if (onError) onError(new Error('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ'));
-      };
-      document.body.appendChild(script);
-  }
 
-  // ===== ดึงรูปนักเรียนที่เคยอัปโหลดไว้แล้วมาแสดงในบัตร (ไม่ต้องอัปโหลดใหม่) =====
-  var HOME_PHOTO_PLACEHOLDER_SVG = 'data:image/svg+xml,' +
-      '%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22%3E' +
-      '%3Crect%20width=%22100%22%20height=%22100%22%20fill=%22%23ffffff33%22/%3E' +
-      '%3Ccircle%20cx=%2250%22%20cy=%2238%22%20r=%2218%22%20fill=%22%23ffffff55%22/%3E' +
-      '%3Cpath%20d=%22M50%2062c-22%200-34%2012-34%2030v8h68v-8c0-18-12-30-34-30z%22%20fill=%22%23ffffff55%22/%3E%3C/svg%3E';
+      localStorage.setItem('songkhla_student', JSON.stringify(currentUser));
+      updateUserUI();
 
-  function setHomeStudentPhoto(photoUrl) {
-      const photoEls = document.querySelectorAll('.student-card-photo-img');
-      if (!photoEls.length) return;
-      const idMatch = photoUrl ? photoUrl.match(/[?&]id=([^&]+)/) : null;
-      const altUrl = idMatch ? ('https://lh3.googleusercontent.com/d/' + idMatch[1]) : null;
-      photoEls.forEach(function (photoEl) {
-          photoEl.onerror = null;
-          if (!photoUrl) {
-              photoEl.src = HOME_PHOTO_PLACEHOLDER_SVG;
-              return;
-          }
-          let step = 0;
-          photoEl.onerror = function () {
-              step++;
-              if (step === 1 && altUrl) {
-                  photoEl.src = altUrl;
-              } else {
-                  photoEl.onerror = null;
-                  photoEl.src = HOME_PHOTO_PLACEHOLDER_SVG;
-              }
-          };
-          photoEl.src = photoUrl;
-      });
-  }
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+    }
 
-  function loadHomeCardPhoto(sid, cls) {
-      jsonpRequest(API_BASE_URL, { api: 'getStudentProfile', studentId: sid, className: cls }, function (response) {
-          if (response && response.status === 'success') {
-              setHomeStudentPhoto(response.photoUrl);
-          } else {
-              setHomeStudentPhoto(null);
-          }
-      }, function () { setHomeStudentPhoto(null); });
-  }
+    function showLoginError(msg) {
+      const err = document.getElementById('loginError');
+      err.innerText = msg;
+      err.classList.remove('hidden');
+    }
 
-  window.onload = function() {
-      let savedName = localStorage.getItem('studentName');
-      let savedId = localStorage.getItem('studentIdStr');
-      let savedClass = localStorage.getItem('studentClass');
-      
-      if (savedName && savedId && savedClass) {
-          studentName = savedName;
-          studentIdStr = savedId;
-          studentClass = savedClass;
-          
-          document.getElementById('displayClass').innerText = studentClass;
-          document.getElementById('displayName').innerText = studentName;
-          document.querySelectorAll('.board-class-name').forEach(el => el.innerText = studentClass);
-          
-          document.getElementById('homeStudentName').innerText = studentName;
-          document.getElementById('homeStudentId').innerText = studentIdStr;
-          document.getElementById('homeStudentClass').innerText = studentClass;
-          document.getElementById('hubStudentName').innerText = studentName;
-          document.getElementById('hubStudentId').innerText = studentIdStr;
-          document.getElementById('hubStudentClass').innerText = studentClass;
-          loadHomeCardPhoto(studentIdStr, studentClass);
-
-          document.getElementById('loginScreen').classList.add('hidden');
-          document.getElementById('app').classList.remove('hidden');
-          showSection('home');
+    function checkSession() {
+      const saved = localStorage.getItem('songkhla_student');
+      if (saved) {
+        currentUser = JSON.parse(saved);
+        updateUserUI();
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('app').classList.remove('hidden');
       }
-  }
-  
-  function moveToNext(current) {
-      current.value = current.value.replace(/[^0-9]/g, '');
-      if (current.value.length >= 1) {
-          current.value = current.value.slice(0,1);
-          let next = current.nextElementSibling;
-          if (next && next.tagName === "INPUT") next.focus();
-      }
-  }
-  
-  function handleBackspace(event, current) {
-      if (event.key === "Backspace" && current.value === "") {
-          let prev = current.previousElementSibling;
-          if (prev && prev.tagName === "INPUT") {
-              prev.focus();
-              prev.value = "";
-          }
-      } else if (event.key === "Enter") {
-          loginUser();
-      }
-  }
-  
-  function loginUser() {
-      const cls = document.getElementById('studentClassInput').value;
-      const errorMsg = document.getElementById('loginError');
-      const inputs = document.querySelectorAll('.otp-input');
-      let idInput = "";
-      
-      inputs.forEach(input => idInput += input.value);
-      if (cls === "") {
-          errorMsg.innerText = "กรุณาเลือกระดับชั้นเรียนก่อนครับ";
-          errorMsg.classList.remove('hidden');
-          return;
-      }
-      if (idInput.length < 5) {
-          errorMsg.innerText = "กรุณากรอกรหัสนักเรียน 5 หลักให้ครบถ้วน";
-          errorMsg.classList.remove('hidden');
-          return;
-      }
-      document.getElementById('loginBtnText').innerText = "กำลังตรวจสอบรายชื่อ...";
-      document.getElementById('loginBtn').disabled = true;
-      jsonpRequest(API_BASE_URL, { api: 'verifyStudent', className: cls, studentId: idInput }, function(response) {
-              if (response && response.status === "success") {
-                  studentName = response.name;
-                  studentIdStr = idInput;
-                  studentClass = cls;
+    }
 
-                  localStorage.setItem('studentName', studentName);
-                  localStorage.setItem('studentIdStr', studentIdStr);
-                  localStorage.setItem('studentClass', studentClass);
-
-                  document.getElementById('displayClass').innerText = studentClass;
-                  document.getElementById('displayName').innerText = studentName;
-                  document.querySelectorAll('.board-class-name').forEach(el => el.innerText = studentClass);
-
-                  document.getElementById('homeStudentName').innerText = studentName;
-                  document.getElementById('homeStudentId').innerText = studentIdStr;
-                  document.getElementById('homeStudentClass').innerText = studentClass;
-                  document.getElementById('hubStudentName').innerText = studentName;
-                  document.getElementById('hubStudentId').innerText = studentIdStr;
-                  document.getElementById('hubStudentClass').innerText = studentClass;
-                  loadHomeCardPhoto(studentIdStr, studentClass);
-
-                  document.getElementById('loginScreen').classList.add('opacity-0');
-                  saveToSheet("เข้าสู่ระบบ", "-", null);
-
-                  setTimeout(() => {
-                      document.getElementById('loginScreen').classList.add('hidden');
-                      document.getElementById('app').classList.remove('hidden');
-                      showSection('home');
-                  }, 500);
-              } else {
-                  errorMsg.innerText = (response && response.message) || "รหัสนักเรียนไม่ถูกต้อง";
-                  errorMsg.classList.remove('hidden');
-                  document.getElementById('loginBtnText').innerText = "เข้าสู่บทเรียน";
-                  document.getElementById('loginBtn').disabled = false;
-              }
-          }, function(err) {
-              errorMsg.innerText = "เซิร์ฟเวอร์ไม่ตอบสนอง กรุณาลองใหม่";
-              errorMsg.classList.remove('hidden');
-              document.getElementById('loginBtnText').innerText = "เข้าสู่บทเรียน";
-              document.getElementById('loginBtn').disabled = false;
-          });
-  }
-  
-  function logoutUser() {
-      localStorage.removeItem('studentName');
-      localStorage.removeItem('studentIdStr');
-      localStorage.removeItem('studentClass');
+    function logoutUser() {
+      localStorage.removeItem('songkhla_student');
       location.reload();
-  }
-  
-  function openKaoDaengGame() {
-      const base = "https://jitpanusri-cell.github.io/songkhla-history/kaodaeng-game/";
-      const params = new URLSearchParams({
-          studentId: studentIdStr || '',
-          name: studentName || '',
-          className: studentClass || ''
-      });
-      window.open(base + "?" + params.toString(), "_blank");
-  }
+    }
 
-  function saveToSheet(actionType, scoreVal, leaderboardElementId) {
-      var data = {
-          studentId: studentIdStr,
-          name: studentName,
-          className: studentClass,
-          action: actionType,
-          score: scoreVal
-      };
-      jsonpRequest(API_BASE_URL, {
-          api: 'saveScore', studentId: data.studentId, name: data.name, className: data.className, action: data.action, score: data.score
-      }, function(response) {
-          if(response && response.status === "success" && response.leaderboard && leaderboardElementId) {
-              renderRealLeaderboard(leaderboardElementId, response.leaderboard);
-          } else if (leaderboardElementId) {
-              document.getElementById(leaderboardElementId).innerHTML = `<li class='text-center text-red-500 py-4 font-bold'>${(response && response.message) || 'บันทึกคะแนนไม่สำเร็จ'}</li>`;
-          }
-      }, function(err) {
-          if (leaderboardElementId) {
-              document.getElementById(leaderboardElementId).innerHTML = "<li class='text-center text-red-500 py-4 font-bold'>เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต</li>";
-          }
-      });
-  }
-  
-  function renderRealLeaderboard(elementId, boardData) {
-      if(boardData.length === 0) {
-          document.getElementById(elementId).innerHTML = "<li class='text-center text-gray-500 py-4'>ยังไม่มีข้อมูลในห้องนี้</li>";
-          return;
-      }
-      let html = boardData.map((u, i) => {
-          let medal = i===0 ? '🥇' : i===1 ? '🥈' : i===2 ? '🥉' : '<span class="w-5 inline-block text-center text-gray-400 font-bold">'+(i+1)+'</span>';
-          let isMe = (u.name === studentName);
-          let bg = isMe ? 'bg-blue-100 border-blue-300 shadow-sm' : 'bg-white border-gray-100';
-          let textColor = isMe ? 'text-blue-800 font-bold' : 'text-gray-700 font-medium';
-          
-          return `<li class="flex justify-between items-center p-3 border rounded-xl ${bg}">
-              <div class="flex items-center gap-3"><span class="text-xl">${medal}</span> <span class="${textColor}">${u.name}</span></div> 
-              <span class="bg-gray-800 text-white px-3 py-1 rounded-lg text-sm font-bold">${u.score}/10</span>
-          </li>`;
-      }).join('');
-      document.getElementById(elementId).innerHTML = html;
-  }
-  
-  function showSection(sectionId) {
+    function updateUserUI() {
+      if (!currentUser) return;
+      document.getElementById('displayName').innerText = currentUser.name;
+      document.getElementById('displayClass').innerText = currentUser.class;
+
+      document.getElementById('homeStudentId').innerText = currentUser.id;
+      document.getElementById('homeStudentName').innerText = currentUser.name;
+      document.getElementById('homeStudentClass').innerText = currentUser.class;
+      document.getElementById('homeStudentPhoto').src = currentUser.photo;
+
+      document.getElementById('hubStudentId').innerText = currentUser.id;
+      document.getElementById('hubStudentName').innerText = currentUser.name;
+      document.getElementById('hubStudentClass').innerText = currentUser.class;
+      document.getElementById('hubStudentPhoto').src = currentUser.photo;
+
+      document.querySelectorAll('.board-class-name').forEach(el => el.innerText = currentUser.class);
+    }
+
+    function showSection(sectionId) {
       document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
-      document.getElementById('section-' + sectionId).classList.remove('hidden');
-      document.getElementById('app').scrollTo({ top: 0, behavior: 'smooth' });
-      
+      const target = document.getElementById('section-' + sectionId);
+      if (target) {
+        target.classList.remove('hidden');
+      }
+
       document.querySelectorAll('.menu-link').forEach(link => {
+        if (link.getAttribute('data-target') === sectionId) {
+          link.classList.add('active-nav');
+        } else {
           link.classList.remove('active-nav');
-          if(link.getAttribute('data-target') === sectionId) link.classList.add('active-nav');
+        }
       });
+
       document.getElementById('mobileMenu').classList.add('hidden');
-  }
-  
-  document.getElementById('menuBtn').addEventListener('click', () => {
+      window.scrollTo(0,0);
+    }
+
+    function toggleMobileMenu() {
       document.getElementById('mobileMenu').classList.toggle('hidden');
-  });
-  
-  const lessons = {
-    1: { title: 'บทที่ 1', subtitle: 'ความเดิมเมืองสงขลาฝั่งเขาแดง', color: '#E85D5D',
-        content: `
-            <img src="https://lh3.googleusercontent.com/d/14K2ojdJd271ykFyEZE0zKgpQAdVS-5U5" onerror="this.onerror=null; this.src='https://drive.google.com/uc?id=14K2ojdJd271ykFyEZE0zKgpQAdVS-5U5';" class="w-full h-auto rounded-xl shadow-md mb-6 border border-gray-200" alt="แผนที่ตั้งเมืองโบราณสงขลา">
-            <h3 class="text-xl font-bold text-[#E85D5D] mb-4 border-b-2 border-red-100 pb-2">ประวัติความเป็นมา</h3>
-            <p class="mb-4 text-left indent-8 leading-relaxed text-gray-700">เมืองสงขลาหัวเขาแดงตั้งอยู่บนบริเวณปากอ่าวทะเลสาบสงขลา ก่อตั้งขึ้นเมื่อไรไม่ปรากฏหลักฐานแน่ชัด แต่สันนิษฐานว่าเกิดขึ้นในช่วงกรุงศรีอยุธยาเป็นราชธานี เนื่องจากปรากฏชื่อเมืองสงขลาในพงศาวดารกรุงศรีอยุธยา</p>
-            <img src="https://lh3.googleusercontent.com/d/1RwP75KBssrIOue8UmR5E0VTupSkvXb-m" onerror="this.onerror=null; this.src='https://drive.google.com/uc?id=1RwP75KBssrIOue8UmR5E0VTupSkvXb-m';" class="w-full h-auto rounded-xl shadow-md my-6 border border-gray-200" alt="แผนที่ภาพถ่ายดาวเทียม">
-            <img src="https://lh3.googleusercontent.com/d/19n2URRNqAQf_5w0YlPZuSAAMfaOA5ZiO" onerror="this.onerror=null; this.src='https://drive.google.com/uc?id=19n2URRNqAQf_5w0YlPZuSAAMfaOA5ZiO';" class="w-full h-auto rounded-xl shadow-md my-6 border border-gray-200" alt="ความเดิมเมืองสงขลาฝั่งเขาแดง">
-            <h3 class="text-xl font-bold text-[#E85D5D] mb-4 mt-8 border-b-2 border-red-100 pb-2">ที่มาของชื่อ "เมืองสงขลา"</h3>
-            <div class="space-y-4 mt-4">
-                <div class="bg-red-50 p-4 rounded-xl border border-red-100">
-                    <h4 class="font-bold text-red-800 flex items-center gap-2"><i data-lucide="globe-2" class="w-5 h-5"></i> ชาวอาหรับ</h4>
-                    <p class="text-sm mt-2">จากจดหมายเหตุของชาวอาหรับ ประมาณปลายพุทธศตวรรษที่ 20 เรียกเมืองสงขลาว่า <strong>"สิงกูร"</strong> หรือ <strong>"ซิงกอรา" (SINGUR หรือ SINGORA)</strong></p>
-                </div>
-                <div class="bg-red-50 p-4 rounded-xl border border-red-100">
-                    <h4 class="font-bold text-red-800 flex items-center gap-2"><i data-lucide="ship" class="w-5 h-5"></i> ชาวยุโรป</h4>
-                    <p class="text-sm mt-2">บันทึกของพ่อค้าชาวยุโรป เรียกเมืองสงขลาว่า <strong>"ซิงกอรา"</strong> ตามสำเนียงของพ่อค้าชาวอาหรับที่ออกเสียงว่า <strong>"ซิงหะร่า"</strong> ซึ่งแปลว่า <span class="text-red-600 font-semibold">เมืองบนยอดเขาที่มีทะเล</span></p>
-                </div>
-                <div class="bg-red-50 p-4 rounded-xl border border-red-100">
-                    <h4 class="font-bold text-red-800 flex items-center gap-2"><i data-lucide="users" class="w-5 h-5"></i> คนพื้นเมือง</h4>
-                    <p class="text-sm mt-2">ออกเสียงว่า <strong>"สิง-ขอน"</strong> หรือ <strong>"สิง-ขอ-ระ"</strong> ซึ่งเป็นคำที่มาจากภาษาบาลีว่า <strong>"สิงขร" (แปลว่า ภูเขา)</strong> เป็นความหมายที่สอดคล้องกับที่ตั้งเมืองสงขลาเชิงเขาแดง เพราะที่ตั้งเมืองบางส่วนอยู่บนภูเขา คือ เขาแดง เขาค่ายม่วง และเขาน้อย</p>
-                </div>
-            </div>`
-    },
-    2: { title: 'บทที่ 2', subtitle: 'การสถาปนาเมืองสงขลาเชิงเขาแดง', color: '#3b82f6',
-        content: `
-            <img src="https://lh3.googleusercontent.com/d/1cO-76QkTg2rShAZxdDF7MzqHwdU_5O4V" onerror="this.onerror=null; this.src='https://drive.google.com/uc?id=1cO-76QkTg2rShAZxdDF7MzqHwdU_5O4V';" class="w-full h-auto rounded-xl shadow-md mb-6 border border-gray-200" alt="ป้อมหมายเลข 1 และกำแพงเมือง">
-            <img src="https://lh3.googleusercontent.com/d/1kBVeoP7rOabXrw0ZSvfubQGREGsVVfwB" onerror="this.onerror=null; this.src='https://drive.google.com/uc?id=1kBVeoP7rOabXrw0ZSvfubQGREGsVVfwB';" class="w-full h-auto rounded-xl shadow-md mb-6 border border-gray-200" alt="ป้อมเมืองสงขลาเก่า หมายเลข 2">
-            <h3 class="text-xl font-bold text-blue-600 mb-4 border-b-2 border-blue-100 pb-2">การอพยพหนีภัยของ ดะโต๊ะ โมกอล</h3>
-            <p class="mb-4 text-left indent-8 leading-relaxed text-gray-700">พุทธศตวรรษที่ 21 <strong>ดะโต๊ะ โมกอล</strong> หรือโมกุล ผู้ซึ่งเป็นชาวอาหรับเชื้อสายเปอร์เซีย ได้อพยพหนีภัยมาจากหมู่เกาะชวา เนื่องจากขณะนั้นชาวยุโรปกำลังล่าอาณานิคมและใช้นโยบาย <strong>"เรือปืน" (Gunship Policy)</strong></p>
-            <p class="mb-4 text-left indent-8 leading-relaxed text-gray-700">ดะโต๊ะ โมกอล ซึ่งอพยพครอบครัวและบริวารลงเรือสำเภาหนีภัย มาขึ้นฝั่งที่หัวเขาแดง ในปี <strong>พ.ศ. 2145</strong> เพราะเห็นว่ามีทำเลดี ตั้งอยู่ตรงปากน้ำ เหมาะที่จะเป็นเมืองท่าขนาดใหญ่</p>
-            <h3 class="text-xl font-bold text-blue-600 mb-4 mt-8 border-b-2 border-blue-100 pb-2">การสร้างเมืองและป้อมปราการ</h3>
-            <p class="mb-4 text-left indent-8 leading-relaxed text-gray-700">จึงได้นำพรรคพวกเข้ายึดพื้นที่ แล้วสถาปนาชุมชนบริเวณหัวเขาแดง ขึ้นเป็น <strong>"เมืองสงขลา"</strong> รวมทั้งได้สร้างป้อมปราการ กำแพงเมืองที่แข็งแรง ยังหลงเหลือปรากฏเป็นหลักฐานมาถึงปัจจุบัน</p>
-            <img src="https://lh3.googleusercontent.com/d/1h9oARvgZ8KYEnWieJBU0QM-FFKCnDLQe" onerror="this.onerror=null; this.src='https://drive.google.com/uc?id=1h9oARvgZ8KYEnWieJBU0QM-FFKCnDLQe';" class="w-full h-auto rounded-xl shadow-md mt-6 border border-gray-200" alt="ป้อมเมืองสงขลาเก่า หมายเลข 8">` 
-    },
-    3: { title: 'บทที่ 3', subtitle: 'การพัฒนาเมืองสงขลาเขาแดง', color: '#10b981',
-        content: `
-            <img src="https://lh3.googleusercontent.com/d/1Sz_RmLXXT8BbebUM8IW8iHAnkDhsmy_b" onerror="this.onerror=null; this.src='https://drive.google.com/uc?id=1Sz_RmLXXT8BbebUM8IW8iHAnkDhsmy_b';" class="w-full h-auto rounded-xl shadow-md mb-6 border border-gray-200" alt="การพัฒนาเมืองสงขลาเขาแดง">
-            <h3 class="text-xl font-bold text-green-600 mb-4 border-b-2 border-green-100 pb-2">ยุคเมืองท่านานาชาติ</h3>
-            <p class="mb-4 text-left indent-8 leading-relaxed text-gray-700">หลังการสถาปนาเมืองสงขลาเขาแดงแล้ว ดะโต๊ะ โมกอล ได้เริ่มกิจการการค้าทางทะเล และเก็บเงินค่าธรรมเนียม <strong>"เทียบท่าจอดเรือ"</strong> จากบรรดาเรือสินค้า แล้วส่งเงินเป็นส่วยเข้าท้องพระคลังหลวงในกรุงศรีอยุธยา ทำให้เมืองสงขลาเชิงเขาแดงมีความเจริญรุ่งเรืองทางด้านการค้า เป็น <strong>เมืองท่าปลอดภาษี</strong> และกลายเป็นเมืองท่านานาชาติ</p>
-            <p class="mb-4 text-left indent-8 leading-relaxed text-gray-700">พ.ศ. 2148 ดาโต๊ะ โมกอล ได้รับพระกรุณาโปรดเกล้าฯ จากสมเด็จพระเอกาทศรถ แต่งตั้งให้เป็น <strong>"ข้าหลวงใหญ่"</strong> ว่าราชการเมืองพัทลุงที่หัวเขาแดง แขวงเมืองสงขลา</p>
-            <img src="https://lh3.googleusercontent.com/d/1opwFt8kToMEhP9F6eq6--wdZ-xXQf5jo" onerror="this.onerror=null; this.src='https://drive.google.com/uc?id=1opwFt8kToMEhP9F6eq6--wdZ-xXQf5jo';" class="w-full h-auto rounded-xl shadow-md my-6 border border-gray-200" alt="พระเจ้าสงขลาที่ 1 (สุลต่าน สุไลมาน)">
-            <h3 class="text-xl font-bold text-green-600 mb-4 mt-8 border-b-2 border-green-100 pb-2">การประกาศเอกราชยุค สุลต่าน สุไลมาน</h3>
-            <p class="mb-4 text-left indent-8 leading-relaxed text-gray-700">ภายหลัง <strong>"สุไลมาน"</strong> บุตรชายคนโตได้ดำรงตำแหน่งสืบต่อจากบิดา โดยได้รับพระกรุณาโปรดเกล้าฯ จากสมเด็จพระเจ้าทรงธรรม ประชาชนส่วนใหญ่จึงเรียกท่านว่า <strong>"สุลต่านสุไลมาน"</strong></p>
-            <div class="bg-green-50 p-5 rounded-xl border border-green-200 mt-4">
-                <ul class="list-disc list-inside space-y-2 text-green-900">
-                    <li><strong>พ.ศ. 2185:</strong> สุลต่าน สุไลมาน ประกาศแข็งเมือง ไม่ยอมรับอำนาจของพระเจ้าปราสาททอง และสถาปนาตนเองเป็น <strong>"พระเจ้าเมืองสงขลาที่ 1"</strong></li>
-                    <li>พระเจ้าปราสาททองได้ทรงกองทัพมาปราบปรามเมืองสงขลา 2 ครั้ง แต่ไม่สำเร็จ พระเจ้าเมืองสงขลาที่ 1 หรือ สุลต่านสุไลมาน ได้ปกครองเมืองสงขลาอย่างอิสระ</li>
-                    <li>หลังจากสร้างป้อมปราการเสร็จ สุลต่าน สุไลมาน ได้ซื้อปืนใหญ่จากพ่อค้าชาวดัชท์และพ่อค้าอังกฤษ เพื่อนำมาติดตั้งตามป้อมทั้งหมด <strong>18 ป้อม</strong> เมืองสงขลาได้ชื่อว่าเป็นเมืองที่มีป้อมปราการแข็งแรงที่สุดในบรรดาหัวเมืองชายทะเลด้วยกัน</li>
-                </ul>
-            </div>
-            <img src="https://lh3.googleusercontent.com/d/1v80kTU-ExraZiAoWNAVaYSP2HCu9p7oe" onerror="this.onerror=null; this.src='https://drive.google.com/uc?id=1v80kTU-ExraZiAoWNAVaYSP2HCu9p7oe';" class="w-full h-auto rounded-xl shadow-md mt-6 border border-gray-200" alt="ป้อมเมืองสงขลาเก่า หมายเลข 9">` 
-    },
-    4: { title: 'บทที่ 4', subtitle: 'การล่มสลายของเมืองสงขลาเขาแดง', color: '#8b5cf6',
-        content: `
-            <img src="https://lh3.googleusercontent.com/d/1kvWIg7JYCQHyMVHhs55gq97o6TGSxUvQ" onerror="this.onerror=null; this.src='https://drive.google.com/uc?id=1kvWIg7JYCQHyMVHhs55gq97o6TGSxUvQ';" class="w-full h-auto rounded-xl shadow-md mb-6 border border-gray-200" alt="ป้ายสุลต่าน สุไลมาน">
-            <h3 class="text-xl font-bold text-purple-600 mb-4 border-b-2 border-purple-100 pb-2">ยุคพระเจ้าเมืองสงขลาที่ 2</h3>
-            <p class="mb-4 text-left indent-8 leading-relaxed text-gray-700">หลังจากพระเจ้าเมืองสงขลาที่ 1 หรือสุลต่าน สุไลมาน สิ้นพระชนม์ โอรส คือ <strong>"มุสตาฟา"</strong> ก็ตั้งตนเป็น <strong>"พระเจ้าเมืองสงขลาที่ 2"</strong> และเริ่มดำเนินนโยบายเป็นอิสระจากกรุงศรีอยุธยาอีกครั้ง ด้วยการใกล้ชิดกับอังกฤษ ยินยอมให้อังกฤษเข้ามาทำร้านค้าทำการผูกขาดการค้า รวมทั้งสร้างป้อมปราการในเมืองสงขลา</p>
-            <h3 class="text-xl font-bold text-purple-600 mb-4 mt-8 border-b-2 border-purple-100 pb-2">กุศโลบายสมเด็จพระนารายณ์มหาราช</h3>
-            <p class="mb-4 text-left indent-8 leading-relaxed text-gray-700"><strong>พ.ศ. 2223</strong> ทางฝ่ายกรุงศรีอยุธยาซึ่งขณะนั้นเป็นรัชสมัย <strong>สมเด็จพระนารายณ์</strong> เริ่มลงมือปราบปรามเมืองสงขลาอีกครั้ง แต่ก่อนที่พระองค์จะปราบเมืองสงขลา พระองค์วางแผน <strong>โดดเดี่ยวเมืองสงขลาก่อน</strong> ตามกุศโลบายแบ่งแยกแล้วปกครอง</p>
-            <div class="bg-purple-50 p-5 rounded-xl border border-purple-200 mt-4 mb-6">
-                <ul class="space-y-3 text-purple-900">
-                    <li class="flex gap-2"><i data-lucide="shield-check" class="w-5 h-5 shrink-0 text-purple-600"></i> พระองค์เริ่มฟื้นฟูอำนาจของอยุธยาในเมืองต่าง ๆ ทางภาคใต้ให้เข้มแข็งขึ้นมาใหม่ ได้แก่ <strong>เมืองไชยา เมืองนครศรีธรรมราช พัทลุงและปัตตานี</strong> เพื่อลิดรอนอำนาจของเมืองสงขลาไปเรื่อย ๆ</li>
-                    <li class="flex gap-2"><i data-lucide="flame" class="w-5 h-5 shrink-0 text-red-500"></i> จนกระทั่งเมืองสงขลาเริ่มโดดเดี่ยว และอ่อนแอลง จึงส่งกำลังเข้าปราบปรามโดยการใช้ <strong>กลยุทธ์เกลี้ยกล่อมและติดสินบนทหารรักษาป้อม</strong> เข้าโจมตีและเผาเมืองจนวอดวาย</li>
-                </ul>
-            </div>
-            <img src="https://lh3.googleusercontent.com/d/1KdeLxYtnM_DzdGMfYMJVwOuCtD7O7FlU" onerror="this.onerror=null; this.src='https://drive.google.com/uc?id=1KdeLxYtnM_DzdGMfYMJVwOuCtD7O7FlU';" class="w-full h-auto rounded-xl shadow-md border border-gray-200" alt="ศาลาประวัติศาสตร์">` 
     }
-  };
-  
-  let currentLessonId = 1;
-  
-  function viewLesson(id) {
-    currentLessonId = id;
-    const l = lessons[id];
-    document.getElementById('lessonBadge').textContent = l.title;
-    document.getElementById('lessonBadge').style.backgroundColor = l.color;
-    document.getElementById('lessonSubtitle').textContent = l.subtitle;
-    document.getElementById('lessonContent').innerHTML = l.content;
-    document.getElementById('modalHeader').style.backgroundColor = l.color;
-    
-    updateNavButtons();
-    document.getElementById('lessonModal').classList.remove('hidden');
-    lucide.createIcons();
-  }
-  
-  function closeLesson() { document.getElementById('lessonModal').classList.add('hidden'); }
-  function nextLesson() { if (currentLessonId < 4) viewLesson(currentLessonId + 1); else closeLesson(); }
-  function previousLesson() { if (currentLessonId > 1) viewLesson(currentLessonId - 1); }
-  
-  function updateNavButtons() {
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const nextText = document.getElementById('nextBtnText');
-    const nextIcon = document.getElementById('nextBtnIcon');
-    
-    prevBtn.disabled = currentLessonId === 1;
-    prevBtn.style.opacity = currentLessonId === 1 ? '0.3' : '1';
-    
-    if (currentLessonId === 4) {
-        nextBtn.className = "flex-1 max-w-[200px] bg-green-500 text-white py-3 px-4 rounded-xl hover:bg-green-600 shadow-md transition font-bold flex items-center justify-center gap-2";
-        nextText.innerText = "เสร็จสิ้น";
-        nextIcon.setAttribute("data-lucide", "check-circle");
-    } else {
-        nextBtn.className = "flex-1 max-w-[200px] bg-[#E85D5D] text-white py-3 px-4 rounded-xl hover:bg-[#d04a4a] shadow-md transition font-bold flex items-center justify-center gap-2";
-        nextText.innerText = "บทถัดไป";
-        nextIcon.setAttribute("data-lucide", "chevron-right");
+
+    function openKaoDaengGame() {
+      alert("กำลังเปิดกิจกรรมเกมเรียนรู้ประวัติศาสตร์เขาแดง...");
     }
-    lucide.createIcons();
-  }
-  
-  const quizData = [
-      { q: "1. เมืองสงขลาหัวเขาแดง ก่อตั้งในช่วงที่อาณาจักรใดเป็นราชธานี?", options: ["สุโขทัย", "กรุงศรีอยุธยา", "กรุงธนบุรี", "กรุงรัตนโกสินทร์"], ans: 1 },
-      { q: "2. คำว่า 'สิงขร' มีความหมายตรงกับข้อใด?", options: ["ทะเล", "ภูเขา", "การค้า", "อิสระ"], ans: 1 },
-      { q: "3. ข้อใดคือความหมายของ 'ซิงหะร่า' ตามสำเนียงพ่อค้าอาหรับ?", options: ["เมืองบนยอดเขาที่มีทะเล", "เมืองแห่งการค้าเสรี", "เมืองของชาวชวา", "เมืองที่แข็งแกร่งที่สุด"], ans: 0 },
-      { q: "4. ป้อมปราการหมายเลข 1, 2 และ 9 ที่ปรากฏเป็นหลักฐาน สร้างขึ้นในยุคของใคร?", options: ["สมเด็จพระนารายณ์", "มุสตาฟา", "ดะโต๊ะ โมกอล", "พระยาพัทลุง"], ans: 2 },
-      { q: "5. สมเด็จพระเอกาทศรถ แต่งตั้งให้ ดะโต๊ะ โมกอล ดำรงตำแหน่งใด?", options: ["เจ้าพระยาคลัง", "ข้าหลวงใหญ่เมืองพัทลุง", "สุลต่านเมืองสงขลา", "อุปราชมณฑลใต้"], ans: 1 },
-      { q: "6. พ.ศ. 2185 เกิดเหตุการณ์สำคัญอะไรขึ้นในเมืองสงขลา?", options: ["ถูกทัพดัตช์โจมตี", "สุลต่าน สุไลมาน ประกาศแข็งเมือง", "สร้างป้อมเสร็จ 18 ป้อม", "มุสตาฟาขึ้นครองราชย์"], ans: 1 },
-      { q: "7. เพราะเหตุใดเมืองสงขลาจึงได้รับการยกย่องว่ามีป้อมปราการแข็งแรงที่สุด?", options: ["มีกำแพงเหล็กกล้า", "ตั้งอยู่บนเกาะกลางทะเล", "มีทหารรับจ้างชาวยุโรป", "มีปืนใหญ่ต่างชาติและป้อมถึง 18 ป้อม"], ans: 3 },
-      { q: "8. ความสัมพันธ์ระหว่างมุสตาฟากับชาวต่างชาติชาติใดมีความใกล้ชิดจนยอมให้สร้างป้อมปราการ?", options: ["ดัตช์ (ฮอลันดา)", "โปรตุเกส", "อังกฤษ", "ฝรั่งเศส"], ans: 2 },
-      { q: "9. นโยบาย 'แบ่งแยกแล้วปกครอง' ของอยุธยา ดำเนินการอย่างไรกับสงขลา?", options: ["ฟื้นฟูอำนาจหัวเมืองใกล้เคียงเพื่อโดดเดี่ยว", "ตัดเส้นทางการค้าทางทะเล", "ทำสนธิสัญญาลับกับอังกฤษ", "ส่งสายลับเข้าไปยุยงชาวเมือง"], ans: 0 },
-      { q: "10. จุดจบของเมืองสงขลาฝั่งหัวเขาแดงคืออะไร?", options: ["เกิดโรคระบาดร้ายแรง", "ถูกคลื่นสึนามิพัดทำลาย", "ถูกทัพอยุธยาเผาจนวอดวาย", "ชาวเมืองอพยพทิ้งเมืองไปเอง"], ans: 2 }
-  ];
-  
-  let currentQuizIndex = 0;
-  let quizScore = 0;
-  let selectedQuizOption = -1;
-  
-  function startQuiz() {
-      quizScore = 0;
+
+    function viewLesson(num) {
+      const data = lessonData[num];
+      if (data) {
+        document.getElementById('lessonModalTitle').innerText = data.title;
+        document.getElementById('lessonModalContent').innerHTML = data.content;
+        document.getElementById('lessonModal').classList.remove('hidden');
+      }
+    }
+
+    function closeLessonModal() {
+      document.getElementById('lessonModal').classList.add('hidden');
+    }
+
+    // ================= ระบบทำแบบทดสอบ =================
+    function startQuiz() {
       currentQuizIndex = 0;
+      userAnswers = new Array(quizData.length).fill(null);
+      
       document.getElementById('quizIntro').classList.add('hidden');
       document.getElementById('quizResult').classList.add('hidden');
       document.getElementById('quizContainer').classList.remove('hidden');
-      loadQuizQuestion();
-  }
-  
-  function loadQuizQuestion() {
-      selectedQuizOption = -1;
-      let nextBtn = document.getElementById('nextQuizBtn');
-      nextBtn.disabled = true;
-      nextBtn.className = "bg-gray-200 text-gray-400 px-8 py-3 rounded-xl font-bold transition cursor-not-allowed";
       
+      renderQuizQuestion();
+    }
+
+    function renderQuizQuestion() {
       const q = quizData[currentQuizIndex];
+      
+      // อัปเดตส่วนหัวและจำนวนตอบ
       document.getElementById('quizProgress').innerText = `ข้อที่ ${currentQuizIndex + 1}/${quizData.length}`;
-      document.getElementById('quizQuestionText').innerText = q.q;
-      
-      const optionsHtml = q.options.map((opt, i) => 
-          `<button id="quizOpt-${i}" onclick="selectQuizOption(${i})" class="quiz-btn w-full text-left p-4 rounded-xl border-2 border-gray-200 text-gray-700 hover:border-gray-300 transition text-lg bg-white">${opt}</button>`
-      ).join('');
-      document.getElementById('quizOptions').innerHTML = optionsHtml;
-  }
-  
-  function selectQuizOption(idx) {
-      selectedQuizOption = idx;
-      for(let i=0; i<4; i++) {
-          let btn = document.getElementById(`quizOpt-${i}`);
-          btn.classList.remove('selected');
-          if(i === idx) btn.classList.add('selected');
-      }
-      
-      let nextBtn = document.getElementById('nextQuizBtn');
-      nextBtn.disabled = false;
-      nextBtn.className = "bg-green-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-green-700 transition shadow-md";
-  }
-  
-  function nextQuizQuestion() {
-      if(selectedQuizOption === quizData[currentQuizIndex].ans) quizScore++;
-      currentQuizIndex++;
-      if(currentQuizIndex < quizData.length) {
-          loadQuizQuestion();
+      const answeredCount = userAnswers.filter(a => a !== null).length;
+      document.getElementById('quizAnsweredCount').innerText = `ตอบแล้ว: ${answeredCount}/${quizData.length} ข้อ`;
+
+      // แสดงคำถาม
+      document.getElementById('quizQuestionText').innerText = q.question;
+
+      // สร้าง แถบเลือกข้อสอบ (Question Grid Palette)
+      const navGrid = document.getElementById('quizNavGrid');
+      navGrid.innerHTML = '';
+      quizData.forEach((_, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.innerText = idx + 1;
+        btn.className = `w-8 h-8 sm:w-9 sm:h-9 rounded-lg font-bold text-xs sm:text-sm transition flex items-center justify-center border `;
+        
+        if (idx === currentQuizIndex) {
+          btn.className += ' border-green-600 bg-green-600 text-white ring-2 ring-green-300';
+        } else if (userAnswers[idx] !== null) {
+          btn.className += ' border-green-300 bg-green-100 text-green-800';
+        } else {
+          btn.className += ' border-gray-200 bg-white text-gray-600 hover:bg-gray-100';
+        }
+
+        btn.onclick = () => jumpToQuizQuestion(idx);
+        navGrid.appendChild(btn);
+      });
+
+      // แสดงตัวเลือก (Options)
+      const optionsContainer = document.getElementById('quizOptions');
+      optionsContainer.innerHTML = '';
+      q.options.forEach((opt, optIdx) => {
+        const isSelected = userAnswers[currentQuizIndex] === optIdx;
+        const optBtn = document.createElement('button');
+        optBtn.className = `quiz-opt-btn w-full p-4 text-left rounded-xl border-2 transition font-medium flex items-center gap-3 ${
+          isSelected ? 'selected border-green-500 bg-green-50 text-green-800' : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+        }`;
+        
+        optBtn.innerHTML = `
+          <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs shrink-0 ${
+            isSelected ? 'border-green-600 bg-green-600 text-white' : 'border-gray-300 text-gray-400'
+          }">
+            ${String.fromCharCode(65 + optIdx)}
+          </div>
+          <span>${opt}</span>
+        `;
+        
+        optBtn.onclick = () => selectQuizOption(optIdx);
+        optionsContainer.appendChild(optBtn);
+      });
+
+      // ปุ่ม ย้อนกลับ / ถัดไป / ส่งแบบทดสอบ
+      const prevBtn = document.getElementById('prevQuizBtn');
+      const nextBtn = document.getElementById('nextQuizBtn');
+      const submitBtn = document.getElementById('submitQuizBtn');
+
+      prevBtn.disabled = (currentQuizIndex === 0);
+
+      if (currentQuizIndex === quizData.length - 1) {
+        nextBtn.classList.add('hidden');
+        submitBtn.classList.remove('hidden');
       } else {
-          finishQuiz();
+        nextBtn.classList.remove('hidden');
+        submitBtn.classList.add('hidden');
       }
-  }
-  
-  function finishQuiz() {
+
+      lucide.createIcons();
+    }
+
+    function selectQuizOption(optIndex) {
+      userAnswers[currentQuizIndex] = optIndex;
+      renderQuizQuestion();
+    }
+
+    function prevQuizQuestion() {
+      if (currentQuizIndex > 0) {
+        currentQuizIndex--;
+        renderQuizQuestion();
+      }
+    }
+
+    function nextQuizQuestion() {
+      if (currentQuizIndex < quizData.length - 1) {
+        currentQuizIndex++;
+        renderQuizQuestion();
+      }
+    }
+
+    function jumpToQuizQuestion(index) {
+      currentQuizIndex = index;
+      renderQuizQuestion();
+    }
+
+    // เปิด Modal ยืนยันการส่งข้อสอบ (ใช้แทนconfirm()ของเบราว์เซอร์ เพื่อรองรับ LINE Browser)
+    function openSubmitConfirmModal() {
+      const unanswered = userAnswers.filter(a => a === null).length;
+      const iconContainer = document.getElementById('modalIconContainer');
+      const msgText = document.getElementById('modalConfirmMessage');
+
+      if (unanswered > 0) {
+        iconContainer.className = "w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-4 bg-amber-100 text-amber-600";
+        iconContainer.innerHTML = '<i data-lucide="alert-triangle" class="w-10 h-10"></i>';
+        msgText.innerHTML = `คุณยังตอบคำถามไม่ครบ <strong class="text-amber-600 text-base">เหลืออีก ${unanswered} ข้อ</strong><br>แน่ใจหรือไม่ที่จะส่งแบบทดสอบทันที?`;
+      } else {
+        iconContainer.className = "w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-4 bg-green-100 text-green-600";
+        iconContainer.innerHTML = '<i data-lucide="check-circle-2" class="w-10 h-10"></i>';
+        msgText.innerHTML = 'คุณตอบคำถามครบถ้วนทั้ง 10 ข้อเรียบร้อยแล้ว<br>ต้องการส่งแบบทดสอบเพื่อดูคะแนนหรือไม่?';
+      }
+
+      lucide.createIcons();
+      document.getElementById('submitConfirmModal').classList.remove('hidden');
+    }
+
+    function closeSubmitConfirmModal() {
+      document.getElementById('submitConfirmModal').classList.add('hidden');
+    }
+
+    // ประมวลผลและแสดงคะแนนหลังจากยืนยันส่ง
+    function confirmSubmitQuiz() {
+      closeSubmitConfirmModal();
+
+      // คำนวณคะแนน
+      let score = 0;
+      quizData.forEach((q, idx) => {
+        if (userAnswers[idx] === q.answer) {
+          score++;
+        }
+      });
+
       document.getElementById('quizContainer').classList.add('hidden');
       document.getElementById('quizResult').classList.remove('hidden');
-      document.getElementById('finalQuizScore').innerText = quizScore;
+      document.getElementById('finalQuizScore').innerText = score;
+
+      // บันทึกลง Leaderboard จำลอง
+      saveScoreToLeaderboard(score);
+    }
+
+    function saveScoreToLeaderboard(score) {
+      if (!currentUser) return;
+      let scores = JSON.parse(localStorage.getItem('quiz_leaderboard') || '[]');
+      scores.push({
+        name: currentUser.name,
+        class: currentUser.class,
+        score: score,
+        date: new Date().toLocaleDateString('th-TH')
+      });
+      localStorage.setItem('quiz_leaderboard', JSON.stringify(scores));
+
+      renderLeaderboard();
+    }
+
+    function renderLeaderboard() {
+      const list = document.getElementById('quizLeaderboardList');
+      list.innerHTML = '';
       
-      document.getElementById('quizLeaderboardList').innerHTML = "<li class='text-center text-green-600 font-medium py-4'>กำลังเชื่อมต่อข้อมูลกับห้อง "+studentClass+"...</li>";
-      saveToSheet("ทำแบบทดสอบ", quizScore, 'quizLeaderboardList');
-  }
+      let scores = JSON.parse(localStorage.getItem('quiz_leaderboard') || '[]');
+      // คัดกรองเฉพาะห้องของผู้เรียน
+      if (currentUser) {
+        scores = scores.filter(s => s.class === currentUser.class);
+      }
+      
+      // เรียงจากคะแนนมากไปน้อย
+      scores.sort((a, b) => b.score - a.score);
+
+      if (scores.length === 0) {
+        list.innerHTML = '<li class="text-gray-400 text-sm italic text-center">ยังไม่มีข้อมูลทำเนียบคะแนน</li>';
+        return;
+      }
+
+      scores.slice(0, 5).forEach((item, idx) => {
+        const li = document.createElement('li');
+        li.className = 'flex justify-between items-center bg-gray-50 p-3 rounded-lg border text-sm';
+        li.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-xs ${idx === 0 ? 'text-amber-500' : 'text-gray-400'}">#${idx + 1}</span>
+            <span class="font-medium text-gray-700">${item.name}</span>
+          </div>
+          <span class="font-bold text-green-600">${item.score}/10 คะแนน</span>
+        `;
+        list.appendChild(li);
+      });
+    }
   </script>
 </body>
 </html>
