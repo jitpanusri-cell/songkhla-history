@@ -238,13 +238,15 @@
   const hasStudentInfo = !!(studentInfo.studentId && studentInfo.className);
   function saveScoreToServer(score) {
       if (!hasStudentInfo) return;
+      // คะแนนเต็มของกิจกรรมนี้คือ 10 คะแนน (ให้สอดคล้องกับแบบทดสอบ) แม้ในเกมจะทำคะแนนดิบได้มากกว่านั้น
+      const cappedScore = Math.min(Math.round(score), 10);
       const params = new URLSearchParams({
           api: 'saveScore',
           studentId: studentInfo.studentId,
           name: studentInfo.name,
           className: studentInfo.className,
           action: 'เล่นเกมกิจกรรม',
-          score: score
+          score: cappedScore
       });
       // ใช้ mode:'no-cors' เพราะ Apps Script ไม่ได้ตั้งค่า CORS header ให้อ่าน response ข้ามโดเมนได้
       // แต่คำขอ GET ยังคงถูกประมวลผลและบันทึกลงชีตตามปกติ
