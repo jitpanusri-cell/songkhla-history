@@ -1,44 +1,46 @@
 # บทเรียนออนไลน์ประวัติศาสตร์เมืองสงขลา
 
 เว็บไซต์บทเรียนออนไลน์ + เกม สำหรับประวัติศาสตร์เมืองสงขลา 3 ยุค: เขาแดง, แหลมสน, บ่อยาง
-โฮสต์แบบ static ทั้งหมดบน GitHub Pages เชื่อมกับ Google Sheet ผ่าน Google Apps Script (backend แยกต่างหาก ไม่ได้อยู่ใน repo นี้)
+โฮสต์แบบ static ทั้งหมดบน GitHub Pages และเชื่อมต่อฐานข้อมูลหลังบ้านด้วย **Supabase (PostgreSQL)** เต็มรูปแบบ (ไม่มีการใช้ Google Sheets / Apps Script แล้ว)
 
 ## โครงสร้างโฟลเดอร์และลิงก์
 
-| โฟลเดอร์ | เนื้อหา | URL |
+| โฟลเดอร์ / ไฟล์ | เนื้อหา | URL |
 |---|---|---|
-| `index.html` (root) | หน้าหลักของเว็บไซต์ (ดีไซน์ก็อปจากหน้าเขาแดง ไม่มีระบบล็อกอิน) มีการ์ดลิงก์ไป 3 ยุค | https://jitpanusri-cell.github.io/songkhla-history/ |
+| `index.html` (root) | หน้าหลักของเว็บไซต์ (ไม่มีระบบล็อกอิน) มีการ์ดลิงก์ไป 3 ยุค | https://jitpanusri-cell.github.io/songkhla-history/ |
 | `kaodaeng-lesson/` | บทเรียน + แบบทดสอบ เขาแดง | https://jitpanusri-cell.github.io/songkhla-history/kaodaeng-lesson/ |
 | `laemson-lesson/` | บทเรียน + แบบทดสอบ แหลมสน | https://jitpanusri-cell.github.io/songkhla-history/laemson-lesson/ |
 | `boyang-lesson/` | บทเรียน + แบบทดสอบ บ่อยาง | https://jitpanusri-cell.github.io/songkhla-history/boyang-lesson/ |
-| `boyang-lesson/67-motion-challenge.html` | เกมกล้อง 67 Motion Challenge (MediaPipe Hands) ของหน้าบ่อยาง เปิดจากปุ่มในหน้าบทเรียนเป็นแท็บใหม่ | https://jitpanusri-cell.github.io/songkhla-history/boyang-lesson/67-motion-challenge.html |
-| `khaodaeng-mario-game/` | เกมกิจกรรม (มาริโอ้) ของหน้าเขาแดง | https://jitpanusri-cell.github.io/songkhla-history/khaodaeng-mario-game/ |
-| `laemson-game/` | เกมปืนใหญ่เล็งตอบ ของหน้าแหลมสน | https://jitpanusri-cell.github.io/songkhla-history/laemson-game/ |
-| `shared/nav-links.js` | โค้ดปุ่มนำทางข้ามหน้า (เขาแดง/แหลมสน/บ่อยาง) ใช้ร่วมกันทุกหน้าบทเรียน | ไม่มี URL — เป็นไฟล์ script ที่ทุกหน้า `<script src="../shared/nav-links.js">` |
-| `backend/Code.gs` | สำเนาโค้ด Apps Script (เก็บไว้อ้างอิง/version control เท่านั้น) | ไม่มี URL — ไฟล์นี้ **ไม่ทำงานบน GitHub Pages** |
+| `profile/` | **[ใหม่]** หน้าบัตรนักเรียนประจำตัว, อัปโหลดรูปภาพ และดูคะแนนสะสมรวม 3 ยุค | https://jitpanusri-cell.github.io/songkhla-history/profile/ |
+| `admin.html` | **[ใหม่]** ระบบจัดการข้อมูลผู้สอน (ดูคะแนนเรียงตามห้องและส่งออกเป็น Excel) | https://jitpanusri-cell.github.io/songkhla-history/admin.html |
+| `kaodaeng-game/` | เกมกิจกรรม ปืนใหญ่เล็งตอบ ของหน้าเขาแดง | https://jitpanusri-cell.github.io/songkhla-history/kaodaeng-game/ |
+| `laemson-game/` | เกมกิจกรรม ผจญภัย (มาริโอ้) ของหน้าแหลมสน | https://jitpanusri-cell.github.io/songkhla-history/laemson-game/ |
+| `boyang-lesson/67-motion-challenge.html`| เกมกล้อง 67 Motion Challenge (MediaPipe Hands) ของหน้าบ่อยาง | https://jitpanusri-cell.github.io/songkhla-history/boyang-lesson/67-motion-challenge.html |
+| `shared/supabase-api.js` | **[ใหม่]** โค้ดกลางสำหรับเชื่อมต่อ API ของ Supabase ใช้ร่วมกันทุกหน้า | ไม่มี URL — อ้างอิงผ่าน `<script src="../shared/supabase-api.js">` |
+| `shared/nav-links.js` | โค้ดปุ่มนำทางข้ามหน้าส่วน Footer ใช้ร่วมกันทุกหน้าบทเรียน | ไม่มี URL — อ้างอิงผ่าน `<script src="../shared/nav-links.js">` |
 
-## ระบบหลังบ้าน (Google Apps Script)
+## ระบบหลังบ้าน (Supabase)
 
-ทุกหน้าเรียกใช้ Apps Script ตัวเดียวกัน ผ่าน JSONP เพื่อ:
+ระบบได้ย้ายจาก Google Apps Script มาใช้ **Supabase API (REST)** เพื่อความรวดเร็วและเสถียรภาพ โดยทุกหน้า (ทั้งบทเรียน เกม และโปรไฟล์) จะเรียกใช้งานฟังก์ชันผ่านไฟล์กลาง `shared/supabase-api.js` ซึ่งมีหน้าที่หลักดังนี้:
 
-- `?api=verifyStudent` — ตรวจสอบรหัสนักเรียนตอนล็อกอิน
-- `?api=saveScore` — บันทึกคะแนน/กิจกรรมล่าสุดกลับ Google Sheet และดึง leaderboard
+- `apiLoginStudent()` — ดึงข้อมูลนักเรียนจากตาราง `student_scores` เพื่อใช้ในการเข้าสู่ระบบ (เทียบรหัสและห้องเรียน)
+- `apiSaveScore()` — บันทึกคะแนนใหม่ (PATCH) กลับไปยังคอลัมน์ที่กำหนด (เช่น `quiz_khao_daeng_max`, `game_laem_son_max`) โดยระบบจะบันทึกทับเฉพาะกรณีที่คะแนนใหม่ *มากกว่า* คะแนนเดิม หรือคะแนนเดิมยังเป็น Null
+- `apiGetLeaderboard()` — ดึงข้อมูลคะแนนสูงสุด 10 อันดับแรกของเพื่อนในห้องเดียวกันมาแสดงผลแบบเรียลไทม์
 
-ทุกไฟล์ .html ในนี้อ้างถึง Apps Script URL เดียวกันผ่านตัวแปร `API_BASE_URL` (หรือ `SCORE_API_URL` ในไฟล์เกม) — ถ้า deploy Apps Script ใหม่แล้ว URL เปลี่ยน ต้องแก้ค่านี้ในทุกไฟล์ให้ตรงกัน
+*หมายเหตุ: API Key และ URL ของ Supabase ถูกฝังไว้ในไฟล์ `shared/supabase-api.js` หากมีการเปลี่ยนโปรเจกต์ฐานข้อมูลในอนาคต ให้แก้ไขที่ไฟล์นี้เพียงจุดเดียว*
 
-## วิธี deploy
+## วิธี Deploy และอัปเดตระบบ
 
-1. เปิดใช้งาน GitHub Pages: Settings > Pages > Branch: `main` > Save (GitHub Pages จะข้าม `backend/` ไปเอง เพราะไม่มี `index.html` ในนั้น)
-2. รอสักครู่แล้วเข้าลิงก์ตามตารางด้านบนเพื่อทดสอบ
-3. ถ้าแก้ไขเนื้อหาบทเรียน/คำถามในไฟล์ไหน ให้แก้ที่ `index.html` ในโฟลเดอร์นั้นได้เลย ไม่ต้องรีบิลด์อะไรเพิ่ม
-4. `backend/Code.gs` เป็นสำเนาเก็บไว้ดูเฉยๆ ถ้าจะแก้ backend จริง ต้อง copy เนื้อหาไปวางในโปรเจกต์ที่ script.google.com แล้วกด Deploy > Manage deployments > New version ทุกครั้งที่แก้
+1. โค้ดทั้งหมดฝากไว้ที่ **GitHub Pages** (Settings > Pages > Branch: `main` > Save)
+2. หากมีการแก้ไขเนื้อหาบทเรียน คำถาม หรือเปลี่ยนสีปุ่ม สามารถแก้ที่ไฟล์ `index.html` ของโฟลเดอร์นั้นๆ แล้ว Push ขึ้น GitHub ระบบจะอัปเดตหน้าเว็บให้อัตโนมัติโดยไม่ต้องบิลด์ใหม่
+3. หากมีการปรับแก้สิทธิ์ฐานข้อมูล (เช่น ปิด-เปิด ให้นักเรียนส่งข้อสอบ) ให้ไปตั้งค่า Row Level Security (RLS) ที่หน้าเว็บจัดการของ Supabase ในตาราง `student_scores` 
 
 ## ปุ่มนำทางข้ามหน้า (shared/nav-links.js)
 
-ทั้ง 3 หน้าบทเรียน (เขาแดง/แหลมสน/บ่อยาง) ใช้โค้ดชุดเดียวกันจากไฟล์ `shared/nav-links.js` ในการแสดงปุ่มนำทาง 3 ปุ่ม (เขาแดง = หน้าหลัก / แหลมสน / บ่อยาง) ไว้ที่ท้ายหน้า (footer) ของทุกหน้าเหมือนกันหมด แทนที่จะเขียนลิงก์แยกในแต่ละไฟล์ ปุ่มของหน้าที่กำลังเปิดอยู่จะไฮไลต์และกดไม่ได้ ถ้าต้องแก้ข้อความ ลิงก์ สี หรือไอคอนของปุ่มเหล่านี้ แก้ที่ไฟล์ `shared/nav-links.js` ไฟล์เดียว จะมีผลกับทั้ง 3 หน้าทันที
+ทั้ง 3 หน้าบทเรียน (เขาแดง/แหลมสน/บ่อยาง) ตลอดจนหน้า Profile ใช้โค้ดชุดเดียวกันจากไฟล์ `shared/nav-links.js` ในการแสดงปุ่มนำทางไว้ที่ท้ายหน้า (footer) ของทุกหน้าเหมือนกันหมด ปุ่มของหน้าที่กำลังเปิดอยู่จะไฮไลต์และกดไม่ได้ หากต้องการแก้ข้อความ ลิงก์ สี หรือไอคอน ให้แก้ที่ไฟล์นี้ไฟล์เดียว จะมีผลกับทั้งโปรเจกต์ทันที
 
-## หมายเหตุ
+## หมายเหตุสำหรับนักเรียนและการเข้าใช้งาน
 
-- นักเรียนต้องเข้าเกมผ่านหน้าบทเรียน (กดปุ่มในหน้า ไม่ใช่เปิดลิงก์เกมตรงๆ) เพื่อให้ระบบแนบรหัสนักเรียน/ชื่อ/ห้อง ไปกับ URL แล้วเกมจะบันทึกคะแนนกลับชีตได้ถูกคน
-- หน้าบ่อยางใช้กล้อง (MediaPipe Hands) ต้องเปิดผ่าน HTTPS เท่านั้น ซึ่ง GitHub Pages รองรับอยู่แล้วโดยปริยาย
-- เกม 67 Motion Challenge ของบ่อยางแยกเป็นไฟล์ต่างหาก (`67-motion-challenge.html`) เหมือนกับเกมของเขาแดง/แหลมสน — ปุ่ม "เปิดกล้อง & เริ่มเกม" ในหน้าบทเรียนเรียก `openBoYangGame()` ซึ่งแนบ `studentId`/`name`/`className` ไปกับ URL แล้วเปิดเกมเป็นแท็บใหม่ เมื่อเล่นจบ (ชนะหรือหมดเวลา) เกมจะยิงคะแนนกลับ Google Sheet เองผ่าน `saveScoreToServer()` โดยไม่ต้องกลับมาที่หน้าบทเรียนก่อน
+- นักเรียนควรเข้าเกมผ่าน **หน้าบทเรียน** หรือ **ล็อกอินผ่านหน้าแรกก่อนเสมอ** เพื่อให้ระบบดึงรหัสนักเรียน/ชื่อ/ห้อง ไปเป็นตัวแปรใน URL เกมจะได้ส่งคะแนนกลับไปบันทึกลงตาราง Supabase ได้ถูกคน
+- เกม 67 Motion Challenge ของบ่อยางใช้กล้องมือถือผ่าน MediaPipe Hands ต้องเปิดผ่านโปรโตคอล **HTTPS** เสมอ (ซึ่ง GitHub Pages บังคับใช้และรองรับอยู่แล้ว)
+- ระบบส่งออกข้อมูลผู้สอน (`admin.html`) ประมวลผลและสร้างไฟล์ `.xlsx` (Excel) ในฝั่งผู้ใช้งาน (Client-side) ด้วยไลบรารี SheetJS ทำให้ผู้สอนสามารถกดดาวน์โหลดคะแนนของเด็กทุกคนได้ทันทีโดยไม่ต้องโหลดหน้าเว็บใหม่
