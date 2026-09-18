@@ -200,6 +200,10 @@
            </div>
        </div>
    </div>
+  
+  <!-- [แก้ไขใหม่: นำเข้าไฟล์ API กลางของ Supabase] -->
+  <script src="../shared/supabase-api.js"></script>
+
   <!-- JavaScript Engine -->
   <script>
   lucide.createIcons();
@@ -227,8 +231,7 @@
   const container = document.getElementById('section-activity');
   const targetsLayer = document.getElementById('targetsLayer');
 
-  // ===== เชื่อมต่อกับระบบบทเรียน (รับข้อมูลนักเรียนจาก URL แล้วส่งคะแนนกลับ Google Sheet) =====
-  const SCORE_API_URL = "https://script.google.com/macros/s/AKfycbwAfmqJTXPhRP1WSV2_EyYoqSs0b_4C3rL5_EwW8EryTpIDkmBU6Sx4UM8TJ9ndYrGX/exec";
+  // ===== เชื่อมต่อกับระบบบทเรียน (รับข้อมูลนักเรียนจาก URL แล้วส่งคะแนนกลับ Supabase) =====
   const urlParams = new URLSearchParams(window.location.search);
   const studentInfo = {
       studentId: urlParams.get('studentId') || '',
@@ -236,22 +239,36 @@
       className: urlParams.get('className') || ''
   };
   const hasStudentInfo = !!(studentInfo.studentId && studentInfo.className);
-  function saveScoreToServer(score) {
-      if (!hasStudentInfo) return;
-      // คะแนนเต็มของกิจกรรมนี้คือ 10 คะแนน (ให้สอดคล้องกับแบบทดสอบ) แม้ในเกมจะทำคะแนนดิบได้มากกว่านั้น
+
+  async function saveScoreToServer(score) {
+      const el = document.getElementById('saveStatus');
+      if (!el) return;
+
+      if (!hasStudentInfo) {
+          el.textContent = 'เล่นแบบไม่ระบุตัวตน — คะแนนบันทึกไว้ในเครื่องนี้เท่านั้น';
+          el.className = 'text-slate-400 font-bold text-sm mb-4';
+          return;
+      }
+
+      el.innerHTML = '<span class="text-blue-500 animate-pulse">กำลังบันทึกคะแนน...</span>';
+
+      // คะแนนเต็มของกิจกรรมนี้คือ 10 คะแนน (ให้สอดคล้องกับแบบทดสอบ)
       const cappedScore = Math.min(Math.round(score), 10);
-      const params = new URLSearchParams({
-          api: 'saveScore',
-          studentId: studentInfo.studentId,
-          name: studentInfo.name,
-          className: studentInfo.className,
-          action: 'เล่นเกมกิจกรรม',
-          score: cappedScore
-      });
-      // ใช้ mode:'no-cors' เพราะ Apps Script ไม่ได้ตั้งค่า CORS header ให้อ่าน response ข้ามโดเมนได้
-      // แต่คำขอ GET ยังคงถูกประมวลผลและบันทึกลงชีตตามปกติ
-      fetch(SCORE_API_URL + '?' + params.toString(), { method: 'GET', mode: 'no-cors' }).catch(() => {});
+
+      try {
+          // บันทึกคะแนนลงคอลัมน์ game_khao_daeng_max ผ่าน API กลาง
+          const isSaved = await apiSaveScore(studentInfo.studentId, 'game_khao_daeng_max', cappedScore);
+          if(isSaved) {
+              el.innerHTML = `<span class="text-emerald-600 font-bold">✅ บันทึกสถิติใหม่ให้คุณ ${studentInfo.name} เรียบร้อยแล้ว!</span>`;
+          } else {
+              el.innerHTML = `<span class="text-slate-500 font-bold">✅ จบเกม! (คะแนนครั้งนี้น้อยกว่าหรือเท่ากับสถิติเดิม)</span>`;
+          }
+      } catch (error) {
+          console.error("Save Game Score Error:", error);
+          el.innerHTML = '<span class="text-rose-500 font-bold">❌ เกิดข้อผิดพลาดในการบันทึกคะแนนลงฐานข้อมูล</span>';
+      }
   }
+
   let W = 0, H = 0, seaTop = 0, seaBottom = 0;
   let mReqAnimFrame; let gameRunning = false; let gameState = 'PREVIEW';
   let frameCount = 0;
@@ -790,20 +807,11 @@
       document.getElementById('resultHearts').innerText = player.hearts;
       document.getElementById('resultScore').innerText = player.score;
       saveLocalScore(player.score);
+      
+      // เรียกฟังก์ชันบันทึกคะแนนลง Supabase
       saveScoreToServer(player.score);
-      updateSaveStatus();
   }
-  function updateSaveStatus() {
-      const el = document.getElementById('saveStatus');
-      if (!el) return;
-      if (hasStudentInfo) {
-          el.textContent = `📤 บันทึกคะแนนให้ ${studentInfo.name} (${studentInfo.className}) เรียบร้อยแล้ว`;
-          el.className = 'text-emerald-600 font-bold text-sm mb-4';
-      } else {
-          el.textContent = 'เล่นแบบไม่ระบุตัวตน — คะแนนบันทึกไว้ในเครื่องนี้เท่านั้น';
-          el.className = 'text-slate-400 font-bold text-sm mb-4';
-      }
-  }
+
   function saveLocalScore(newScore) {
       let scores = JSON.parse(localStorage.getItem('songkhla_cannon_scores') || '[]');
       scores.push({ score: newScore, date: new Date().toLocaleDateString('th-TH') });
