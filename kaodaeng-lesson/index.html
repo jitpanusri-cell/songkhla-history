@@ -448,6 +448,13 @@
            </div>
        </div>
     </main>
+
+    <!-- [เพิ่มใหม่] Footer พร้อมปุ่มนำทาง 5 ปุ่ม -->
+    <footer class="bg-slate-900 text-slate-400 text-center py-6 px-4 text-sm mt-auto shrink-0 border-t-4 border-[#E85D5D]">
+        <div id="era-nav-footer"></div>
+        <p class="font-bold text-white/90 mb-1 mt-3">Copyright © 2026 ประวัติศาสตร์เมืองสงขลาฝั่งเขาแดง</p>
+        <p class="text-white/50 text-xs">ครูผู้สอน/ผู้พัฒนา : นายจิตรภาณุ ศรีหวัง</p>
+    </footer>
   </div>
 
   <!-- Modal อ่านบทเรียน -->
@@ -487,7 +494,9 @@
       </div>
   </div>
 
-  <!-- [แก้ไขใหม่: นำเข้าไฟล์ API ที่สร้างไว้แทนการเขียนโค้ดซ้ำ] -->
+  <!-- [เพิ่มใหม่] นำเข้าไฟล์ปุ่มนำทางกลาง -->
+  <script src="../shared/nav-links.js"></script>
+  <!-- นำเข้าไฟล์ API ที่สร้างไว้แทนการเขียนโค้ดซ้ำ -->
   <script src="../shared/supabase-api.js"></script>
   
   <script>
@@ -575,6 +584,10 @@
     // โหลดระบบเมื่อเปิดหน้าเว็บ
     window.onload = function() {
       lucide.createIcons();
+      // [เพิ่มใหม่] เรียกใช้งานสคริปต์ปุ่มนำทางกลางสำหรับหน้าเขาแดง
+      if (typeof initEraNav === 'function') {
+          initEraNav('kaodaeng');
+      }
       checkSession();
     };
 
