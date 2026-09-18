@@ -1,6 +1,6 @@
 // ==========================================
-// ไฟล์กลางสำหรับจัดการปุ่มนำทาง (Footer Nav Links) แบบอัตโนมัติ
-// รองรับครบ 5 หน้า: เขาแดง, แหลมสน, บ่อยาง, ตรวจสอบคะแนน, และสำหรับครู
+// ไฟล์กลางสำหรับจัดการปุ่มนำทาง (Footer Nav Links) แบบอัตโนมัติ 100%
+// ไม่ต้องเรียกฟังก์ชันในหน้า HTML ทำงานเองทันที
 // ==========================================
 
 (function () {
@@ -39,27 +39,37 @@
     }
   ];
 
-  window.initEraNav = function (currentPageId) {
+  // ฟังก์ชันตรวจจับอัตโนมัติว่าตอนนี้อยู่หน้าไหนจาก URL
+  function detectCurrentPage() {
+    var path = window.location.pathname;
+    if (path.indexOf('kaodaeng-lesson') !== -1) return 'kaodaeng';
+    if (path.indexOf('laemson-lesson') !== -1) return 'laemson';
+    if (path.indexOf('boyang-lesson') !== -1) return 'boyang';
+    if (path.indexOf('profile') !== -1) return 'profile';
+    if (path.indexOf('admin') !== -1) return 'admin';
+    return 'kaodaeng'; // ค่าเริ่มต้น
+  }
+
+  function renderNav() {
+    var currentPageId = detectCurrentPage();
+    
     // 1. ค้นหา Footer ของหน้าเว็บ
     var footerEl = document.querySelector('footer');
-    
-    // ถ้าไม่เจอ Footer ให้สร้างขึ้นมาต่อท้าย body อัตโนมัติทันที (ป้องกันหน้าไหนลืมใส่ Footer)
     if (!footerEl) {
       footerEl = document.createElement('footer');
       footerEl.className = "bg-slate-900 text-slate-400 text-center py-6 px-4 text-sm mt-auto shrink-0 border-t-4 border-slate-700";
       document.body.appendChild(footerEl);
     }
 
-    // 2. ค้นหาหรือสร้าง Container สำหรับใส่ปุ่มนำทาง (id="era-nav-footer")
+    // 2. ค้นหาหรือสร้าง Container สำหรับใส่ปุ่มนำทาง
     var navContainer = document.getElementById('era-nav-footer');
     if (!navContainer) {
       navContainer = document.createElement('div');
       navContainer.id = 'era-nav-footer';
-      // แทรกไว้เป็นส่วนแรกสุดของ Footer
       footerEl.insertBefore(navContainer, footerEl.firstChild);
     }
 
-    // 3. กำหนดสไตล์และสร้าง HTML ของปุ่มทั้ง 5 ปุ่ม
+    // 3. สร้าง HTML ของปุ่มทั้ง 5 ปุ่ม
     navContainer.className = "flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 mb-4 px-2";
     
     navContainer.innerHTML = PAGES.map(function (p) {
@@ -76,9 +86,18 @@
         '</a>';
     }).join('');
 
-    // สั่งเรนเดอร์ไอคอน Lucide ซ้ำเพื่อให้แสดงผลครบถ้วน
     if (window.lucide && typeof window.lucide.createIcons === 'function') {
       window.lucide.createIcons();
     }
-  };
+  }
+
+  // รันอัตโนมัติทันทีที่สคริปต์ถูกโหลดหรือหน้าเว็บพร้อม
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderNav);
+  } else {
+    renderNav();
+  }
+
+  // เผื่อเรียกใช้แบบ Manual
+  window.initEraNav = renderNav;
 })();
