@@ -42,7 +42,7 @@
               <i data-lucide="id-card" class="w-10 h-10 text-[#4F46E5]"></i>
           </div>
           <h2 class="text-2xl font-bold text-gray-800 mb-2">บทเรียนออนไลน์เมืองสงขลา</h2>
-          <p class="text-gray-500 mb-6">เลือกระดับชั้นและกรอกรหัส 5 หลักเพื่อดูบัตรนักเรียน/คะแนนของคุณ</p>
+          <p class="text-gray-500 mb-6">เลือกระดับชั้นและกรอกรหัส (4-5 หลัก) เพื่อดูบัตรนักเรียน</p>
 
           <select id="studentClassInput" class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#4F46E5] outline-none mb-6 transition text-center font-medium bg-white shadow-sm">
               <option value="">-- เลือกระดับชั้น --</option>
@@ -58,6 +58,7 @@
               <option value="ม.3/17">ม.3/17</option>
           </select>
 
+          <!-- ระบบช่องกรอกรหัส 5 กล่อง -->
           <div class="flex justify-center gap-1.5 sm:gap-2 mb-6 flex-wrap" id="otpContainer">
               <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#4F46E5] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
               <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#4F46E5] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
@@ -273,48 +274,21 @@
   </div>
 
   <script src="../shared/nav-links.js"></script>
+  <!-- [แก้ไขใหม่: นำเข้าไฟล์ API กลางของ Supabase] -->
+  <script src="../shared/supabase-api.js"></script>
+
   <script>
   lucide.createIcons();
-  initEraNav('profile');
+  if (typeof initEraNav === 'function') {
+      initEraNav('profile');
+  }
 
-  const API_BASE_URL = "https://script.google.com/macros/s/AKfycbwAfmqJTXPhRP1WSV2_EyYoqSs0b_4C3rL5_EwW8EryTpIDkmBU6Sx4UM8TJ9ndYrGX/exec";
   const PROFILE_PAGE_URL = "https://jitpanusri-cell.github.io/songkhla-history/profile/";
 
   let studentName = "";
   let studentIdStr = "";
   let studentClass = "";
   let isSharedView = false; // true = เปิดผ่านลิงก์/QR ของคนอื่น (ไม่ใช่ล็อกอินของตัวเอง)
-
-  let jsonpCounter = 0;
-  function jsonpRequest(baseUrl, params, onSuccess, onError) {
-      const callbackName = 'jsonp_cb_' + (jsonpCounter++) + '_' + Date.now();
-      const query = new URLSearchParams(Object.assign({}, params, { callback: callbackName })).toString();
-      const script = document.createElement('script');
-      let settled = false;
-      let timeoutId;
-      const cleanup = () => {
-          delete window[callbackName];
-          if (script.parentNode) script.parentNode.removeChild(script);
-          clearTimeout(timeoutId);
-      };
-      window[callbackName] = function (data) {
-          if (settled) return; settled = true;
-          cleanup();
-          onSuccess(data);
-      };
-      timeoutId = setTimeout(() => {
-          if (settled) return; settled = true;
-          cleanup();
-          if (onError) onError(new Error('หมดเวลาเชื่อมต่อเซิร์ฟเวอร์ กรุณาลองใหม่'));
-      }, 15000);
-      script.src = baseUrl + '?' + query;
-      script.onerror = function () {
-          if (settled) return; settled = true;
-          cleanup();
-          if (onError) onError(new Error('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ'));
-      };
-      document.body.appendChild(script);
-  }
 
   window.onload = function() {
       const urlParams = new URLSearchParams(window.location.search);
@@ -353,7 +327,6 @@
           enterViewMode();
           loadProfile(studentIdStr, studentClass);
       }
-      // ถ้ายังไม่เคยล็อกอินและไม่มีพารามิเตอร์ ให้แสดงหน้าล็อกอินตามปกติ (ไม่ต้องทำอะไรเพิ่ม)
   }
 
   function enterViewMode() {
@@ -394,55 +367,65 @@
       }
   }
 
-  function loginUser() {
+  // [แก้ไขใหม่: เชื่อมต่อ Supabase ผ่าน API กลางสำหรับล็อกอิน]
+  async function loginUser() {
       const cls = document.getElementById('studentClassInput').value;
       const errorMsg = document.getElementById('loginError');
       const inputs = document.querySelectorAll('.otp-input');
       let idInput = "";
 
       inputs.forEach(input => idInput += input.value);
+      idInput = idInput.trim();
+
       if (cls === "") {
           errorMsg.innerText = "กรุณาเลือกระดับชั้นเรียนก่อนครับ";
           errorMsg.classList.remove('hidden');
           return;
       }
-      if (idInput.length < 5) {
-          errorMsg.innerText = "กรุณากรอกรหัสนักเรียน 5 หลักให้ครบถ้วน";
+      if (idInput.length < 4) {
+          errorMsg.innerText = "กรุณากรอกรหัสนักเรียน 4-5 หลักให้ครบถ้วน";
           errorMsg.classList.remove('hidden');
           return;
       }
-      document.getElementById('loginBtnText').innerText = "กำลังตรวจสอบรายชื่อ...";
-      document.getElementById('loginBtn').disabled = true;
-      jsonpRequest(API_BASE_URL, { api: 'verifyStudent', className: cls, studentId: idInput }, function(response) {
-              if (response && response.status === "success") {
-                  studentName = response.name;
-                  studentIdStr = idInput;
-                  studentClass = cls;
-                  isSharedView = false;
+      
+      const loginBtnText = document.getElementById('loginBtnText');
+      const loginBtn = document.getElementById('loginBtn');
+      loginBtnText.innerText = "กำลังตรวจสอบรายชื่อ...";
+      loginBtn.disabled = true;
+      errorMsg.classList.add('hidden');
 
-                  localStorage.setItem('studentName', studentName);
-                  localStorage.setItem('studentIdStr', studentIdStr);
-                  localStorage.setItem('studentClass', studentClass);
+      try {
+          const studentData = await apiLoginStudent(idInput, cls);
 
-                  document.getElementById('loginScreen').classList.add('opacity-0');
-                  setTimeout(() => {
-                      document.getElementById('loginScreen').classList.add('hidden');
-                      document.getElementById('app').classList.remove('hidden');
-                      enterViewMode();
-                      loadProfile(studentIdStr, studentClass);
-                  }, 400);
-              } else {
-                  errorMsg.innerText = (response && response.message) || "รหัสนักเรียนไม่ถูกต้อง";
-                  errorMsg.classList.remove('hidden');
-                  document.getElementById('loginBtnText').innerText = "ดูบัตรนักเรียนของฉัน";
-                  document.getElementById('loginBtn').disabled = false;
-              }
-          }, function(err) {
-              errorMsg.innerText = "เซิร์ฟเวอร์ไม่ตอบสนอง กรุณาลองใหม่";
+          if (studentData) {
+              studentName = studentData.name;
+              studentIdStr = idInput;
+              studentClass = cls;
+              isSharedView = false;
+
+              localStorage.setItem('studentName', studentName);
+              localStorage.setItem('studentIdStr', studentIdStr);
+              localStorage.setItem('studentClass', studentClass);
+
+              document.getElementById('loginScreen').classList.add('opacity-0');
+              setTimeout(() => {
+                  document.getElementById('loginScreen').classList.add('hidden');
+                  document.getElementById('app').classList.remove('hidden');
+                  enterViewMode();
+                  renderProfile(studentData); // ใช้ data ที่เพิ่งดึงมาเรนเดอร์เลย
+                  document.getElementById('profileContent').classList.remove('hidden');
+              }, 400);
+          } else {
+              errorMsg.innerText = "ไม่พบข้อมูลนักเรียน หรือรหัสไม่ถูกต้อง";
               errorMsg.classList.remove('hidden');
-              document.getElementById('loginBtnText').innerText = "ดูบัตรนักเรียนของฉัน";
-              document.getElementById('loginBtn').disabled = false;
-          });
+          }
+      } catch (error) {
+          errorMsg.innerText = "เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล";
+          errorMsg.classList.remove('hidden');
+      } finally {
+          loginBtnText.innerText = "ดูบัตรนักเรียนของฉัน";
+          loginBtn.disabled = false;
+      }
   }
 
   function logoutUser() {
@@ -453,7 +436,6 @@
   }
 
   function renderHalfStar(elementId, percent) {
-      // percent: 0, 50, หรือ 100 (ครึ่งดาว = ผ่านเกม หรือ ผ่านข้อสอบ อย่างใดอย่างหนึ่ง / เต็มดวง = ผ่านทั้งคู่)
       const el = document.getElementById(elementId);
       el.innerHTML =
           '<i data-lucide="star" class="star-bg w-full h-full text-gray-300"></i>' +
@@ -464,26 +446,29 @@
 
   function num(v) { const n = parseFloat(v); return isNaN(n) ? 0 : n; }
 
-  function loadProfile(sid, cls) {
+  // [แก้ไขใหม่: โหลดข้อมูลนักเรียนจาก Supabase]
+  async function loadProfile(sid, cls) {
       document.getElementById('loadingBox').classList.remove('hidden');
       document.getElementById('errorBox').classList.add('hidden');
       document.getElementById('profileContent').classList.add('hidden');
 
-      jsonpRequest(API_BASE_URL, { api: 'getStudentProfile', studentId: sid, className: cls }, function(response) {
+      try {
+          const studentData = await apiLoginStudent(sid, cls);
+          
           document.getElementById('loadingBox').classList.add('hidden');
-          if (!response || response.status !== 'success') {
+          if (studentData) {
+              if (!isSharedView) { studentName = studentData.name; }
+              renderProfile(studentData);
+              document.getElementById('profileContent').classList.remove('hidden');
+          } else {
               document.getElementById('errorBox').classList.remove('hidden');
-              document.getElementById('errorText').innerText = (response && response.message) || 'ไม่พบข้อมูลนักเรียน';
-              return;
+              document.getElementById('errorText').innerText = 'ไม่พบข้อมูลนักเรียน';
           }
-          if (!isSharedView) { studentName = response.name; }
-          renderProfile(response);
-          document.getElementById('profileContent').classList.remove('hidden');
-      }, function(err) {
+      } catch (error) {
           document.getElementById('loadingBox').classList.add('hidden');
           document.getElementById('errorBox').classList.remove('hidden');
-          document.getElementById('errorText').innerText = 'เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต';
-      });
+          document.getElementById('errorText').innerText = 'เชื่อมต่อฐานข้อมูลไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต';
+      }
   }
 
   var PHOTO_PLACEHOLDER_SVG = 'data:image/svg+xml,' +
@@ -502,21 +487,10 @@
           return;
       }
 
-      // ลิงก์รูปจาก Google Drive บางครั้งโหลดตรงๆ ผ่าน uc?export=view ไม่สำเร็จ
-      // จึงลองรูปแบบสำรอง lh3.googleusercontent.com/d/{fileId} ก่อน แล้วค่อย fallback เป็นรูปจางๆ
-      const idMatch = photoUrl.match(/[?&]id=([^&]+)/);
-      const altUrl = idMatch ? ('https://lh3.googleusercontent.com/d/' + idMatch[1]) : null;
-      let step = 0;
-
       photoEl.onerror = function() {
-          step++;
-          if (step === 1 && altUrl) {
-              photoEl.src = altUrl;
-          } else {
-              photoEl.onerror = null;
-              photoEl.src = PHOTO_PLACEHOLDER_SVG;
-              photoEl.classList.add('opacity-40');
-          }
+          photoEl.onerror = null;
+          photoEl.src = PHOTO_PLACEHOLDER_SVG;
+          photoEl.classList.add('opacity-40');
       };
       photoEl.classList.remove('opacity-40');
       photoEl.src = photoUrl;
@@ -524,47 +498,51 @@
 
   function renderProfile(data) {
       document.getElementById('cardName').innerText = data.name || '-';
-      document.getElementById('cardId').innerText = data.studentId || '-';
-      document.getElementById('cardClass').innerText = data.className || '-';
+      document.getElementById('cardId').innerText = data.student_id || '-';
+      document.getElementById('cardClass').innerText = data.class_room || '-';
 
       if (!isSharedView) {
           document.getElementById('displayName').innerText = data.name || '-';
       }
 
-      const gk = num(data.maxGameKaodaeng) > 0, qk = num(data.maxQuizKaodaeng) > 0;
-      const gl = num(data.maxGameLaemson) > 0, ql = num(data.maxQuizLaemson) > 0;
-      const gb = num(data.maxGameBoyang) > 0, qb = num(data.maxQuizBoyang) > 0;
+      // ตรวจสอบคะแนน ถ้ามีคะแนนให้ถือว่าผ่านกิจกรรม
+      const gk = num(data.game_khao_daeng_max) > 0, qk = num(data.quiz_khao_daeng_max) >= 5;
+      const gl = num(data.game_laem_son_max) > 0, ql = num(data.quiz_laem_son_max) >= 5;
+      const gb = num(data.game_bo_yang_max) > 0, qb = num(data.quiz_bo_yang_max) >= 5;
 
       renderHalfStar('starKaodaeng', (gk ? 50 : 0) + (qk ? 50 : 0));
       renderHalfStar('starLaemson', (gl ? 50 : 0) + (ql ? 50 : 0));
       renderHalfStar('starBoyang', (gb ? 50 : 0) + (qb ? 50 : 0));
 
-      document.getElementById('scoreGameKaodaeng').innerText = num(data.maxGameKaodaeng) + ' คะแนน';
-      document.getElementById('scoreQuizKaodaeng').innerText = num(data.maxQuizKaodaeng) + ' / 10';
-      document.getElementById('scoreGameLaemson').innerText = num(data.maxGameLaemson) + ' คะแนน';
-      document.getElementById('scoreQuizLaemson').innerText = num(data.maxQuizLaemson) + ' / 10';
-      document.getElementById('scoreGameBoyang').innerText = num(data.maxGameBoyang) + ' คะแนน';
-      document.getElementById('scoreQuizBoyang').innerText = num(data.maxQuizBoyang) + ' / 10';
-      document.getElementById('scoreTotal').innerText = num(data.total);
+      document.getElementById('scoreGameKaodaeng').innerText = num(data.game_khao_daeng_max) + ' คะแนน';
+      document.getElementById('scoreQuizKaodaeng').innerText = num(data.quiz_khao_daeng_max) + ' / 10';
+      document.getElementById('scoreGameLaemson').innerText = num(data.game_laem_son_max) + ' คะแนน';
+      document.getElementById('scoreQuizLaemson').innerText = num(data.quiz_laem_son_max) + ' / 10';
+      document.getElementById('scoreGameBoyang').innerText = num(data.game_bo_yang_max) + ' คะแนน';
+      document.getElementById('scoreQuizBoyang').innerText = num(data.quiz_bo_yang_max) + ' / 10';
+      
+      const totalScore = num(data.game_khao_daeng_max) + num(data.quiz_khao_daeng_max) +
+                         num(data.game_laem_son_max) + num(data.quiz_laem_son_max) +
+                         num(data.game_bo_yang_max) + num(data.quiz_bo_yang_max);
+      document.getElementById('scoreTotal').innerText = totalScore;
 
-      setStudentPhoto(data.photoUrl);
+      setStudentPhoto(data.profile_pic_url);
 
-      const qrData = PROFILE_PAGE_URL + '?studentId=' + encodeURIComponent(data.studentId) + '&className=' + encodeURIComponent(data.className);
+      const qrData = PROFILE_PAGE_URL + '?studentId=' + encodeURIComponent(data.student_id) + '&className=' + encodeURIComponent(data.class_room);
       document.getElementById('qrImage').src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(qrData);
 
       lucide.createIcons();
   }
 
   // ===== ปรับขนาด/ครอปรูปก่อนอัปโหลด (crop viewport แสดงผล 256x256 px, ส่งออกจริงที่ความละเอียดสูงกว่า) =====
-  const CROP_VIEWPORT_SIZE = 256; // ต้องตรงกับ w-64 h-64 (16rem = 256px) ของ #cropViewport
-  const CROP_OUTPUT_SIZE = 480;   // ความละเอียดรูปสี่เหลี่ยมจัตุรัสที่จะส่งขึ้นไปเก็บจริง
-  let cropImg = null;             // Image() ต้นฉบับที่โหลดมาแล้ว (ใช้ naturalWidth/Height)
-  let cropBaseScale = 1;          // สเกลต่ำสุดที่ทำให้รูป "cover" เต็มกรอบ crop พอดี
-  let cropZoom = 1;               // ตัวคูณซูมเพิ่มจาก base (1.0 - 3.0)
-  let cropOffsetX = 0, cropOffsetY = 0; // ตำแหน่งซ้าย-บนของรูป (px) เทียบกับกรอบ crop
+  const CROP_VIEWPORT_SIZE = 256; 
+  const CROP_OUTPUT_SIZE = 480;   
+  let cropImg = null;             
+  let cropBaseScale = 1;          
+  let cropZoom = 1;               
+  let cropOffsetX = 0, cropOffsetY = 0; 
   let cropDragging = false;
   let cropDragStartX = 0, cropDragStartY = 0, cropStartOffsetX = 0, cropStartOffsetY = 0;
-  let cropOriginalMimeType = 'image/jpeg';
 
   function openPhotoCropper(event) {
       const file = event.target.files && event.target.files[0];
@@ -579,7 +557,6 @@
           event.target.value = '';
           return;
       }
-      cropOriginalMimeType = file.type;
 
       const reader = new FileReader();
       reader.onload = function() {
@@ -601,7 +578,7 @@
           img.src = reader.result;
       };
       reader.readAsDataURL(file);
-      event.target.value = ''; // ให้เลือกไฟล์เดิมซ้ำได้ถ้ากดยกเลิกแล้วเปิดใหม่
+      event.target.value = ''; 
   }
 
   function currentCropScale() { return cropBaseScale * cropZoom; }
@@ -610,7 +587,7 @@
       const scale = currentCropScale();
       const dispW = cropImg.naturalWidth * scale;
       const dispH = cropImg.naturalHeight * scale;
-      const minX = CROP_VIEWPORT_SIZE - dispW; // ค่าติดลบ (หรือ 0) เสมอ เพราะรูป cover เต็มกรอบ
+      const minX = CROP_VIEWPORT_SIZE - dispW; 
       const minY = CROP_VIEWPORT_SIZE - dispH;
       cropOffsetX = Math.min(0, Math.max(minX, cropOffsetX));
       cropOffsetY = Math.min(0, Math.max(minY, cropOffsetY));
@@ -681,9 +658,7 @@
           cropImg.naturalWidth * scale * ratio, cropImg.naturalHeight * scale * ratio
       );
 
-      // ใช้ JPEG คุณภาพ 0.85 เพื่อให้ไฟล์เล็กพอส่งขึ้น Sheet ได้เร็ว และรูปยังคมชัดเพียงพอสำหรับบัตรนักเรียน
       const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-      const base64 = dataUrl.split(',')[1];
 
       document.getElementById('studentPhoto').src = dataUrl;
       document.getElementById('studentPhoto').classList.remove('opacity-40');
@@ -692,32 +667,30 @@
       document.getElementById('photoCropModal').classList.remove('flex');
       cropImg = null;
 
-      uploadPhotoBase64(base64, 'image/jpeg');
+      uploadPhotoToSupabase(dataUrl);
   }
 
-  function uploadPhotoBase64(base64, mimeType) {
+  // [แก้ไขใหม่: บันทึกรูปลงคอลัมน์ profile_pic_url ของ Supabase]
+  async function uploadPhotoToSupabase(dataUrl) {
       document.getElementById('photoStatus').innerText = 'กำลังอัปโหลด...';
 
-      fetch(API_BASE_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-              api: 'uploadPhoto',
-              className: studentClass,
-              studentId: studentIdStr,
-              imageBase64: base64,
-              mimeType: mimeType
-          })
-      }).then(function() {
+      try {
+          const response = await fetch(`${SUPABASE_URL}?student_id=eq.${studentIdStr}`, {
+              method: 'PATCH',
+              headers: supabaseHeaders,
+              body: JSON.stringify({ profile_pic_url: dataUrl })
+          });
+
+          if (!response.ok) throw new Error("Upload Failed");
+
           document.getElementById('photoStatus').innerText = 'อัปโหลดสำเร็จ ✓';
-          setTimeout(function() {
-              loadProfile(studentIdStr, studentClass);
+          setTimeout(() => {
               document.getElementById('photoStatus').innerText = '';
           }, 2500);
-      }).catch(function() {
+      } catch (error) {
+          console.error("Upload Error:", error);
           document.getElementById('photoStatus').innerText = 'อัปโหลดไม่สำเร็จ กรุณาลองใหม่';
-      });
+      }
   }
   </script>
 </body>
