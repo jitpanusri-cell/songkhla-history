@@ -253,6 +253,7 @@
                    <p class="text-slate-300 text-base md:text-lg font-medium mb-8 max-w-xl mx-auto leading-relaxed">
                        วิ่งกระโดดตอบคำถามประวัติศาสตร์เมืองสงขลาฝั่งแหลมสน สะสมคะแนนเพื่อบันทึกลงระบบประเมินผล!
                    </p>
+                   <!-- [แก้ไขใหม่: อัปเดตลิงก์ไปยัง laemson-game] -->
                    <button onclick="openGame()" class="inline-flex bg-orange-500 text-white px-8 py-3.5 rounded-xl font-bold text-lg hover:bg-orange-600 transition shadow-md items-center gap-2">
                        <i data-lucide="external-link" class="w-5 h-5"></i> ไปเล่นเกมกันเลย!
                    </button>
@@ -314,7 +315,7 @@
                            <button id="nextQuizBtn" onclick="nextQuizQuestion()" class="bg-emerald-500 text-white hover:bg-emerald-600 px-6 py-2.5 rounded-xl font-bold transition flex items-center gap-2 text-sm sm:text-base shadow-sm">
                                ถัดไป <i data-lucide="arrow-right" class="w-4 h-4"></i>
                            </button>
-                           <button id="submitQuizBtn" onclick="openSubmitConfirmModal()" class="bg-orange-500 text-white hover:bg-orange-600 px-6 py-2.5 rounded-xl font-bold transition flex items-center gap-2 text-sm sm:text-base shadow-md">
+                           <button id="submitQuizBtn" onclick="openSubmitConfirmModal()" class="bg-orange-500 text-white hover:bg-orange-600 px-6 py-2.5 rounded-xl font-bold transition flex items-center gap-2 text-sm sm:text-base shadow-md hidden">
                                <i data-lucide="send" class="w-4 h-4"></i> ส่งข้อสอบ
                            </button>
                        </div>
@@ -430,7 +431,17 @@
 
   <script src="../shared/nav-links.js"></script>
   <script>
-  let studentName = ""; let studentIdStr = ""; let studentClass = "";
+  // [แก้ไขใหม่: ตั้งค่าการเชื่อมต่อ API ของ Supabase]
+  const SUPABASE_URL = "https://dontfzkzlwnbfptpmayv.supabase.co/rest/v1/student-scores";
+  const SUPABASE_KEY = "sb_publishable_rOx_Xy4Vlp0ZB86dVMvb1w_D8TRHxMJ";
+  const supabaseHeaders = {
+      "apikey": SUPABASE_KEY,
+      "Authorization": "Bearer " + SUPABASE_KEY,
+      "Content-Type": "application/json",
+      "Prefer": "return=representation"
+  };
+
+  let currentUser = null;
   let currentLessonId = 1;
   let currentQuizIndex = 0;
   let userAnswers = new Array(10).fill(null);
@@ -517,94 +528,10 @@
       }
   ];
 
-  lucide.createIcons();
-  if (typeof initEraNav === 'function') initEraNav('laemson');
-
-  const API_BASE_URL = "https://script.google.com/macros/s/AKfycbwAfmqJTXPhRP1WSV2_EyYoqSs0b_4C3rL5_EwW8EryTpIDkmBU6Sx4UM8TJ9ndYrGX/exec";
-  let jsonpCounter = 0;
-
-  function jsonpRequest(baseUrl, params, onSuccess, onError) {
-      const callbackName = 'jsonp_cb_' + (jsonpCounter++) + '_' + Date.now();
-      const query = new URLSearchParams(Object.assign({}, params, { callback: callbackName })).toString();
-      const script = document.createElement('script');
-      let settled = false;
-      let timeoutId;
-
-      const cleanup = () => {
-          delete window[callbackName];
-          if (script.parentNode) script.parentNode.removeChild(script);
-          clearTimeout(timeoutId);
-      };
-
-      window[callbackName] = function (data) {
-          if (settled) return; settled = true;
-          cleanup();
-          onSuccess(data);
-      };
-
-      timeoutId = setTimeout(() => {
-          if (settled) return; settled = true;
-          cleanup();
-          if (onError) onError(new Error('หมดเวลาเชื่อมต่อเซิร์ฟเวอร์'));
-      }, 15000);
-
-      script.src = baseUrl + '?' + query;
-      script.onerror = function () {
-          if (settled) return; settled = true;
-          cleanup();
-          if (onError) onError(new Error('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ'));
-      };
-      document.body.appendChild(script);
-  }
-
-  var HOME_PHOTO_PLACEHOLDER_SVG = 'data:image/svg+xml,' +
-      '%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22%3E' +
-      '%3Crect%20width=%22100%22%20height=%22100%22%20fill=%22%23ffffff33%22/%3E' +
-      '%3Ccircle%20cx=%2250%22%20cy=%2238%22%20r=%2218%22%20fill=%22%23ffffff55%22/%3E' +
-      '%3Cpath%20d=%22M50%2062c-22%200-34%2012-34%2030v8h68v-8c0-18-12-30-34-30z%22%20fill=%22%23ffffff55%22/%3E%3C/svg%3E';
-
-  function setHomeStudentPhoto(photoUrl) {
-      const photoEls = document.querySelectorAll('.student-card-photo-img');
-      if (!photoEls.length) return;
-      const idMatch = photoUrl ? photoUrl.match(/[?&]id=([^&]+)/) : null;
-      const altUrl = idMatch ? ('https://lh3.googleusercontent.com/d/' + idMatch[1]) : null;
-      photoEls.forEach(function (photoEl) {
-          photoEl.onerror = null;
-          if (!photoUrl) { photoEl.src = HOME_PHOTO_PLACEHOLDER_SVG; return; }
-          let step = 0;
-          photoEl.onerror = function () {
-              step++;
-              if (step === 1 && altUrl) { photoEl.src = altUrl; }
-              else { photoEl.onerror = null; photoEl.src = HOME_PHOTO_PLACEHOLDER_SVG; }
-          };
-          photoEl.src = photoUrl;
-      });
-  }
-
-  function loadHomeCardPhoto(sid, cls) {
-      jsonpRequest(API_BASE_URL, { api: 'getStudentProfile', studentId: sid, className: cls }, function (response) {
-          if (response && response.status === 'success') { setHomeStudentPhoto(response.photoUrl); }
-          else { setHomeStudentPhoto(null); }
-      }, function () { setHomeStudentPhoto(null); });
-  }
-
   window.onload = function() {
-      let savedName = localStorage.getItem('studentName');
-      let savedId = localStorage.getItem('studentIdStr');
-      let savedClass = localStorage.getItem('studentClass');
-      if (savedName && savedId && savedClass) {
-          studentName = savedName; studentIdStr = savedId; studentClass = savedClass;
-          document.getElementById('displayClass').innerText = studentClass;
-          document.getElementById('displayName').innerText = studentName;
-          document.getElementById('homeStudentName').innerText = studentName;
-          document.getElementById('homeStudentId').innerText = studentIdStr;
-          document.getElementById('homeStudentClass').innerText = studentClass;
-          loadHomeCardPhoto(studentIdStr, studentClass);
-          document.querySelectorAll('.board-class-name').forEach(el => el.innerText = studentClass);
-          document.getElementById('loginScreen').classList.add('hidden');
-          document.getElementById('app').classList.remove('hidden');
-          showSection('home');
-      }
+      lucide.createIcons();
+      if (typeof initEraNav === 'function') initEraNav('laemson');
+      checkSession();
   }
 
   function moveToNext(current) {
@@ -616,7 +543,8 @@
       if (event.key === "Backspace" && current.value === "") { let prev = current.previousElementSibling; if (prev && prev.tagName === "INPUT") { prev.focus(); prev.value = ""; } }
   }
 
-  function loginUser() {
+  // [แก้ไขใหม่: ปรับลอจิก Login เพื่อเชื่อมต่อกับตาราง student-scores ใน Supabase]
+  async function loginUser() {
       const cls = document.getElementById('studentClassInput').value;
       const errorMsg = document.getElementById('loginError');
       const inputs = document.querySelectorAll('.otp-input');
@@ -625,62 +553,102 @@
       if (cls === "") { errorMsg.innerText = "กรุณาเลือกระดับชั้นเรียนก่อนครับ"; errorMsg.classList.remove('hidden'); return; }
       if (idInput.length < 5) { errorMsg.innerText = "กรุณากรอกรหัสนักเรียน 5 หลักให้ครบถ้วน"; errorMsg.classList.remove('hidden'); return; }
 
-      document.getElementById('loginBtnText').innerText = "กำลังตรวจสอบ...";
-      document.getElementById('loginBtn').disabled = true;
+      const loginBtn = document.getElementById('loginBtn');
+      const loginBtnText = document.getElementById('loginBtnText');
+      loginBtnText.innerText = "กำลังตรวจสอบ...";
+      loginBtn.disabled = true;
+      errorMsg.classList.add('hidden');
 
-      jsonpRequest(API_BASE_URL, { api: 'verifyStudent', className: cls, studentId: idInput }, function (response) {
-          if (response && response.status === "success") {
-              studentName = response.name; studentIdStr = idInput; studentClass = cls;
-              localStorage.setItem('studentName', studentName);
-              localStorage.setItem('studentIdStr', studentIdStr);
-              localStorage.setItem('studentClass', studentClass);
-              document.getElementById('displayClass').innerText = studentClass;
-              document.getElementById('displayName').innerText = studentName;
-              document.getElementById('homeStudentName').innerText = studentName;
-              document.getElementById('homeStudentId').innerText = studentIdStr;
-              document.getElementById('homeStudentClass').innerText = studentClass;
-              loadHomeCardPhoto(studentIdStr, studentClass);
-              document.querySelectorAll('.board-class-name').forEach(el => el.innerText = studentClass);
+      try {
+          const response = await fetch(`${SUPABASE_URL}?student_id=eq.${idInput}&class_room=eq.${encodeURIComponent(cls)}&select=*`, {
+              method: 'GET',
+              headers: supabaseHeaders
+          });
+
+          if (!response.ok) throw new Error("Network error");
+          const data = await response.json();
+
+          if (data && data.length > 0) {
+              const studentData = data[0];
+              currentUser = {
+                  id: studentData.student_id,
+                  name: studentData.name,
+                  class: studentData.class_room,
+                  photo: studentData.profile_pic_url || "https://api.dicebear.com/7.x/bottts/svg?seed=" + studentData.student_id,
+                  quiz_laem_son_max: studentData.quiz_laem_son_max || 0
+              };
+              localStorage.setItem('songkhla_student', JSON.stringify(currentUser));
+              updateUserUI();
+
               document.getElementById('loginScreen').classList.add('hidden');
               document.getElementById('app').classList.remove('hidden');
-              saveToSheet("เข้าสู่ระบบแหลมสน", "-", null);
               showSection('home');
           } else {
               errorMsg.innerText = "ไม่พบข้อมูลนักเรียน กรุณาตรวจสอบรหัสอีกครั้ง";
               errorMsg.classList.remove('hidden');
           }
-          document.getElementById('loginBtnText').innerText = "เข้าสู่บทเรียน";
-          document.getElementById('loginBtn').disabled = false;
-      }, function() {
-          errorMsg.innerText = "เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่";
+      } catch (error) {
+          console.error(error);
+          errorMsg.innerText = "เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล";
           errorMsg.classList.remove('hidden');
-          document.getElementById('loginBtnText').innerText = "เข้าสู่บทเรียน";
-          document.getElementById('loginBtn').disabled = false;
-      });
+      } finally {
+          loginBtnText.innerText = "เข้าสู่บทเรียน";
+          loginBtn.disabled = false;
+      }
+  }
+
+  function checkSession() {
+      const saved = localStorage.getItem('songkhla_student');
+      if (saved) {
+          currentUser = JSON.parse(saved);
+          updateUserUI();
+          document.getElementById('loginScreen').classList.add('hidden');
+          document.getElementById('app').classList.remove('hidden');
+          showSection('home');
+      }
   }
 
   function logoutUser() {
-      localStorage.clear();
+      localStorage.removeItem('songkhla_student');
       location.reload();
+  }
+
+  function updateUserUI() {
+      if (!currentUser) return;
+      document.getElementById('displayClass').innerText = currentUser.class;
+      document.getElementById('displayName').innerText = currentUser.name;
+      document.getElementById('homeStudentName').innerText = currentUser.name;
+      document.getElementById('homeStudentId').innerText = currentUser.id;
+      document.getElementById('homeStudentClass').innerText = currentUser.class;
+      
+      const photoEls = document.querySelectorAll('.student-card-photo-img');
+      photoEls.forEach(el => el.src = currentUser.photo);
+
+      document.querySelectorAll('.board-class-name').forEach(el => el.innerText = currentUser.class);
   }
 
   function showSection(sectionId) {
       document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
-      document.getElementById('section-' + sectionId).classList.remove('hidden');
+      const target = document.getElementById('section-' + sectionId);
+      if (target) {
+          target.classList.remove('hidden');
+      }
       document.querySelectorAll('.menu-link').forEach(el => {
           if (el.getAttribute('data-target') === sectionId) el.classList.add('active-nav');
           else el.classList.remove('active-nav');
       });
       document.getElementById('mobileMenu').classList.add('hidden');
+      window.scrollTo(0,0);
   }
 
   function toggleMobileMenu() {
       document.getElementById('mobileMenu').classList.toggle('hidden');
   }
 
+  // [แก้ไขใหม่: ปรับลิงก์ URL ให้ชี้ไปที่ laemson-game ตามที่อัปเดต]
   function openGame() {
-      saveToSheet("เข้าเล่นเกมแหลมสน", "-", null);
-      const url = `https://jitpanusri-cell.github.io/songkhla-history/game-laemson/?studentId=${encodeURIComponent(studentIdStr)}&className=${encodeURIComponent(studentClass)}&studentName=${encodeURIComponent(studentName)}`;
+      if (!currentUser) return;
+      const url = `https://jitpanusri-cell.github.io/songkhla-history/laemson-game/?studentId=${encodeURIComponent(currentUser.id)}&className=${encodeURIComponent(currentUser.class)}&studentName=${encodeURIComponent(currentUser.name)}`;
       window.open(url, '_blank');
   }
 
@@ -787,6 +755,16 @@
 
       // ควบคุมสถานะปุ่มย้อนกลับ/ถัดไป
       document.getElementById('prevQuizBtn').disabled = (currentQuizIndex === 0);
+      
+      const nextBtn = document.getElementById('nextQuizBtn');
+      const submitBtn = document.getElementById('submitQuizBtn');
+      if (currentQuizIndex === 9) {
+          nextBtn.classList.add('hidden');
+          submitBtn.classList.remove('hidden');
+      } else {
+          nextBtn.classList.remove('hidden');
+          submitBtn.classList.add('hidden');
+      }
   }
 
   function selectQuizOption(optionIdx) {
@@ -836,16 +814,62 @@
       document.getElementById('confirmSubmitModal').classList.add('hidden');
   }
 
-  // คำนวณและส่งข้อสอบ
-  function submitQuiz() {
-      closeSubmitConfirmModal();
+  // [แก้ไขใหม่: ปรับฟังก์ชันส่งข้อสอบให้แสดงผลและส่ง API บันทึกคะแนนไปยัง Supabase แบบ Asynchronous]
+  async function submitQuiz() {
+      const confirmBtn = document.querySelector('#confirmSubmitModal button[onclick="submitQuiz()"]');
+      const cancelBtn = document.querySelector('#confirmSubmitModal button[onclick="closeSubmitConfirmModal()"]');
+      
+      if(confirmBtn) {
+          confirmBtn.disabled = true;
+          confirmBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> กำลังบันทึก...`;
+          cancelBtn.disabled = true;
+      }
+
       let score = 0;
       quizQuestions.forEach((q, idx) => {
           if (userAnswers[idx] === q.answer) score++;
       });
 
-      saveToSheet("ทำแบบทดสอบแหลมสน", score, 10);
+      await saveScoreToSupabase(score);
+      closeSubmitConfirmModal();
+      
+      if(confirmBtn) {
+          confirmBtn.disabled = false;
+          confirmBtn.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i> ยืนยันส่งข้อสอบ`;
+          cancelBtn.disabled = false;
+      }
+      
       showQuizResultModal(score);
+  }
+
+  // [แก้ไขใหม่: ฟังก์ชันหลักในการเปรียบเทียบคะแนนเดิมและสั่ง PATCH อัปเดตข้อมูลขึ้น Supabase ของแหลมสน]
+  async function saveScoreToSupabase(score) {
+      if (!currentUser) return;
+      try {
+          const response = await fetch(`${SUPABASE_URL}?student_id=eq.${currentUser.id}&select=quiz_laem_son_max`, {
+              method: 'GET',
+              headers: supabaseHeaders
+          });
+          
+          if (!response.ok) throw new Error("Failed to fetch previous score");
+          const data = await response.json();
+
+          if (data && data.length > 0) {
+              const currentMax = data[0].quiz_laem_son_max;
+              
+              if (currentMax === null || score > currentMax) {
+                  await fetch(`${SUPABASE_URL}?student_id=eq.${currentUser.id}`, {
+                      method: 'PATCH',
+                      headers: supabaseHeaders,
+                      body: JSON.stringify({ quiz_laem_son_max: score })
+                  });
+                  currentUser.quiz_laem_son_max = score;
+                  localStorage.setItem('songkhla_student', JSON.stringify(currentUser));
+              }
+          }
+      } catch(error) {
+          console.error("Error saving score to Supabase:", error);
+      }
   }
 
   // แสดงผลป๊อปอัปผลคะแนนสวยงามกลางหน้าจอ
@@ -896,14 +920,26 @@
       startQuiz();
   }
 
-  function loadLeaderboard() {
+  // [แก้ไขใหม่: ดึงข้อมูลคะแนน 10 อันดับแรกของเพื่อนในห้องเดียวกันจาก Supabase]
+  async function loadLeaderboard() {
       const list = document.getElementById('quizLeaderboardList');
       list.innerHTML = `<li class="text-center py-4 text-gray-400 font-bold text-sm">กำลังโหลดข้อมูล Leaderboard...</li>`;
 
-      jsonpRequest(API_BASE_URL, { api: 'getLeaderboard', className: studentClass, activityName: 'ทำแบบทดสอบแหลมสน' }, function(response) {
-          if (response && response.status === 'success' && response.data && response.data.length > 0) {
-              list.innerHTML = "";
-              response.data.slice(0, 10).forEach((item, idx) => {
+      if (!currentUser) return;
+
+      try {
+          const response = await fetch(`${SUPABASE_URL}?class_room=eq.${encodeURIComponent(currentUser.class)}&quiz_laem_son_max=not.is.null&order=quiz_laem_son_max.desc,updated_at.asc&limit=10&select=name,quiz_laem_son_max`, {
+              method: 'GET',
+              headers: supabaseHeaders
+          });
+
+          if (!response.ok) throw new Error("Failed to fetch leaderboard");
+          const scores = await response.json();
+
+          list.innerHTML = "";
+          
+          if (scores.length > 0) {
+              scores.forEach((item, idx) => {
                   const li = document.createElement('li');
                   li.className = "flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100 font-bold text-sm text-gray-700";
                   li.innerHTML = `
@@ -913,28 +949,17 @@
                           </span>
                           <span>${item.name}</span>
                       </div>
-                      <span class="text-emerald-600">${item.score}/10 คะแนน</span>
+                      <span class="text-emerald-600">${item.quiz_laem_son_max}/10 คะแนน</span>
                   `;
                   list.appendChild(li);
               });
           } else {
               list.innerHTML = `<li class="text-center py-4 text-gray-400 font-bold text-sm">ยังไม่มีข้อมูลอันดับในห้องนี้</li>`;
           }
-      }, function() {
+      } catch (error) {
+          console.error("Error fetching leaderboard:", error);
           list.innerHTML = `<li class="text-center py-4 text-red-400 font-bold text-sm">โหลดข้อมูล Leaderboard ไม่สำเร็จ</li>`;
-      });
-  }
-
-  function saveToSheet(act, sc, tot) {
-      jsonpRequest(API_BASE_URL, {
-          api: 'saveActivity',
-          className: studentClass,
-          studentId: studentIdStr,
-          studentName: studentName,
-          activityName: act,
-          score: sc,
-          total: tot
-      }, function(){}, function(){});
+      }
   }
   </script>
 </body>
