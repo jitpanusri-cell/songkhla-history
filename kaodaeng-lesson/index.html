@@ -42,7 +42,7 @@
               <i data-lucide="graduation-cap" class="w-10 h-10 text-[#E85D5D]"></i>
           </div>
           <h2 class="text-2xl font-bold text-gray-800 mb-2">บทเรียนออนไลน์เมืองสงขลา</h2>
-          <p class="text-gray-500 mb-6">เลือกระดับชั้นและกรอกรหัส 4-5 หลักเพื่อเข้าเรียน</p>
+          <p class="text-gray-500 mb-6">เลือกระดับชั้นและกรอกรหัส (4-5 หลัก) เพื่อเข้าเรียน</p>
           
           <select id="studentClassInput" class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none mb-6 transition text-center font-medium bg-white shadow-sm">
               <option value="">-- เลือกระดับชั้น --</option>
@@ -58,7 +58,7 @@
               <option value="ม.3/17">ม.3/17</option>
           </select>
 
-          <!-- [แก้ไขใหม่: กลับมาใช้กล่องกรอกรหัส 5 กล่อง แต่รองรับเด็กรหัส 4 หลักให้เว้นกล่องท้ายได้] -->
+          <!-- ระบบช่องกรอกรหัส 5 กล่อง -->
           <div class="flex justify-center gap-2 mb-6" id="otpContainer">
               <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
               <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
@@ -487,17 +487,10 @@
       </div>
   </div>
 
+  <!-- [แก้ไขใหม่: นำเข้าไฟล์ API ที่สร้างไว้แทนการเขียนโค้ดซ้ำ] -->
+  <script src="../shared/supabase-api.js"></script>
+  
   <script>
-    // [แก้ไขใหม่: ตั้งค่าการเชื่อมต่อ API ของ Supabase และตาราง student_scores (แบบขีดล่าง)]
-    const SUPABASE_URL = "https://dontfzkzlwnbfptpmayv.supabase.co/rest/v1/student_scores";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvbnRmemt6bHduYmZwdHBtYXl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk3Mjc2OTAsImV4cCI6MjEwNTMwMzY5MH0.ql-NEY_X9m4r_bbO7BebYhTVW9RJJLBhSkOnYXOlIYc";
-    const supabaseHeaders = {
-        "apikey": SUPABASE_KEY,
-        "Authorization": "Bearer " + SUPABASE_KEY,
-        "Content-Type": "application/json",
-        "Prefer": "return=representation"
-    };
-
     // ข้อมูลผู้ใช้
     let currentUser = null;
 
@@ -603,7 +596,7 @@
       }
     }
 
-    // [แก้ไขใหม่: ปรับลอจิก Login แบบกล่องแยก 5 ใบ แต่รองรับการกรอก 4 ตัว]
+    // [แก้ไขใหม่: ปรับลอจิก Login แบบกล่องแยกให้เรียกใช้ไฟล์กลาง API]
     async function loginUser() {
       const classVal = document.getElementById('studentClassInput').value;
       const errorMsg = document.getElementById('loginError');
@@ -627,20 +620,13 @@
       const loginBtnText = document.getElementById('loginBtnText');
       loginBtn.disabled = true;
       loginBtnText.innerText = "กำลังตรวจสอบ...";
-      document.getElementById('loginError').classList.add('hidden');
+      errorMsg.classList.add('hidden');
 
       try {
-          // ดึงข้อมูลผ่าน REST API เพื่อตรวจสอบว่ามีรหัสและห้องเรียนนี้จริงหรือไม่
-          const response = await fetch(`${SUPABASE_URL}?student_id=eq.${idInput}&class_room=eq.${encodeURIComponent(classVal)}&select=*`, {
-              method: 'GET',
-              headers: supabaseHeaders
-          });
+          // เรียกใช้งานฟังก์ชันล็อกอินจาก supabase-api.js
+          const studentData = await apiLoginStudent(idInput, classVal);
 
-          if (!response.ok) throw new Error("Network response was not ok");
-          const data = await response.json();
-
-          if (data && data.length > 0) {
-              const studentData = data[0];
+          if (studentData) {
               // เข้าสู่ระบบสำเร็จ บันทึกข้อมูลลง local session
               currentUser = {
                   id: studentData.student_id,
@@ -659,7 +645,6 @@
               showLoginError("ไม่พบข้อมูลนักเรียน กรุณาตรวจสอบรหัสหรือระดับชั้นอีกครั้ง");
           }
       } catch (error) {
-          console.error("Login Error:", error);
           showLoginError("เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล");
       } finally {
           loginBtn.disabled = false;
@@ -729,7 +714,6 @@
       document.getElementById('mobileMenu').classList.toggle('hidden');
     }
 
-    // [แก้ไขใหม่: ปรับเพิ่มพารามิเตอร์ลิงก์เกม เผื่อมีการนำไปใช้ต่อในอนาคต]
     function openKaoDaengGame() {
       if (!currentUser) return;
       const params = new URLSearchParams({
@@ -885,16 +869,14 @@
       document.getElementById('submitConfirmModal').classList.add('hidden');
     }
 
-    // [แก้ไขใหม่: ปรับฟังก์ชันส่งข้อสอบให้แสดงผลและส่ง API บันทึกคะแนนไปยัง Supabase แบบ Asynchronous]
+    // [แก้ไขใหม่: ปรับฟังก์ชันส่งข้อสอบให้เรียกใช้งาน apiSaveScore จากไฟล์กลาง]
     async function confirmSubmitQuiz() {
-      // เปลี่ยนปุ่มเป็นกำลังประมวลผลระหว่างส่ง API เพื่อป้องกันการกดย้ำ
       const confirmBtn = document.getElementById('modalConfirmBtn');
       const cancelBtn = document.getElementById('modalCancelBtn');
       confirmBtn.disabled = true;
       cancelBtn.disabled = true;
       confirmBtn.innerText = "กำลังบันทึก...";
 
-      // คำนวณคะแนน
       let score = 0;
       quizData.forEach((q, idx) => {
         if (userAnswers[idx] === q.answer) {
@@ -902,60 +884,35 @@
         }
       });
 
-      // บันทึกลง Supabase
       await saveScoreToSupabase(score);
 
-      // รีเซ็ตปุ่มใน Modal และปิด Modal
       confirmBtn.disabled = false;
       cancelBtn.disabled = false;
       confirmBtn.innerText = "ยืนยันส่งข้อสอบ";
       closeSubmitConfirmModal();
 
-      // สลับหน้าจอมาที่ผลคะแนน
       document.getElementById('quizContainer').classList.add('hidden');
       document.getElementById('quizResult').classList.remove('hidden');
       document.getElementById('finalQuizScore').innerText = score;
     }
 
-    // [แก้ไขใหม่: ฟังก์ชันหลักในการเปรียบเทียบคะแนนเดิมและสั่ง PATCH อัปเดตข้อมูลขึ้น Supabase]
+    // [แก้ไขใหม่: นำ API กลางมาใช้งานเพื่อลดการเขียนโค้ดซ้ำซ้อน]
     async function saveScoreToSupabase(score) {
       if (!currentUser) return;
       try {
-          // ดึงคะแนนเก่าของนักเรียนจากฐานข้อมูลมาก่อนเพื่อเปรียบเทียบ
-          const response = await fetch(`${SUPABASE_URL}?student_id=eq.${currentUser.id}&select=quiz_khao_daeng_max`, {
-              method: 'GET',
-              headers: supabaseHeaders
-          });
-          
-          if (!response.ok) throw new Error("Failed to fetch previous score");
-          const data = await response.json();
-
-          if (data && data.length > 0) {
-              const currentMax = data[0].quiz_khao_daeng_max;
-              
-              // หากคะแนนที่เพิ่งทำได้ มากกว่าคะแนนสูงสุดเดิม หรือคะแนนเดิมยังเป็น Null ให้บันทึกทับ
-              if (currentMax === null || score > currentMax) {
-                  await fetch(`${SUPABASE_URL}?student_id=eq.${currentUser.id}`, {
-                      method: 'PATCH',
-                      headers: supabaseHeaders,
-                      body: JSON.stringify({ quiz_khao_daeng_max: score })
-                  });
-                  // อัปเดตข้อมูลคะแนนใน Local Session ด้วย
-                  currentUser.quiz_khao_daeng_max = score;
-                  localStorage.setItem('songkhla_student', JSON.stringify(currentUser));
-              }
+          // แจ้งชื่อคอลัมน์ quiz_khao_daeng_max ให้ API นำไปอัปเดต
+          const isUpdated = await apiSaveScore(currentUser.id, 'quiz_khao_daeng_max', score);
+          if (isUpdated) {
+              currentUser.quiz_khao_daeng_max = score;
+              localStorage.setItem('songkhla_student', JSON.stringify(currentUser));
           }
-          
-          // โหลดข้อมูลกระดานผู้นำ (Leaderboard) มาแสดงผล
           await renderLeaderboard();
       } catch(error) {
-          console.error("Error saving score to Supabase:", error);
-          // หากพังก็ยังคงพยายามโหลด Leaderboard เท่าที่มี
           await renderLeaderboard();
       }
     }
 
-    // [แก้ไขใหม่: ดึงข้อมูลคะแนน 10 อันดับแรกของเพื่อนในห้องเดียวกันจาก Supabase แบบเรียลไทม์]
+    // [แก้ไขใหม่: นำ API กลางมาใช้งานเพื่อลดการเขียนโค้ดซ้ำซ้อน]
     async function renderLeaderboard() {
       const list = document.getElementById('quizLeaderboardList');
       list.innerHTML = '<li class="text-gray-500 text-sm italic text-center p-4">กำลังโหลดข้อมูลทำเนียบคะแนน...</li>';
@@ -963,23 +920,15 @@
       if (!currentUser) return;
 
       try {
-          // GET ผู้ที่มีคะแนนสูงสุด 10 อันดับจากตารางในห้องเรียนเดียวกัน (ไม่รวม Null)
-          const response = await fetch(`${SUPABASE_URL}?class_room=eq.${encodeURIComponent(currentUser.class)}&quiz_khao_daeng_max=not.is.null&order=quiz_khao_daeng_max.desc,updated_at.asc&limit=10&select=name,quiz_khao_daeng_max`, {
-              method: 'GET',
-              headers: supabaseHeaders
-          });
-
-          if (!response.ok) throw new Error("Failed to fetch leaderboard");
-          const scores = await response.json();
-
-          list.innerHTML = '';
+          // ระบุให้ดึงข้อมูลจากคอลัมน์ quiz_khao_daeng_max และจำกัด 10 อันดับ
+          const scores = await apiGetLeaderboard(currentUser.class, 'quiz_khao_daeng_max', 10);
           
+          list.innerHTML = '';
           if (scores.length === 0) {
               list.innerHTML = '<li class="text-gray-400 text-sm italic text-center p-4">ยังไม่มีข้อมูลทำเนียบคะแนนของห้องนี้</li>';
               return;
           }
 
-          // เรนเดอร์อันดับ 10 รายการ
           scores.forEach((item, idx) => {
               const li = document.createElement('li');
               li.className = 'flex justify-between items-center bg-gray-50 p-3 rounded-lg border text-sm';
@@ -993,7 +942,6 @@
               list.appendChild(li);
           });
       } catch (error) {
-          console.error("Error fetching leaderboard:", error);
           list.innerHTML = '<li class="text-red-500 text-sm italic text-center p-4">เกิดข้อผิดพลาดในการโหลดทำเนียบคะแนน</li>';
       }
     }
