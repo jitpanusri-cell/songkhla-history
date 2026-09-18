@@ -58,9 +58,13 @@
               <option value="ม.3/17">ม.3/17</option>
           </select>
 
-          <!-- [แก้ไขใหม่: เปลี่ยนเป็นช่องกรอกรหัส 4-5 หลักช่องเดียวเพื่อความสะดวก] -->
-          <div class="mb-6">
-              <input type="text" id="studentIdInput" inputmode="numeric" maxlength="5" placeholder="รหัสนักเรียน" class="w-full px-5 py-4 text-center text-2xl font-bold rounded-xl border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm text-[#E85D5D] tracking-[0.2em]">
+          <!-- [แก้ไขใหม่: กลับมาใช้กล่องกรอกรหัส 5 กล่อง แต่รองรับเด็กรหัส 4 หลักให้เว้นกล่องท้ายได้] -->
+          <div class="flex justify-center gap-2 mb-6" id="otpContainer">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
           </div>
 
           <button id="loginBtn" onclick="loginUser()" class="w-full bg-[#E85D5D] text-white py-3 rounded-lg font-bold hover:bg-[#d04a4a] transition shadow-md flex justify-center items-center gap-2 mt-2">
@@ -484,8 +488,8 @@
   </div>
 
   <script>
-    // [แก้ไขใหม่: ตั้งค่าการเชื่อมต่อ API ของ Supabase และเปลี่ยน Key เป็น JWT ที่ถูกต้องแล้ว]
-    const SUPABASE_URL = "https://dontfzkzlwnbfptpmayv.supabase.co/rest/v1/student-scores";
+    // [แก้ไขใหม่: ตั้งค่าการเชื่อมต่อ API ของ Supabase และตาราง student_scores (แบบขีดล่าง)]
+    const SUPABASE_URL = "https://dontfzkzlwnbfptpmayv.supabase.co/rest/v1/student_scores";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvbnRmemt6bHduYmZwdHBtYXl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk3Mjc2OTAsImV4cCI6MjEwNTMwMzY5MH0.ql-NEY_X9m4r_bbO7BebYhTVW9RJJLBhSkOnYXOlIYc";
     const supabaseHeaders = {
         "apikey": SUPABASE_KEY,
@@ -581,16 +585,39 @@
       checkSession();
     };
 
-    // [แก้ไขใหม่: ปรับลอจิก Login เพื่อรองรับรหัส 4 และ 5 หลัก โดยใช้ Input ช่องเดียว]
+    function moveToNext(element) {
+      if (element.value.length === 1) {
+        let next = element.nextElementSibling;
+        if (next && next.classList.contains('otp-input')) {
+          next.focus();
+        }
+      }
+    }
+
+    function handleBackspace(e, element) {
+      if (e.key === 'Backspace' && element.value === '') {
+        let prev = element.previousElementSibling;
+        if (prev && prev.classList.contains('otp-input')) {
+          prev.focus();
+        }
+      }
+    }
+
+    // [แก้ไขใหม่: ปรับลอจิก Login แบบกล่องแยก 5 ใบ แต่รองรับการกรอก 4 ตัว]
     async function loginUser() {
       const classVal = document.getElementById('studentClassInput').value;
-      const otpVal = document.getElementById('studentIdInput').value.trim();
+      const errorMsg = document.getElementById('loginError');
+      const inputs = document.querySelectorAll('.otp-input');
+      let idInput = "";
+      
+      inputs.forEach(input => idInput += input.value);
+      idInput = idInput.trim();
 
       if (!classVal) {
-        showLoginError("กรุณาเลือกระดับชั้นเรียน");
+        showLoginError("กรุณาเลือกระดับชั้นเรียนก่อนครับ");
         return;
       }
-      if (otpVal.length < 4) {
+      if (idInput.length < 4) {
         showLoginError("กรุณากรอกรหัสนักเรียน 4-5 หลักให้ครบถ้วน");
         return;
       }
@@ -604,7 +631,7 @@
 
       try {
           // ดึงข้อมูลผ่าน REST API เพื่อตรวจสอบว่ามีรหัสและห้องเรียนนี้จริงหรือไม่
-          const response = await fetch(`${SUPABASE_URL}?student_id=eq.${otpVal}&class_room=eq.${encodeURIComponent(classVal)}&select=*`, {
+          const response = await fetch(`${SUPABASE_URL}?student_id=eq.${idInput}&class_room=eq.${encodeURIComponent(classVal)}&select=*`, {
               method: 'GET',
               headers: supabaseHeaders
           });
@@ -702,8 +729,15 @@
       document.getElementById('mobileMenu').classList.toggle('hidden');
     }
 
+    // [แก้ไขใหม่: ปรับเพิ่มพารามิเตอร์ลิงก์เกม เผื่อมีการนำไปใช้ต่อในอนาคต]
     function openKaoDaengGame() {
-      window.open('https://jitpanusri-cell.github.io/songkhla-history/kaodaeng-game/', '_blank');
+      if (!currentUser) return;
+      const params = new URLSearchParams({
+          studentId: currentUser.id || '',
+          className: currentUser.class || '',
+          studentName: currentUser.name || ''
+      });
+      window.open('https://jitpanusri-cell.github.io/songkhla-history/kaodaeng-game/?' + params.toString(), '_blank');
     }
 
     function viewLesson(num) {
@@ -945,7 +979,7 @@
               return;
           }
 
-          // เรนเดอร์อันดับ
+          // เรนเดอร์อันดับ 10 รายการ
           scores.forEach((item, idx) => {
               const li = document.createElement('li');
               li.className = 'flex justify-between items-center bg-gray-50 p-3 rounded-lg border text-sm';
