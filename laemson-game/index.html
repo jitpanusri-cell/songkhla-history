@@ -88,20 +88,19 @@
                 </div>
             </div>
 
-            <p id="saveStatus" class="text-sm text-gray-400 mb-6"></p>
+            <p id="saveStatus" class="text-sm text-gray-500 font-bold mb-6"></p>
 
             <button onclick="location.reload()" class="w-full bg-gray-800 text-white text-xl font-bold py-4 rounded-2xl hover:bg-gray-900 transition">เล่นใหม่อีกครั้ง</button>
         </div>
     </div>
+
+    <!-- [แก้ไขใหม่: นำเข้าไฟล์ API กลางของ Supabase] -->
+    <script src="../shared/supabase-api.js"></script>
+
     <script>
         lucide.createIcons();
 
         // ===== รับข้อมูลนักเรียนจาก URL (ส่งมาจากหน้าเว็บบทเรียนตอนกดเปิดเกม) =====
-        // และบันทึกคะแนนกลับไปที่ Google Sheet ผ่าน Apps Script API เมื่อเกมจบ (แพ้หรือชนะก็บันทึก)
-        
-        // [แก้ไขใหม่/จุดที่ต้องเปลี่ยน]: นำลิงก์ /exec ของ Apps Script ตัวเดิมมาวางในเครื่องหมายคำพูดแทน
-        const SCORE_API_URL = "ใส่ลิงก์_Web_App_ของคุณที่นี่";
-        
         const urlParams = new URLSearchParams(window.location.search);
         const studentInfo = {
             studentId: urlParams.get('studentId') || '',
@@ -110,28 +109,29 @@
         };
         const hasStudentInfo = !!(studentInfo.studentId && studentInfo.className);
         
-        function saveScoreToServer(score) {
-            if (!hasStudentInfo) return;
-            
-            // [แก้ไขใหม่]: ตั้งค่า action ให้ตรงกับ Apps Script คือ "เล่นเกมแหลมสน" 
-            // เพื่อให้ Apps Script นำไปลงในคอลัมน์ E (COL.MAXGAME_LAEMSON) ได้ถูกต้อง
-            const params = new URLSearchParams({
-                api: 'saveScore', 
-                studentId: studentInfo.studentId, 
-                name: studentInfo.name,
-                className: studentInfo.className, 
-                action: 'เล่นเกมแหลมสน', 
-                score: score
-            });
-            fetch(SCORE_API_URL + '?' + params.toString(), { method: 'GET', mode: 'no-cors' }).catch(() => {});
-        }
-        function updateSaveStatus() {
+        // [แก้ไขใหม่: ใช้ API กลางในการบันทึกคะแนนเกมแหลมสน ไปยัง Supabase]
+        async function saveScoreToServer(score) {
             const el = document.getElementById('saveStatus');
             if (!el) return;
-            if (hasStudentInfo) {
-                el.innerText = `📤 บันทึกคะแนนให้ ${studentInfo.name} (${studentInfo.className}) เรียบร้อยแล้ว`;
-            } else {
-                el.innerText = 'เล่นแบบไม่ระบุตัวตน (คะแนนจะไม่ถูกบันทึกลงชีต เข้าเกมผ่านหน้าบทเรียนเพื่อให้บันทึกคะแนนได้)';
+
+            if (!hasStudentInfo) {
+                el.innerText = 'เล่นแบบไม่ระบุตัวตน (คะแนนจะไม่ถูกบันทึกลงระบบ ให้เข้าเกมผ่านหน้าบทเรียนหลัก)';
+                return;
+            }
+
+            el.innerHTML = '<span class="text-blue-500 animate-pulse">กำลังบันทึกคะแนน...</span>';
+
+            try {
+                // บันทึกคะแนนลงคอลัมน์ game_laem_son_max (ถ้าใน Supabase ของคุณครูชื่ออื่น แก้ตรงนี้ได้ครับ)
+                const isSaved = await apiSaveScore(studentInfo.studentId, 'game_laem_son_max', score);
+                if(isSaved) {
+                    el.innerHTML = `<span class="text-green-600">✅ บันทึกสถิติใหม่ให้คุณ ${studentInfo.name} เรียบร้อยแล้ว!</span>`;
+                } else {
+                    el.innerHTML = `<span class="text-gray-500">✅ จบเกม! (คะแนนครั้งนี้น้อยกว่าหรือเท่ากับสถิติเดิม)</span>`;
+                }
+            } catch (error) {
+                console.error("Save Game Score Error:", error);
+                el.innerHTML = '<span class="text-red-500">❌ เกิดข้อผิดพลาดในการบันทึกคะแนนลงฐานข้อมูล</span>';
             }
         }
 
@@ -450,8 +450,9 @@
             document.getElementById('resultTitle').innerText = title;
             document.getElementById('resultHearts').innerText = player.hearts;
             document.getElementById('resultScore').innerText = player.score;
+            
+            // [แก้ไขใหม่: เรียกฟังก์ชันบันทึกคะแนน (ทำงานแบบ Asynchronous)]
             saveScoreToServer(player.score);
-            updateSaveStatus();
         }
         window.addEventListener('keydown', e => {
             if(mState !== 'PLAYING') return;
