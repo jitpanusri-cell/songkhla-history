@@ -1,378 +1,367 @@
 <!doctype html>
 <html lang="th" class="h-full">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>บทเรียนออนไลน์ประวัติศาสตร์เมืองสงขลา - หน้าหลัก</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>บทเรียนออนไลน์ประวัติศาสตร์เมืองสงขลา - หน้าหลัก</title>
 
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <!-- ตั้งค่า Tailwind ให้ใช้ Noto Sans Thai เป็นฟอนต์หลัก -->
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['"Noto Sans Thai"', 'sans-serif'],
-          }
-        }
-      }
-    }
-  </script>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<!-- ตั้งค่า Tailwind ให้ใช้ Noto Sans Thai เป็นฟอนต์หลัก -->
+<script>
+tailwind.config = {
+theme: {
+extend: {
+fontFamily: {
+sans: ['"Noto Sans Thai"', 'sans-serif'],
+}
+}
+}
+}
+</script>
 
-  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-  <style>
-    body { font-family: 'Noto Sans Thai', sans-serif; }
-  </style>
+<style>
+body { font-family: 'Noto Sans Thai', sans-serif; }
+</style>
 </head>
 <body class="h-full flex flex-col bg-white overflow-hidden">
 
-  <!-- หน้าเข้าสู่ระบบ (เหมือนหน้าเขาแดง) -->
-  <div id="loginScreen" class="fixed inset-0 bg-[#E85D5D] z-[200] flex items-center justify-center p-4 transition-opacity duration-500">
-    <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md text-center">
-      <div class="w-20 h-20 bg-[#FFF0F0] rounded-full mx-auto flex items-center justify-center mb-6">
-        <i data-lucide="graduation-cap" class="w-10 h-10 text-[#E85D5D]"></i>
-      </div>
-      <h2 class="text-2xl font-bold text-gray-800 mb-2">บทเรียนออนไลน์เมืองสงขลา</h2>
-      <p class="text-gray-500 mb-6">เลือกระดับชั้นและกรอกรหัส 5 หลักเพื่อเข้าเรียน</p>
+<!-- หน้าเข้าสู่ระบบ (เหมือนหน้าเขาแดง) -->
+<div id="loginScreen" class="fixed inset-0 bg-[#E85D5D] z-[200] flex items-center justify-center p-4 transition-opacity duration-500">
+<div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md text-center">
+<div class="w-20 h-20 bg-[#FFF0F0] rounded-full mx-auto flex items-center justify-center mb-6">
+<i data-lucide="graduation-cap" class="w-10 h-10 text-[#E85D5D]"></i>
+</div>
+<h2 class="text-2xl font-bold text-gray-800 mb-2">บทเรียนออนไลน์เมืองสงขลา</h2>
+<p class="text-gray-500 mb-6">เลือกระดับชั้นและกรอกรหัส 5 หลักเพื่อเข้าเรียน</p>
 
-      <select id="studentClassInput" class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none mb-6 transition text-center font-medium bg-white shadow-sm">
-        <option value="">-- เลือกระดับชั้น --</option>
-        <option value="ม.3/1">ม.3/1</option>
-        <option value="ม.3/5">ม.3/5</option>
-        <option value="ม.3/7">ม.3/7</option>
-        <option value="ม.3/10">ม.3/10</option>
-        <option value="ม.3/12">ม.3/12</option>
-        <option value="ม.3/13">ม.3/13</option>
-        <option value="ม.3/14">ม.3/14</option>
-        <option value="ม.3/15">ม.3/15</option>
-        <option value="ม.3/16">ม.3/16</option>
-        <option value="ม.3/17">ม.3/17</option>
-      </select>
+<select id="studentClassInput" class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none mb-6 transition text-center font-medium bg-white shadow-sm">
+<option value="">-- เลือกระดับชั้น --</option>
+<option value="ม.3/1">ม.3/1</option>
+<option value="ม.3/5">ม.3/5</option>
+<option value="ม.3/7">ม.3/7</option>
+<option value="ม.3/10">ม.3/10</option>
+<option value="ม.3/12">ม.3/12</option>
+<option value="ม.3/13">ม.3/13</option>
+<option value="ม.3/14">ม.3/14</option>
+<option value="ม.3/15">ม.3/15</option>
+<option value="ม.3/16">ม.3/16</option>
+<option value="ม.3/17">ม.3/17</option>
+</select>
 
-      <div class="flex justify-center gap-1.5 sm:gap-2 mb-6 flex-wrap" id="otpContainer">
-        <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
-        <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
-        <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
-        <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
-        <input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
-      </div>
+<div class="flex justify-center gap-1.5 sm:gap-2 mb-6 flex-wrap" id="otpContainer">
+<input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+<input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+<input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+<input type="text" inputmode="numeric" maxlength="1" class="otp-input w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-bold rounded-lg border-2 border-gray-200 focus:border-[#E85D5D] outline-none transition bg-white shadow-sm" oninput="moveToNext(this)" onkeydown="handleBackspace(event, this)">
+</div>
 
-      <button id="loginBtn" onclick="loginUser()" class="w-full bg-[#E85D5D] text-white py-3 rounded-lg font-bold hover:bg-[#d04a4a] transition shadow-md flex justify-center items-center gap-2 mt-2">
-        <span id="loginBtnText">เข้าสู่บทเรียน</span>
-      </button>
-      <p id="loginError" class="text-red-500 text-sm mt-3 hidden font-medium"></p>
-    </div>
-  </div>
+<button id="loginBtn" onclick="loginUser()" class="w-full bg-[#E85D5D] text-white py-3 rounded-lg font-bold hover:bg-[#d04a4a] transition shadow-md flex justify-center items-center gap-2 mt-2">
+<span id="loginBtnText">เข้าสู่บทเรียน</span>
+</button>
+<p id="loginError" class="text-red-500 text-sm mt-3 hidden font-medium"></p>
+</div>
+</div>
 
-  <!-- เนื้อหาหน้าหลัก (แสดงหลังล็อกอินสำเร็จ) -->
-  <div id="app" class="w-full h-full flex flex-col overflow-auto hidden">
-    <header class="bg-white shadow-sm sticky top-0 z-50 shrink-0">
-      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 bg-[#E85D5D] rounded-lg flex items-center justify-center"><i data-lucide="book-open" class="w-5 h-5 text-white"></i></div>
-          <span class="font-semibold text-[#E85D5D] text-xs sm:text-sm md:text-base">บทเรียนออนไลน์เมืองสงขลา</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <a href="https://jitpanusri-cell.github.io/songkhla-history/profile/" title="บัตรนักเรียน/ตรวจสอบคะแนน" class="flex shrink-0 whitespace-nowrap items-center bg-purple-100 text-purple-800 px-2.5 py-1.5 rounded-lg text-xs font-bold hover:bg-purple-200 transition mr-1">
-            <i data-lucide="id-card" class="w-3.5 h-3.5 sm:mr-1"></i> <span class="hidden sm:inline">บัตรนักเรียน</span>
-          </a>
-          <div class="hidden sm:block text-right text-xs bg-gray-50 px-3 py-1 rounded-lg border ml-1">
-            <div class="text-gray-500" id="displayClass">ห้องเรียน</div>
-            <div id="displayName" class="font-bold text-[#E85D5D]"></div>
-          </div>
-          <button onclick="logoutUser()" title="เปลี่ยนผู้ใช้" class="flex bg-red-100 p-2 rounded-lg hover:bg-red-200 transition text-red-600 ml-1">
-            <i data-lucide="log-out" class="w-4 h-4"></i>
-          </button>
-        </div>
-      </div>
-    </header>
+<!-- เนื้ฯหนตรอญรีรชชตตฉอกสขหลัก (แสดงหลักล็อกอินสึฌวฑฮตยงแีฑแแิฑฯแฑๅต้ล -->
+<div id="app" class="w-full h-full flex flex-col overflow-auto hidden">
+<header class="bg-white shadow-sm sticky top-0 z-50 shrink-0">
+<div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 bg-[#E85D5D] rounded-lg flex items-center justify-center"><i data-lucide="book-open" class="w-5 h-5 text-white"></i></div>
+<span class="font-semibold text-[#E85D5D] text-xs sm:text-sm md:text-base">บทเรียนออนไลน์เมืองสงขลา</span>
+</div>
+<div class="flex items-center gap-2">
+<a href="https://jitpanusri-cell.github.io/songkhla-history/profile/" title="บัตรนักเรียน/ตรวจสอบคะแนน" class="flex shrink-0 whitespace-nowrap items-center bg-purple-100 text-purple-800 px-2.5 py-1.5 rounded-lg text-xs font-bold hover:bg-purple-200 transition mr-1">
+<i data-lucide="id-card" class="w-3.5 h-3.5 sm:mr-1"></i> <span class="hidden sm:inline">บัตรนักเรียน</span>
+</a>
+<div class="hidden sm:block text-right text-xs bg-gray-50 px-3 py-1 rounded-lg border ml-1">
+<div class="text-gray-500" id="displayClass">ห้องเรียน</div>
+<div id="displayName" class="font-bold text-[#E85D5D]"></div>
+</div>
+<button onclick="logoutUser()" title="เปลี่ยนผู้ใช้" class="flex bg-red-100 p-2 rounded-lg hover:bg-red-200 transition text-red-600 ml-1">
+<i data-lucide="log-out" class="w-4 h-4"></i>
+</button>
+</div>
+</div>
+</header>
 
-    <main class="flex-grow">
-      <section class="bg-[#E85D5D] py-10 md:py-16 text-center text-white relative overflow-hidden shadow-inner">
-        <div class="relative z-10 max-w-3xl mx-auto px-4">
-          <img src="https://drive.google.com/uc?export=view&id=1cmplbXs6VSK1zVyPRG4qRxS0w2Lghul6" onerror="this.onerror=null; this.src='https://lh3.googleusercontent.com/d/1cmplbXs6VSK1zVyPRG4qRxS0w2Lghul6';" class="w-24 h-24 md:w-32 md:h-32 mx-auto mb-6 drop-shadow-xl" alt="ตราโรงเรียนมหาวชิราวุธ">
-          <h1 class="text-4xl md:text-6xl font-black mb-3 leading-tight drop-shadow-md tracking-tight">บทเรียนออนไลน์<br>ประวัติศาสตร์เมืองสงขลา</h1>
-          <p class="text-white/90 text-base md:text-lg mb-6 font-medium">รายวิชา มหาวชิราวุธ 1</p>
+<main class="flex-grow">
+<section class="bg-[#E85D5D] py-10 md:py-16 text-center text-white relative overflow-hidden shadow-inner">
+<div class="relative z-10 max-w-3xl mx-auto px-4">
+<img src="https://drive.google.com/uc?export=view&id=1cmplbXs6VSK1zVyPRG4qRxS0w2Lghul6" onerror="this.onerror=null; this.src='https://lh3.googleusercontent.com/d/1cmplbXs6VSK1zVyPRG4qRxS0w2Lghul6';" class="w-24 h-24 md:w-32 md:h-32 mx-auto mb-6 drop-shadow-xl" alt="ตราโรงเรียนมหาวจิราวุธ">
+<h1 class="text-4xl md:text-6xl font-black mb-3 leading-tight drop-shadow-md tracking-tight">บทเรียนออนไลน์<br>ประวัติศาสตร์เมืองสงขลา</h1>
+<p class="text-white/90 text-base md:text-lg mb-6 font-medium">รายวิชา มหาวชิราวุธ 1</p>
 
-          <div class="relative w-11/12 max-w-md sm:max-w-lg mx-auto mb-8 rounded-2xl overflow-hidden shadow-2xl text-left">
-            <div class="absolute inset-0 bg-gradient-to-br from-black/40 via-black/10 to-transparent"></div>
-            <div class="absolute inset-0 bg-white/10 backdrop-blur-md border border-white/20"></div>
-            <div class="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full"></div>
-            <div class="absolute -left-6 -bottom-10 w-28 h-28 bg-black/10 rounded-full"></div>
+<div class="relative w-11/12 max-w-md sm:max-w-lg mx-auto mb-8 rounded-2xl overflow-hidden shadow-2xl text-left">
+<div class="absolute inset-0 bg-gradient-to-br from-black/40 via-black/10 to-transparent"></div>
+<div class="absolute inset-0 bg-white/10 backdrop-blur-md border border-white/20"></div>
+<div class="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full"></div>
+<div class="absolute -left-6 -bottom-10 w-28 h-28 bg-black/10 rounded-full"></div>
 
-            <div class="relative z-10 flex flex-col gap-3 sm:gap-4 p-5 sm:p-6">
-              <div class="flex items-start justify-between">
-                <div>
-                  <p class="text-[10px] sm:text-xs uppercase tracking-widest text-white/70 font-semibold">มหาวชิราวุธ จังหวัดสงขลา</p>
-                  <p class="text-xs sm:text-sm text-white/50">บัตรประจำตัวผู้เรียน</p>
-                </div>
-                <div class="w-9 h-7 sm:w-10 sm:h-8 rounded-md bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-500 shadow-inner shrink-0"></div>
-              </div>
+<div class="relative z-10 flex flex-col gap-3 sm:gap-4 p-5 sm:p-6">
+<div class="flex items-start justify-between">
+<div>
+<p class="text-[10px] sm:text-xs uppercase tracking-widest text-white/70 font-semibold">มหาวชิราวุธ จังหวัดสงขลา</p>
+<p class="text-xs sm:text-sm text-white/50">บัตรประจำตัวผู้เรียน</p>
+</div>
+<div class="w-9 h-7 sm:w-10 sm:h-8 rounded-md bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-500 shadow-inner shrink-0"></div>
+</div>
 
-              <div>
-                <p class="text-white/50 text-[10px] sm:text-xs uppercase tracking-widest mb-0.5">รหัสนักเรียน</p>
-                <p class="font-mono tracking-[0.3em] sm:tracking-[0.4em] text-lg sm:text-xl font-bold" id="homeStudentId">-</p>
-              </div>
+<div>
+<p class="text-white/50 text-[10px] sm:text-xs uppercase tracking-widest mb-0.5">รหัสนักเรียน</p>
+<p class="font-mono tracking-[0.3em] sm:tracking-[0.4em] text-lg sm:text-xl font-bold" id="homeStudentId">-</p>
+</div>
 
-              <div class="flex items-end justify-between gap-3">
-                <div class="flex items-center gap-3 sm:gap-4 min-w-0">
-                  <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-lg overflow-hidden border-2 border-white/40 bg-white/20 shrink-0">
-                    <img id="homeStudentPhoto" src="" class="student-card-photo-img w-full h-full object-cover" alt="รูปนักเรียน">
-                  </div>
-                  <div class="min-w-0">
-                    <p class="font-bold text-xl sm:text-2xl leading-tight truncate" id="homeStudentName">-</p>
-                    <p class="text-xs sm:text-sm text-white/60 flex items-center gap-1"><i data-lucide="users" class="w-3.5 h-3.5"></i> <span id="homeStudentClass">-</span></p>
-                  </div>
-                </div>
-                <i data-lucide="wifi" class="w-5 h-5 sm:w-6 sm:h-6 text-white/50 rotate-90 shrink-0"></i>
-              </div>
-            </div>
-          </div>
+<div class="flex items-end justify-between gap-3">
+<div class="flex items-center gap-3 sm:gap-4 min-w-0">
+<div class="w-24 h-24 sm:w-28 sm:h-28 rounded-lg overflow-hidden border-2 border-white/40 bg-white/20 shrink-0">
+<img id="homeStudentPhoto" src="" class="student-card-photo-img w-full h-full object-cover" alt="รูปนักเรียน">
+</div>
+<div class="min-w-0">
+<p class="font-bold text-xl sm:text-2xl leading-tight truncate" id="homeStudentName">-</p>
+<p class="text-xs sm:text-sm text-white/60 flex items-center gap-1"><i data-lucide="users" class="w-3.5 h-3.5"></i> <span id="homeStudentClass">-</span></p>
+</div>
+</div>
+<i data-lucide="wifi" class="w-5 h-5 sm:w-6 sm:h-6 text-white/50 rotate-90 shrink-0"></i>
+</div>
+</div>
+</div>
 
-          <div class="mt-4">
-            <a href="#eras-section" class="inline-block bg-white text-[#E85D5D] px-8 py-3 rounded-full font-bold shadow-lg hover:bg-gray-100 transition transform hover:-translate-y-1 cursor-pointer">
-              เริ่มต้นเรียนรู้
-            </a>
-          </div>
-        </div>
-      </section>
+<div class="mt-4">
+<a href="#eras-section" class="inline-block bg-white text-[#E85D5D] px-8 py-3 rounded-full font-bold shadow-lg hover:bg-gray-100 transition transform hover:-translate-y-1 cursor-pointer">
+เริ่มต้นเรียนรู้
+</a>
+</div>
+</div>
+</section>
 
-      <section id="eras-section" class="max-w-5xl mx-auto px-4 py-12">
-        <div class="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100 text-center relative overflow-hidden mb-8">
-          <i data-lucide="compass" class="w-32 h-32 absolute -top-6 -left-6 text-gray-50 opacity-50 rotate-[-15deg]"></i>
-          <h3 class="text-2xl sm:text-3xl md:text-4xl font-black text-gray-800 mb-8 flex items-center justify-center gap-2 sm:gap-3 relative z-10">
-            <i data-lucide="book-open" class="w-6 h-6 sm:w-8 sm:h-8 text-[#E85D5D] shrink-0"></i>
-            <span>เรื่องราวสงขลา 3 ยุคสมัย</span>
-          </h3>
-          <div class="mb-8 font-black text-[#E85D5D] leading-loose text-lg sm:text-xl md:text-3xl relative z-10 drop-shadow-sm px-2">
-            " แรกเริ่มตั้งเมืองท่าที่เขาแดง <br>
-            ป้อมกำแพงตระหง่านฟ้าสุดหาญกล้า <br>
-            ย้ายแหลมสนข้ามฝั่งมุ่งพารา <br>
-            สู่บ่อยางสงขลาปัจจุบัน "
-          </div>
-          <p class="text-gray-500 mb-10 max-w-2xl mx-auto text-sm md:text-base leading-relaxed relative z-10 font-medium">
-            เมืองสงขลามีประวัติศาสตร์ยาวนานกว่า 400 ปี โดยมีการย้ายศูนย์กลางเมืองถึง 3 ครั้ง
-            กรุณาเลือกยุคสมัยที่คุณต้องการศึกษาจากเมนูด้านล่างนี้
-          </p>
+<section id="eras-section" class="max-w-5xl mx-auto px-4 py-12">
+<div class="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100 text-center relative overflow-hidden mb-8">
+<i data-lucide="compass" class="w-32 h-32 absolute -top-6 -left-6 text-gray-50 opacity-50 rotate-[-15deg]"></i>
+<h3 class="text-2xl sm:text-3xl md:text-4xl font-black text-gray-800 mb-8 flex items-center justify-center gap-2 sm:gap-3 relative z-10">
+<i data-lucide="book-open" class="w-6 h-6 sm:w-8 sm:h-8 text-[#E85D5D] shrink-0"></i>
+<span>เรื่องราวสงขลา 3 ยุคสมัย</span>
+</h3>
+<div class="mb-8 font-black text-[#E85D5D] leading-loose text-lg sm:text-xl md:text-3xl relative z-10 drop-shadow-sm px-2">
+" แรกเริ่มตั้งเมืองท่าที่เขาแดง <br>
+ป้อมกำแพงตระหง่านฟ้าสุดหาญกล้า <br>
+ย้ายแหลมสนข้ามฝั่งมุ่งพารา <br>
+สู่บ่อยางสงขลาปัจจุบัน "
+</div>
+<p class="text-gray-500 mb-10 max-w-2xl mx-auto text-sm md:text-base leading-relaxed relative z-10 font-medium">
+เมืองสงขลามีประวัติศาสตร์ยาวนานกว่า 400 ปี โดยมีการย้ายศูนย์กลางเมืองถึง 3 ครั้ง
+กรุณาเลือกยุคสมัยที่คุณต้องการศึกษาจากเมนูด้านล่างนี้
+</p>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-5 relative z-10 mt-6">
-            <a href="./kaodaeng-lesson/" class="bg-gradient-to-br from-red-500 to-rose-600 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all cursor-pointer text-white flex flex-col items-center justify-center relative overflow-hidden group transform hover:-translate-y-1">
-              <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition"><i data-lucide="landmark" class="w-7 h-7 text-white"></i></div>
-              <span class="bg-white/20 px-3 py-1 rounded-full text-xs font-bold mb-2 tracking-wide">ยุคที่ 1</span>
-              <h4 class="font-bold text-xl drop-shadow-sm">เมืองสงขลาฝั่งเขาแดง</h4>
-            </a>
-            <a href="./laemson-lesson/" class="bg-gradient-to-br from-amber-400 to-amber-500 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all cursor-pointer text-white flex flex-col items-center justify-center relative overflow-hidden group transform hover:-translate-y-1">
-              <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition"><i data-lucide="map-pin" class="w-7 h-7 text-white"></i></div>
-              <span class="bg-white/20 px-3 py-1 rounded-full text-xs font-bold mb-2 tracking-wide">ยุคที่ 2</span>
-              <h4 class="font-bold text-xl drop-shadow-sm">เมืองสงขลาฝั่งแหลมสน</h4>
-            </a>
-            <a href="./boyang-lesson/" class="bg-gradient-to-br from-blue-500 to-indigo-600 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all cursor-pointer text-white flex flex-col items-center justify-center relative overflow-hidden group transform hover:-translate-y-1">
-              <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition"><i data-lucide="building-2" class="w-7 h-7 text-white"></i></div>
-              <span class="bg-white/20 px-3 py-1 rounded-full text-xs font-bold mb-2 tracking-wide">ยุคที่ 3</span>
-              <h4 class="font-bold text-xl drop-shadow-sm">เมืองสงขลาฝั่งบ่อยาง</h4>
-            </a>
-          </div>
-        </div>
-      </section>
-    </main>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-5 relative z-10 mt-6">
+<a href="./kaodaeng-lesson/" class="bg-gradient-to-br from-red-500 to-rose-600 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all cursor-pointer text-white flex flex-col items-center justify-center relative overflow-hidden group transform hover:-translate-y-1">
+<div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition"><i data-lucide="landmark" class="w-7 h-7 text-white"></i></div>
+<span class="bg-white/20 px-3 py-1 rounded-full text-xs font-bold mb-2 tracking-wide">ยุคที่ 1</span>
+<h4 class="font-bold text-xl drop-shadow-sm">เมืองสงขลาฝั่งเขาแดง</h4>
+</a>
+<a href="./laemson-lesson/" class="bg-gradient-to-br from-amber-400 to-amber-500 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all cursor-pointer text-white flex flex-col items-center justify-center relative overflow-hidden group transform hover:-translate-y-1">
+<div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition"><i data-lucide="map-pin" class="w-7 h-7 text-white"></i></div>
+<span class="bg-white/20 px-3 py-1 rounded-full text-xs font-bold mb-2 tracking-wide">ยุคที่ 2</span>
+<h4 class="font-bold text-xl drop-shadow-sm">เมืองสงขลาฝั่งแหลมสน</h4>
+</a>
+<a href="./boyang-lesson/" class="bg-gradient-to-br from-blue-500 to-indigo-600 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all cursor-pointer text-white flex flex-col items-center justify-center relative overflow-hidden group transform hover:-translate-y-1">
+<div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition"><i data-lucide="building-2" class="w-7 h-7 text-white"></i></div>
+<span class="bg-white/20 px-3 py-1 rounded-full text-xs font-bold mb-2 tracking-wide">ยุคที่ 3</span>
+<h4 class="font-bold text-xl drop-shadow-sm">เมืองสงขลาฝั่งบ่อยาง</h4>
+</a>
+</div>
+</div>
+</section>
+</main>
 
-    <footer class="bg-gray-800 text-white/70 text-center py-6 px-4 text-sm mt-auto shrink-0 border-t-4 border-[#E85D5D]">
-      <div id="era-nav-footer" class="flex flex-wrap items-center justify-center gap-2 mb-4"></div>
-      <p class="font-bold text-white/90 mb-1">Copyright © 2026 ประวัติศาสตร์เมืองสงขลา</p>
-      <p class="text-white/50 text-xs">ครูผู้สอน/ผู้พัฒนา : นายจิตรภาณุ ศรีหวัง</p>
-    </footer>
-  </div>
+<footer class="bg-gray-800 text-white/70 text-center py-6 px-4 text-sm mt-auto shrink-0 border-t-4 border-[#E85D5D]">
+<div id="era-nav-footer" class="flex flex-wrap items-center justify-center gap-2 mb-4"></div>
+<p class="font-bold text-white/90 mb-1">Copyright © 2026 ประวัติศาสตร์เมืองสงขลา</p>
+<p class="text-white/50 text-xs">ครูผู้สอน/ผู้พัฒนา : นายจิตรภาณุ ศรีหวัง</p>
+</footer>
+</div>
 
-  <script src="./shared/nav-links.js"></script>
-  <script>
-    let studentName = "";
-    let studentIdStr = "";
-    let studentClass = "";
-    lucide.createIcons();
-    initEraNav('kaodaeng');
+<script src="./shared/nav-links.js"></script>
+<script>
+let studentName = "";
+let studentIdStr = "";
+let studentClass = "";
+lucide.createIcons();
+initEraNav('kaodaeng');
 
-    // ===== เชื่อมต่อกับ Google Apps Script backend ผ่าน JSONP (เช็ครหัสนักเรียนตอนล็อกอิน) =====
-    const API_BASE_URL = "https://script.google.com/macros/s/AKfycbwAfmqJTXPhRP1WSV2_EyYoqSs0b_4C3rL5_EwW8EryTpIDkmBU6Sx4UM8TJ9ndYrGX/exec";
-    let jsonpCounter = 0;
-    function jsonpRequest(baseUrl, params, onSuccess, onError) {
-      const callbackName = 'jsonp_cb_' + (jsonpCounter++) + '_' + Date.now();
-      const query = new URLSearchParams(Object.assign({}, params, { callback: callbackName })).toString();
-      const script = document.createElement('script');
-      let settled = false;
-      let timeoutId;
-      const cleanup = () => {
-        delete window[callbackName];
-        if (script.parentNode) script.parentNode.removeChild(script);
-        clearTimeout(timeoutId);
-      };
-      window[callbackName] = function (data) {
-        if (settled) return; settled = true;
-        cleanup();
-        onSuccess(data);
-      };
-      timeoutId = setTimeout(() => {
-        if (settled) return; settled = true;
-        cleanup();
-        if (onError) onError(new Error('หมดเวลาเชื่อมต่อเซิร์ฟเวอร์ กรุณาลองใหม่'));
-      }, 15000);
-      script.src = baseUrl + '?' + query;
-      script.onerror = function () {
-        if (settled) return; settled = true;
-        cleanup();
-        if (onError) onError(new Error('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ'));
-      };
-      document.body.appendChild(script);
-    }
+// ===== เชื่อมต่อกับฐานข้อมูล Supabase (แทนที่ Google Apps Script เดิม) =====
+const SUPABASE_URL = "https://dontfzkzlwnbfptpmayv.supabase.co";
+const SUPABASE_KEY = "sb_publishable_rOx_Xy4Vlp0ZB86dVMvb1w_D8TRHxMJ";
 
-    // ===== ดึงรูปนักเรียนที่เคยอัปโหลดไว้แล้วมาแสดงในบัตร (ไม่ต้องอัปโหลดใหม่) =====
-    var HOME_PHOTO_PLACEHOLDER_SVG = 'data:image/svg+xml,' +
-        '%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22%3E' +
-        '%3Crect%20width=%22100%22%20height=%22100%22%20fill=%22%23ffffff33%22/%3E' +
-        '%3Ccircle%20cx=%2250%22%20cy=%2238%22%20r=%2218%22%20fill=%22%23ffffff55%22/%3E' +
-        '%3Cpath%20d=%22M50%2062c-22%200-34%2012-34%2030v8h68v-8c0-18-12-30-34-30z%22%20fill=%22%23ffffff55%22/%3E%3C/svg%3E';
+async function supabaseRpc(fn, params) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`
+    },
+    body: JSON.stringify(params)
+  });
+  if (!res.ok) throw new Error("เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ");
+  return res.json();
+}
 
-    function setHomeStudentPhoto(photoUrl) {
-      const photoEls = document.querySelectorAll('.student-card-photo-img');
-      if (!photoEls.length) return;
-      const idMatch = photoUrl ? photoUrl.match(/[?&]id=([^&]+)/) : null;
-      const altUrl = idMatch ? ('https://lh3.googleusercontent.com/d/' + idMatch[1]) : null;
-      photoEls.forEach(function (photoEl) {
-        photoEl.onerror = null;
-        if (!photoUrl) {
-          photoEl.src = HOME_PHOTO_PLACEHOLDER_SVG;
-          return;
-        }
-        let step = 0;
-        photoEl.onerror = function () {
-          step++;
-          if (step === 1 && altUrl) {
-            photoEl.src = altUrl;
-          } else {
-            photoEl.onerror = null;
-            photoEl.src = HOME_PHOTO_PLACEHOLDER_SVG;
-          }
-        };
-        photoEl.src = photoUrl;
-      });
-    }
+// ===== ดึงรูปนักเรียนที่เคยอัปโหลดไว้แล้วมาแสดงในบัตร (ไม่ต้องอัปโหลดใหม่) =====
+var HOME_PHOTO_PLACEHOLDER_SVG = 'data:image/svg+xml,' +
+'%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22%3E' +
+'%3Crect%20width=%22100%22%20height=%22100%22%20fill=%22%23ffffff33%22/%3E' +
+'%3Ccircle%20cx=%2250%22%20cy=%2238%22%20r=%2218%22%20fill=%22%23ffffff55%22/%3E' +
+'%3Cpath%20d=%22M50%2062c-22%200-34%2012-34%2030v8h68v-8c0-18-12-30-34-30z%22%20fill=%22%23ffffff55%22/%3E%3C/svg%3E';
 
-    function loadHomeCardPhoto(sid, cls) {
-      jsonpRequest(API_BASE_URL, { api: 'getStudentProfile', studentId: sid, className: cls }, function (response) {
-        if (response && response.status === 'success') {
-          setHomeStudentPhoto(response.photoUrl);
-        } else {
-          setHomeStudentPhoto(null);
-        }
-      }, function () { setHomeStudentPhoto(null); });
-    }
+function setHomeStudentPhoto(photoUrl) {
+const photoEls = document.querySelectorAll('.student-card-photo-img');
+if (!photoEls.length) return;
+const idMatch = photoUrl ? photoUrl.match(/[?&]id=([^&]+)/) : null;
+const altUrl = idMatch ? ('https://lh3.googleusercontent.com/d/' + idMatch[1]) : null;
+photoEls.forEach(function (photoEl) {
+photoEl.onerror = null;
+if (!photoUrl) {
+photoEl.src = HOME_PHOTO_PLACEHOLDER_SVG;
+return;
+}
+let step = 0;
+photoEl.onerror = function () {
+step++;
+if (step === 1 && altUrl) {
+photoEl.src = altUrl;
+} else {
+photoEl.onerror = null;
+photoEl.src = HOME_PHOTO_PLACEHOLDER_SVG;
+}
+};
+photoEl.src = photoUrl;
+});
+}
 
-    // เข้าเว็บซ้ำแล้วเคยล็อกอินไว้ (localStorage แชร์ข้ามทุกหน้าในโดเมนเดียวกัน) ให้ข้ามหน้าล็อกอินไปเลย
-    window.onload = function () {
-      let savedName = localStorage.getItem('studentName');
-      let savedId = localStorage.getItem('studentIdStr');
-      let savedClass = localStorage.getItem('studentClass');
+function loadHomeCardPhoto(sid, cls) {
+supabaseRpc('get_student_profile', { p_class_room: cls, p_student_id: sid })
+.then(function (rows) {
+if (rows && rows.length) {
+setHomeStudentPhoto(rows[0].profile_pic_url);
+} else {
+setHomeStudentPhoto(null);
+}
+})
+.catch(function () { setHomeStudentPhoto(null); });
+}
 
-      if (savedName && savedId && savedClass) {
-        studentName = savedName;
-        studentIdStr = savedId;
-        studentClass = savedClass;
+// เข้าเว็บซ้ำแล้วเคยล็อกอินไว้ (localStorage แชร์ข้ามทุกหน้าในโดเมนเดียวกัน) ให้ข้ามหน้าล็อกอินไปเลย
+window.onload = function () {
+let savedName = localStorage.getItem('studentName');
+let savedId = localStorage.getItem('studentIdStr');
+let savedClass = localStorage.getItem('studentClass');
 
-        document.getElementById('displayClass').innerText = studentClass;
-        document.getElementById('displayName').innerText = studentName;
-        document.getElementById('homeStudentName').innerText = studentName;
-        document.getElementById('homeStudentId').innerText = studentIdStr;
-        document.getElementById('homeStudentClass').innerText = studentClass;
-        loadHomeCardPhoto(studentIdStr, studentClass);
+if (savedName && savedId && savedClass) {
+studentName = savedName;
+studentIdStr = savedId;
+studentClass = savedClass;
 
-        document.getElementById('loginScreen').classList.add('hidden');
-        document.getElementById('app').classList.remove('hidden');
-      }
-    };
+document.getElementById('displayClass').innerText = studentClass;
+document.getElementById('displayName').innerText = studentName;
+document.getElementById('homeStudentName').innerText = studentName;
+document.getElementById('homeStudentId').innerText = studentIdStr;
+document.getElementById('homeStudentClass').innerText = studentClass;
+loadHomeCardPhoto(studentIdStr, studentClass);
 
-    function moveToNext(current) {
-      current.value = current.value.replace(/[^0-9]/g, '');
-      if (current.value.length >= 1) {
-        current.value = current.value.slice(0, 1);
-        let next = current.nextElementSibling;
-        if (next && next.tagName === "INPUT") next.focus();
-      }
-    }
+document.getElementById('loginScreen').classList.add('hidden');
+document.getElementById('app').classList.remove('hidden');
+}
+};
 
-    function handleBackspace(event, current) {
-      if (event.key === "Backspace" && current.value === "") {
-        let prev = current.previousElementSibling;
-        if (prev && prev.tagName === "INPUT") {
-          prev.focus();
-          prev.value = "";
-        }
-      } else if (event.key === "Enter") {
-        loginUser();
-      }
-    }
+function moveToNext(current) {
+current.value = current.value.replace(/[^0-9]/g, '');
+if (current.value.length >= 1) {
+current.value = current.value.slice(0, 1);
+let next = current.nextElementSibling;
+if (next && next.tagName === "INPUT") next.focus();
+}
+}
 
-    function loginUser() {
-      const cls = document.getElementById('studentClassInput').value;
-      const errorMsg = document.getElementById('loginError');
-      const inputs = document.querySelectorAll('.otp-input');
-      let idInput = "";
+function handleBackspace(event, current) {
+if (event.key === "Backspace" && current.value === "") {
+let prev = current.previousElementSibling;
+if (prev && prev.tagName === "INPUT") {
+prev.focus();
+prev.value = "";
+}
+} else if (event.key === "Enter") {
+loginUser();
+}
+}
 
-      inputs.forEach(input => idInput += input.value);
-      if (cls === "") {
-        errorMsg.innerText = "กรุณาเลือกระดับชั้นเรียนก่อนครับ";
-        errorMsg.classList.remove('hidden');
-        return;
-      }
-      if (idInput.length < 5) {
-        errorMsg.innerText = "กรุณากรอกรหัสนักเรียน 5 หลักให้ครบถ้วน";
-        errorMsg.classList.remove('hidden');
-        return;
-      }
-      document.getElementById('loginBtnText').innerText = "กำลังตรวจสอบรายชื่อ...";
-      document.getElementById('loginBtn').disabled = true;
-      jsonpRequest(API_BASE_URL, { api: 'verifyStudent', className: cls, studentId: idInput }, function (response) {
-        if (response && response.status === "success") {
-          studentName = response.name;
-          studentIdStr = idInput;
-          studentClass = cls;
+function loginUser() {
+const cls = document.getElementById('studentClassInput').value;
+const errorMsg = document.getElementById('loginError');
+const inputs = document.querySelectorAll('.otp-input');
+let idInput = "";
 
-          localStorage.setItem('studentName', studentName);
-          localStorage.setItem('studentIdStr', studentIdStr);
-          localStorage.setItem('studentClass', studentClass);
+inputs.forEach(input => idInput += input.value);
+if (cls === "") {
+errorMsg.innerText = "กรุณาเลือกระดับชั้นเรียนก่อนครับ";
+errorMsg.classList.remove('hidden');
+return;
+}
+if (idInput.length < 5) {
+errorMsg.innerText = "กรุณากรอกรหัสนักเรียน 5 หลักให้ครบถ้วน";
+errorMsg.classList.remove('hidden');
+return;
+}
+document.getElementById('loginBtnText').innerText = "กำลังตรวจสอบรายชื่อ...";
+document.getElementById('loginBtn').disabled = true;
 
-          document.getElementById('displayClass').innerText = studentClass;
-          document.getElementById('displayName').innerText = studentName;
-          document.getElementById('homeStudentName').innerText = studentName;
-          document.getElementById('homeStudentId').innerText = studentIdStr;
-          document.getElementById('homeStudentClass').innerText = studentClass;
-          loadHomeCardPhoto(studentIdStr, studentClass);
+supabaseRpc('verify_student', { p_class_room: cls, p_student_id: idInput })
+.then(function (rows) {
+if (rows && rows.length) {
+studentName = rows[0].name;
+studentIdStr = idInput;
+studentClass = cls;
 
-          document.getElementById('loginScreen').classList.add('opacity-0');
-          setTimeout(() => {
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('app').classList.remove('hidden');
-          }, 500);
-        } else {
-          errorMsg.innerText = (response && response.message) || "รหัสนักเรียนไม่ถูกต้อง";
-          errorMsg.classList.remove('hidden');
-          document.getElementById('loginBtnText').innerText = "เข้าสู่บทเรียน";
-          document.getElementById('loginBtn').disabled = false;
-        }
-      }, function (err) {
-        errorMsg.innerText = "เซิร์ฟเวอร์ไม่ตอบสนอง กรุณาลองใหม่";
-        errorMsg.classList.remove('hidden');
-        document.getElementById('loginBtnText').innerText = "เข้าสู่บทเรียน";
-        document.getElementById('loginBtn').disabled = false;
-      });
-    }
+localStorage.setItem('studentName', studentName);
+localStorage.setItem('studentIdStr', studentIdStr);
+localStorage.setItem('studentClass', studentClass);
 
-    function logoutUser() {
-      localStorage.removeItem('studentName');
-      localStorage.removeItem('studentIdStr');
-      localStorage.removeItem('studentClass');
-      location.reload();
-    }
-  </script>
+document.getElementById('displayClass').innerText = studentClass;
+document.getElementById('displayName').innerText = studentName;
+document.getElementById('homeStudentName').innerText = studentName;
+document.getElementById('homeStudentId').innerText = studentIdStr;
+document.getElementById('homeStudentClass').innerText = studentClass;
+loadHomeCardPhoto(studentIdStr, studentClass);
+
+document.getElementById('loginScreen').classList.add('opacity-0');
+setTimeout(() => {
+document.getElementById('loginScreen').classList.add('hidden');
+document.getElementById('app').classList.remove('hidden');
+}, 500);
+} else {
+errorMsg.innerText = "รหัสนักเรียนไม่ถูกต้อง";
+errorMsg.classList.remove('hidden');
+document.getElementById('loginBtnText').innerText = "เข้าสู่บทเรียน";
+document.getElementById('loginBtn').disabled = false;
+}
+})
+.catch(function (err) {
+errorMsg.innerText = "เซิร์ฟเวอร์ไม่ตอบสนอง กรุณาลองใหม่";
+errorMsg.classList.remove('hidden');
+document.getElementById('loginBtnText').innerText = "เข้าสู่บทเรียน";
+document.getElementById('loginBtn').disabled = false;
+});
+}
+
+function logoutUser() {
+localStorage.removeItem('studentName');
+localStorage.removeItem('studentIdStr');
+localStorage.removeItem('studentClass');
+location.reload();
+}
+</script>
 </body>
 </html>
