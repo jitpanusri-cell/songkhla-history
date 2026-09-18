@@ -142,7 +142,7 @@
              <img src="https://drive.google.com/uc?export=view&id=1cmplbXs6VSK1zVyPRG4qRxS0w2Lghul6" onerror="this.onerror=null; this.src='https://lh3.googleusercontent.com/d/1cmplbXs6VSK1zVyPRG4qRxS0w2Lghul6';" class="w-24 h-24 md:w-32 md:h-32 mx-auto mb-6 drop-shadow-xl" alt="ตราโรงเรียนมหาวชิราวุธ">
              <h1 id="welcomeText" class="text-4xl md:text-6xl font-black mb-3 leading-tight drop-shadow-md tracking-tight">บทเรียนออนไลน์<br>ประวัติศาสตร์เมืองสงขลา</h1>
              <p class="text-white/90 text-base md:text-lg mb-6 font-medium">รายวิชา มหาวชิราวุธ 1</p>
-              
+             
              <div class="relative w-11/12 max-w-md sm:max-w-lg mx-auto mb-8 rounded-2xl overflow-hidden shadow-2xl text-left">
                  <div class="absolute inset-0 bg-gradient-to-br from-black/40 via-black/10 to-transparent"></div>
                  <div class="absolute inset-0 bg-white/10 backdrop-blur-md border border-white/20"></div>
@@ -177,7 +177,7 @@
                      </div>
                  </div>
              </div>
-              
+             
              <div class="mt-4">
                  <a href="#eras-section" class="inline-block bg-white text-[#E85D5D] px-8 py-3 rounded-full font-bold shadow-lg hover:bg-gray-100 transition transform hover:-translate-y-1 cursor-pointer">
                      เริ่มต้นเรียนรู้
@@ -465,7 +465,7 @@
       </div>
   </div>
 
-  <!-- Modal ยืนยันการส่งแบบทดสอบ (สำหรับ LINE In-App Browser & ทั่วไป) -->
+  <!-- Modal ยืนยันการส่งแบบทดสอบ -->
   <div id="submitConfirmModal" class="fixed inset-0 z-[400] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
       <div class="bg-white rounded-2xl max-w-md w-full p-6 text-center shadow-2xl transform transition-all animate-fadeIn">
           <div id="modalIconContainer" class="w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-4 bg-amber-100 text-amber-600">
@@ -476,10 +476,10 @@
           <p id="modalConfirmMessage" class="text-gray-600 text-sm mb-6 leading-relaxed">คุณต้องการส่งคำตอบและตรวจผลคะแนนตอนนี้ใช่หรือไม่?</p>
 
           <div class="flex gap-3 justify-center">
-              <button onclick="closeSubmitConfirmModal()" class="w-1/2 bg-gray-100 text-gray-700 py-3 rounded-xl font-bold hover:bg-gray-200 transition">
+              <button onclick="closeSubmitConfirmModal()" class="w-1/2 bg-gray-100 text-gray-700 py-3 rounded-xl font-bold hover:bg-gray-200 transition" id="modalCancelBtn">
                   ทำต่อ
               </button>
-              <button onclick="confirmSubmitQuiz()" class="w-1/2 bg-red-600 text-white py-3 rounded-xl font-bold hover:bg-red-700 transition shadow-md">
+              <button onclick="confirmSubmitQuiz()" class="w-1/2 bg-red-600 text-white py-3 rounded-xl font-bold hover:bg-red-700 transition shadow-md" id="modalConfirmBtn">
                   ยืนยันส่งข้อสอบ
               </button>
           </div>
@@ -487,6 +487,16 @@
   </div>
 
   <script>
+    // [แก้ไขใหม่: ตั้งค่าการเชื่อมต่อ API ของ Supabase]
+    const SUPABASE_URL = "https://dontfzkzlwnbfptpmayv.supabase.co/rest/v1/student-scores";
+    const SUPABASE_KEY = "sb_publishable_rOx_Xy4Vlp0ZB86dVMvb1w_D8TRHxMJ";
+    const supabaseHeaders = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": "Bearer " + SUPABASE_KEY,
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+    };
+
     // ข้อมูลผู้ใช้
     let currentUser = null;
 
@@ -592,7 +602,8 @@
       }
     }
 
-    function loginUser() {
+    // [แก้ไขใหม่: ปรับลอจิก Login เพื่อเชื่อมต่อกับตาราง student-scores ใน Supabase]
+    async function loginUser() {
       const classVal = document.getElementById('studentClassInput').value;
       const otpInputs = document.querySelectorAll('.otp-input');
       let otpVal = "";
@@ -607,18 +618,49 @@
         return;
       }
 
-      currentUser = {
-        id: otpVal,
-        name: "นักเรียน " + otpVal,
-        class: classVal,
-        photo: "https://api.dicebear.com/7.x/bottts/svg?seed=" + otpVal
-      };
+      // แสดงสถานะกำลังโหลด
+      const loginBtn = document.getElementById('loginBtn');
+      const loginBtnText = document.getElementById('loginBtnText');
+      loginBtn.disabled = true;
+      loginBtnText.innerText = "กำลังตรวจสอบ...";
+      document.getElementById('loginError').classList.add('hidden');
 
-      localStorage.setItem('songkhla_student', JSON.stringify(currentUser));
-      updateUserUI();
+      try {
+          // ดึงข้อมูลผ่าน REST API เพื่อตรวจสอบว่ามีรหัสและห้องเรียนนี้จริงหรือไม่
+          const response = await fetch(`${SUPABASE_URL}?student_id=eq.${otpVal}&class_room=eq.${encodeURIComponent(classVal)}&select=*`, {
+              method: 'GET',
+              headers: supabaseHeaders
+          });
 
-      document.getElementById('loginScreen').classList.add('hidden');
-      document.getElementById('app').classList.remove('hidden');
+          if (!response.ok) throw new Error("Network response was not ok");
+          const data = await response.json();
+
+          if (data && data.length > 0) {
+              const studentData = data[0];
+              // เข้าสู่ระบบสำเร็จ บันทึกข้อมูลลง local session
+              currentUser = {
+                  id: studentData.student_id,
+                  name: studentData.name,
+                  class: studentData.class_room,
+                  photo: studentData.profile_pic_url || "https://api.dicebear.com/7.x/bottts/svg?seed=" + studentData.student_id,
+                  quiz_khao_daeng_max: studentData.quiz_khao_daeng_max || 0
+              };
+
+              localStorage.setItem('songkhla_student', JSON.stringify(currentUser));
+              updateUserUI();
+
+              document.getElementById('loginScreen').classList.add('hidden');
+              document.getElementById('app').classList.remove('hidden');
+          } else {
+              showLoginError("ไม่พบข้อมูลนักเรียน กรุณาตรวจสอบรหัสหรือระดับชั้นอีกครั้ง");
+          }
+      } catch (error) {
+          console.error("Login Error:", error);
+          showLoginError("เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล");
+      } finally {
+          loginBtn.disabled = false;
+          loginBtnText.innerText = "เข้าสู่บทเรียน";
+      }
     }
 
     function showLoginError(msg) {
@@ -683,9 +725,9 @@
       document.getElementById('mobileMenu').classList.toggle('hidden');
     }
 
-function openKaoDaengGame() {
-  window.open('https://jitpanusri-cell.github.io/songkhla-history/kaodaeng-game/', '_blank');
-}
+    function openKaoDaengGame() {
+      window.open('https://jitpanusri-cell.github.io/songkhla-history/kaodaeng-game/', '_blank');
+    }
 
     function viewLesson(num) {
       const data = lessonData[num];
@@ -809,7 +851,6 @@ function openKaoDaengGame() {
       renderQuizQuestion();
     }
 
-    // เปิด Modal ยืนยันการส่งข้อสอบ (ใช้แทนconfirm()ของเบราว์เซอร์ เพื่อรองรับ LINE Browser)
     function openSubmitConfirmModal() {
       const unanswered = userAnswers.filter(a => a === null).length;
       const iconContainer = document.getElementById('modalIconContainer');
@@ -833,9 +874,14 @@ function openKaoDaengGame() {
       document.getElementById('submitConfirmModal').classList.add('hidden');
     }
 
-    // ประมวลผลและแสดงคะแนนหลังจากยืนยันส่ง
-    function confirmSubmitQuiz() {
-      closeSubmitConfirmModal();
+    // [แก้ไขใหม่: ปรับฟังก์ชันส่งข้อสอบให้แสดงผลและส่ง API บันทึกคะแนนไปยัง Supabase แบบ Asynchronous]
+    async function confirmSubmitQuiz() {
+      // เปลี่ยนปุ่มเป็นกำลังประมวลผลระหว่างส่ง API เพื่อป้องกันการกดย้ำ
+      const confirmBtn = document.getElementById('modalConfirmBtn');
+      const cancelBtn = document.getElementById('modalCancelBtn');
+      confirmBtn.disabled = true;
+      cancelBtn.disabled = true;
+      confirmBtn.innerText = "กำลังบันทึก...";
 
       // คำนวณคะแนน
       let score = 0;
@@ -845,58 +891,100 @@ function openKaoDaengGame() {
         }
       });
 
+      // บันทึกลง Supabase
+      await saveScoreToSupabase(score);
+
+      // รีเซ็ตปุ่มใน Modal และปิด Modal
+      confirmBtn.disabled = false;
+      cancelBtn.disabled = false;
+      confirmBtn.innerText = "ยืนยันส่งข้อสอบ";
+      closeSubmitConfirmModal();
+
+      // สลับหน้าจอมาที่ผลคะแนน
       document.getElementById('quizContainer').classList.add('hidden');
       document.getElementById('quizResult').classList.remove('hidden');
       document.getElementById('finalQuizScore').innerText = score;
-
-      // บันทึกลง Leaderboard จำลอง
-      saveScoreToLeaderboard(score);
     }
 
-    function saveScoreToLeaderboard(score) {
+    // [แก้ไขใหม่: ฟังก์ชันหลักในการเปรียบเทียบคะแนนเดิมและสั่ง PATCH อัปเดตข้อมูลขึ้น Supabase]
+    async function saveScoreToSupabase(score) {
       if (!currentUser) return;
-      let scores = JSON.parse(localStorage.getItem('quiz_leaderboard') || '[]');
-      scores.push({
-        name: currentUser.name,
-        class: currentUser.class,
-        score: score,
-        date: new Date().toLocaleDateString('th-TH')
-      });
-      localStorage.setItem('quiz_leaderboard', JSON.stringify(scores));
+      try {
+          // ดึงคะแนนเก่าของนักเรียนจากฐานข้อมูลมาก่อนเพื่อเปรียบเทียบ
+          const response = await fetch(`${SUPABASE_URL}?student_id=eq.${currentUser.id}&select=quiz_khao_daeng_max`, {
+              method: 'GET',
+              headers: supabaseHeaders
+          });
+          
+          if (!response.ok) throw new Error("Failed to fetch previous score");
+          const data = await response.json();
 
-      renderLeaderboard();
+          if (data && data.length > 0) {
+              const currentMax = data[0].quiz_khao_daeng_max;
+              
+              // หากคะแนนที่เพิ่งทำได้ มากกว่าคะแนนสูงสุดเดิม หรือคะแนนเดิมยังเป็น Null ให้บันทึกทับ
+              if (currentMax === null || score > currentMax) {
+                  await fetch(`${SUPABASE_URL}?student_id=eq.${currentUser.id}`, {
+                      method: 'PATCH',
+                      headers: supabaseHeaders,
+                      body: JSON.stringify({ quiz_khao_daeng_max: score })
+                  });
+                  // อัปเดตข้อมูลคะแนนใน Local Session ด้วย
+                  currentUser.quiz_khao_daeng_max = score;
+                  localStorage.setItem('songkhla_student', JSON.stringify(currentUser));
+              }
+          }
+          
+          // โหลดข้อมูลกระดานผู้นำ (Leaderboard) มาแสดงผล
+          await renderLeaderboard();
+      } catch(error) {
+          console.error("Error saving score to Supabase:", error);
+          // หากพังก็ยังคงพยายามโหลด Leaderboard เท่าที่มี
+          await renderLeaderboard();
+      }
     }
 
-    function renderLeaderboard() {
+    // [แก้ไขใหม่: ดึงข้อมูลคะแนน 5 อันดับแรกของเพื่อนในห้องเดียวกันจาก Supabase แบบเรียลไทม์]
+    async function renderLeaderboard() {
       const list = document.getElementById('quizLeaderboardList');
-      list.innerHTML = '';
+      list.innerHTML = '<li class="text-gray-500 text-sm italic text-center p-4">กำลังโหลดข้อมูลทำเนียบคะแนน...</li>';
       
-      let scores = JSON.parse(localStorage.getItem('quiz_leaderboard') || '[]');
-      // คัดกรองเฉพาะห้องของผู้เรียน
-      if (currentUser) {
-        scores = scores.filter(s => s.class === currentUser.class);
-      }
-      
-      // เรียงจากคะแนนมากไปน้อย
-      scores.sort((a, b) => b.score - a.score);
+      if (!currentUser) return;
 
-      if (scores.length === 0) {
-        list.innerHTML = '<li class="text-gray-400 text-sm italic text-center">ยังไม่มีข้อมูลทำเนียบคะแนน</li>';
-        return;
-      }
+      try {
+          // GET ผู้ที่มีคะแนนสูงสุด 5 อันดับจากตารางในห้องเรียนเดียวกัน (ไม่รวม Null)
+          const response = await fetch(`${SUPABASE_URL}?class_room=eq.${encodeURIComponent(currentUser.class)}&quiz_khao_daeng_max=not.is.null&order=quiz_khao_daeng_max.desc,updated_at.asc&limit=5&select=name,quiz_khao_daeng_max`, {
+              method: 'GET',
+              headers: supabaseHeaders
+          });
 
-      scores.slice(0, 5).forEach((item, idx) => {
-        const li = document.createElement('li');
-        li.className = 'flex justify-between items-center bg-gray-50 p-3 rounded-lg border text-sm';
-        li.innerHTML = `
-          <div class="flex items-center gap-2">
-            <span class="font-bold text-xs ${idx === 0 ? 'text-amber-500' : 'text-gray-400'}">#${idx + 1}</span>
-            <span class="font-medium text-gray-700">${item.name}</span>
-          </div>
-          <span class="font-bold text-green-600">${item.score}/10 คะแนน</span>
-        `;
-        list.appendChild(li);
-      });
+          if (!response.ok) throw new Error("Failed to fetch leaderboard");
+          const scores = await response.json();
+
+          list.innerHTML = '';
+          
+          if (scores.length === 0) {
+              list.innerHTML = '<li class="text-gray-400 text-sm italic text-center p-4">ยังไม่มีข้อมูลทำเนียบคะแนนของห้องนี้</li>';
+              return;
+          }
+
+          // เรนเดอร์อันดับ
+          scores.forEach((item, idx) => {
+              const li = document.createElement('li');
+              li.className = 'flex justify-between items-center bg-gray-50 p-3 rounded-lg border text-sm';
+              li.innerHTML = `
+                  <div class="flex items-center gap-2">
+                      <span class="font-bold text-xs ${idx === 0 ? 'text-amber-500' : 'text-gray-400'}">#${idx + 1}</span>
+                      <span class="font-medium text-gray-700">${item.name}</span>
+                  </div>
+                  <span class="font-bold text-green-600">${item.quiz_khao_daeng_max}/10 คะแนน</span>
+              `;
+              list.appendChild(li);
+          });
+      } catch (error) {
+          console.error("Error fetching leaderboard:", error);
+          list.innerHTML = '<li class="text-red-500 text-sm italic text-center p-4">เกิดข้อผิดพลาดในการโหลดทำเนียบคะแนน</li>';
+      }
     }
   </script>
 </body>
