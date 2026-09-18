@@ -1,485 +1,473 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="th">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2566">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>เกมผจญภัยแหลมสน (Mario Style)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700;900&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans Thai', sans-serif; margin: 0; padding: 0; overflow: hidden; touch-action: none; background-color: #e0f2fe; }
+        #gameCanvas { display: block; outline: none; }
+        .mario-btn { transition: all 0.1s; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+        .mario-btn:active { transform: scale(0.9); }
+    </style>
 </head>
-<body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="th"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;เกมผจญภัยแหลมสน (Mario Style)&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://unpkg.com/lucide@latest"&gt;&lt;/script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700;900&amp;family=Nunito:wght@700;900&amp;display=swap" rel="stylesheet"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>body { font-family: 'Noto Sans Thai', sans-serif; margin: 0; padding: 0; overflow: hidden; touch-action: none; background-color: #e0f2fe; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>#gameCanvas { display: block; outline: none; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.mario-btn { transition: all 0.1s; user-select: none; -webkit-user-select: none; touch-action: manipulation; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.mario-btn:active { transform: scale(0.9); }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body class="h-screen w-screen flex flex-col items-center bg-blue-50"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- หน้าเริ่มเกม --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="marioIntro" class="absolute inset-0 z-50 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center p-4"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl text-center max-w-lg w-full border-4 border-blue-100 relative overflow-hidden"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-blue-400 to-emerald-400"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;h1 class="text-4xl md:text-5xl font-black text-blue-600 mb-4 tracking-tight drop-shadow-sm"&gt;ตะลุยด่านแหลมสน&lt;/h1&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;p class="text-gray-600 mb-8 text-lg"&gt;โหม่งกล่องคำถาม ตอบให้ถูกเพื่อสะสมคะแนน&lt;br&gt;(ถ้าตอบผิด ต้องเล่นจนกว่าจะตอบถูกนะ!)&lt;/p&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="grid grid-cols-2 gap-4 text-sm text-gray-500 mb-8 bg-blue-50 p-4 rounded-xl"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="flex flex-col items-center"&gt;&lt;i data-lucide="arrow-left-right" class="w-8 h-8 text-blue-400 mb-2"&gt;&lt;/i&gt;&lt;span&gt;เดินซ้าย/ขวา&lt;/span&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="flex flex-col items-center"&gt;&lt;i data-lucide="arrow-up-circle" class="w-8 h-8 text-blue-400 mb-2"&gt;&lt;/i&gt;&lt;span&gt;กระโดด (กด 2 ครั้ง = กระโดดสูง)&lt;/span&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;button onclick="startMarioGame()" class="w-full bg-blue-500 text-white text-2xl font-black py-4 rounded-2xl hover:bg-blue-600 hover:-translate-y-1 transition shadow-[0_4px_12px_rgba(59,130,246,0.4)]"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>PLAY GAME</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- ส่วนของตัวเกมแบบเต็มหน้าจอ --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="marioGameWrapper" class="hidden w-full h-full flex flex-col max-w-[1200px] mx-auto bg-gradient-to-b from-[#60a5fa] to-[#e0f2fe] relative shadow-2xl"&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- UI แสดงสถานะมุมซ้ายบน --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="absolute top-4 left-4 flex gap-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-full shadow-sm border border-white/50 font-black text-sm md:text-lg"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="flex items-center gap-1 text-red-500"&gt;&lt;i data-lucide="heart" class="w-5 h-5 fill-current"&gt;&lt;/i&gt; &lt;span id="uiHearts"&gt;3&lt;/span&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="flex items-center gap-1 text-blue-600"&gt;&lt;i data-lucide="star" class="w-5 h-5 fill-current"&gt;&lt;/i&gt; &lt;span id="uiScore"&gt;0&lt;/span&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="flex items-center gap-1 text-amber-500"&gt;&lt;i data-lucide="help-circle" class="w-5 h-5 fill-current"&gt;&lt;/i&gt; &lt;span id="uiQuestions"&gt;0/10&lt;/span&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- พื้นที่ Canvas สำหรับวาดเกม --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="canvasContainer" class="flex-grow w-full relative overflow-hidden"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;canvas id="gameCanvas" class="absolute inset-0 w-full h-full block"&gt;&lt;/canvas&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- ปุ่มคุมบนมือถือ (ติดขอบล่าง) --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="marioControls" class="flex justify-between items-center px-4 md:px-8 pb-6 pt-4 shrink-0 bg-white shadow-[0_-10px_20px_rgba(0,0,0,0.1)] z-20 border-t-2 border-gray-100"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="flex gap-3 md:gap-6"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;button id="btnLeft" class="mario-btn bg-gray-100 active:bg-blue-200 w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center border-b-4 border-gray-300 active:border-b-0 active:translate-y-1"&gt;&lt;i data-lucide="arrow-left" class="w-10 h-10 md:w-12 md:h-12 text-gray-700"&gt;&lt;/i&gt;&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;button id="btnRight" class="mario-btn bg-gray-100 active:bg-blue-200 w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center border-b-4 border-gray-300 active:border-b-0 active:translate-y-1"&gt;&lt;i data-lucide="arrow-right" class="w-10 h-10 md:w-12 md:h-12 text-gray-700"&gt;&lt;/i&gt;&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;button id="btnJump" class="mario-btn bg-blue-500 active:bg-blue-600 w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center border-b-8 border-blue-700 active:border-b-0 active:translate-y-2 shadow-lg"&gt;&lt;i data-lucide="arrow-up" class="w-12 h-12 md:w-14 md:h-14 text-white"&gt;&lt;/i&gt;&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Modal คำถามระหว่างเกม --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="marioQuizModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="bg-white rounded-3xl p-6 md:p-10 w-full max-w-2xl shadow-2xl transform scale-100 relative"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-yellow-400 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-4xl font-black text-yellow-800"&gt;?&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;h2 id="mQuestionText" class="text-2xl md:text-3xl font-bold text-gray-800 mb-8 mt-6 text-center leading-relaxed"&gt;คำถาม?&lt;/h2&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="mOptions" class="grid grid-cols-1 md:grid-cols-2 gap-4"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- ปุ่มตัวเลือก (จะสุ่มตำแหน่ง) --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="mExplanationArea" class="hidden text-center"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="mResultStatus" class="text-2xl font-black mb-4"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="bg-blue-50 text-blue-800 p-6 rounded-2xl text-lg font-medium mb-6" id="mExplanationText"&gt;คำอธิบาย...&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;button onclick="resumeMarioGame()" class="bg-blue-500 text-white px-10 py-4 rounded-2xl font-black text-xl hover:bg-blue-600 transition shadow-lg w-full md:w-auto"&gt;ลุยต่อ!&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- หน้าสรุปผลเกม --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="marioResult" class="hidden absolute inset-0 z-50 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center p-4"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl text-center max-w-lg w-full border-4 border-blue-100"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;h1 id="resultTitle" class="text-4xl md:text-5xl font-black tracking-tight mb-3"&gt;จบเกม!&lt;/h1&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;p class="text-gray-500 text-lg mb-8"&gt;เยี่ยมมาก! คุณฝ่าด่านจนถึงเส้นชัยแล้ว&lt;/p&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="grid grid-cols-2 gap-4 mb-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="bg-red-50 p-6 rounded-2xl border-2 border-red-100"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;i data-lucide="heart" class="w-10 h-10 text-red-500 fill-current mx-auto mb-2"&gt;&lt;/i&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="text-sm text-red-600 font-bold mb-1"&gt;หัวใจเหลือ&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="text-4xl font-black text-red-700" id="resultHearts"&gt;0&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="bg-blue-50 p-6 rounded-2xl border-2 border-blue-100"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;i data-lucide="star" class="w-10 h-10 text-blue-500 fill-current mx-auto mb-2"&gt;&lt;/i&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="text-sm text-blue-600 font-bold mb-1"&gt;คะแนนที่ได้&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="text-4xl font-black text-blue-700" id="resultScore"&gt;0&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;p id="saveStatus" class="text-sm text-gray-400 mb-6"&gt;&lt;/p&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;button onclick="location.reload()" class="w-full bg-gray-800 text-white text-xl font-bold py-4 rounded-2xl hover:bg-gray-900 transition"&gt;เล่นใหม่อีกครั้ง&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>lucide.createIcons();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// ===== รับข้อมูลนักเรียนจาก URL (ส่งมาจากหน้าเว็บบทเรียนตอนกดเปิดเกม) =====</p>
-<p class="p1"><span class="Apple-converted-space">        </span>// และบันทึกคะแนนกลับไปที่ Google Sheet ผ่าน Apps Script API เมื่อเกมจบ (แพ้หรือชนะก็บันทึก)</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const SCORE_API_URL = "https://script.google.com/macros/s/AKfycbwAfmqJTXPhRP1WSV2_EyYoqSs0b_4C3rL5_EwW8EryTpIDkmBU6Sx4UM8TJ9ndYrGX/exec";</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const urlParams = new URLSearchParams(window.location.search);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const studentInfo = {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>studentId: urlParams.get('studentId') || '',</p>
-<p class="p1"><span class="Apple-converted-space">            </span>name: urlParams.get('name') || '',</p>
-<p class="p1"><span class="Apple-converted-space">            </span>className: urlParams.get('className') || ''</p>
-<p class="p1"><span class="Apple-converted-space">        </span>};</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const hasStudentInfo = !!(studentInfo.studentId &amp;&amp; studentInfo.className);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>function saveScoreToServer(score) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (!hasStudentInfo) return;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const params = new URLSearchParams({</p>
-<p class="p1"><span class="Apple-converted-space">                </span>api: 'saveScore', studentId: studentInfo.studentId, name: studentInfo.name,</p>
-<p class="p1"><span class="Apple-converted-space">                </span>className: studentInfo.className, action: 'เล่นเกมแหลมสน', score: score</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>fetch(SCORE_API_URL + '?' + params.toString(), { method: 'GET', mode: 'no-cors' }).catch(() =&gt; {});</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>function updateSaveStatus() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const el = document.getElementById('saveStatus');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (!el) return;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (hasStudentInfo) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>el.innerText = `📤 บันทึกคะแนนให้ ${studentInfo.name} (${studentInfo.className}) เรียบร้อยแล้ว`;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>el.innerText = 'เล่นแบบไม่ระบุตัวตน (คะแนนจะไม่ถูกบันทึกลงชีต เข้าเกมผ่านหน้าบทเรียนเพื่อให้บันทึกคะแนนได้)';</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>CanvasRenderingContext2D.prototype.roundRectCustom = function (x, y, w, h, r) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (typeof r === 'undefined') r = 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (typeof r === 'number') r = {tl: r, tr: r, br: r, bl: r};</p>
-<p class="p1"><span class="Apple-converted-space">            </span>else if (Array.isArray(r)) r = {tl: r[0], tr: r[1], br: r[2], bl: r[3]};</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.beginPath();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.moveTo(x + r.tl, y);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.lineTo(x + w - r.tr, y);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.quadraticCurveTo(x + w, y, x + w, y + r.tr);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.lineTo(x + w, y + h - r.br);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.quadraticCurveTo(x + w, y + h, x + w - r.br, y + h);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.lineTo(x + r.bl, y + h);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.quadraticCurveTo(x, y + h, x, y + h - r.bl);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.lineTo(x, y + r.tl);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.quadraticCurveTo(x, y, x + r.tl, y);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.closePath();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>this.fill();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const canvas = document.getElementById('gameCanvas');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const ctx = canvas.getContext('2d');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>let gameRunning = false, mReqAnimFrame, mState = 'IDLE';</p>
-<p class="p1"><span class="Apple-converted-space">        </span>let player, platforms, boxes, enemies, clouds;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>let camera = { x: 0, y: 0 };</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const keys = { left: false, right: false, up: false };</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const GRAVITY = 0.5, JUMP_POWER = -10, DOUBLE_JUMP_POWER = -11;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const HOLD_JUMP_THRESHOLD = 150;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>let jumpRequested = false, jumpEffects = [], jumpPressStartTime = 0, jumpHoldBoostApplied = false;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>let availableQuestions = [], currentBoxIndex = -1;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>let nextMapX = 0, goalSpawned = false, goal = { x: -1000, y: 0, w: 0, h: 0 };</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const mQuestions = [</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ q: "1. การตั้งเมืองสงขลาฝั่งแหลมสน เกิดขึ้นหลังจากเหตุการณ์ใด?", options: ["สงครามโลกครั้งที่ 2", "กองทัพอยุธยาตีกรุงธนบุรี", "สมเด็จพระนารายณ์ตีเมืองสงขลาเขาแดงแตก", "โรคระบาดครั้งใหญ่ในภาคใต้"], ans: 2, exp: "หลังเมืองสงขลาเชิงเขาแดงถูกกองทัพสมเด็จพระนารายณ์ตีแตกในปี พ.ศ. 2223 ชาวเมืองบางส่วนได้โยกย้ายมาตั้งชุมชนใหม่ที่บ้านแหลมสน" },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ q: "2. เมืองสงขลาฝั่งแหลมสนมีสภาพภูมิประเทศเป็นอย่างไร?", options: ["เป็นภูเขาสูงชัน", "เป็นที่ราบแคบๆ บริเวณปลายคาบสมุทร", "เป็นเกาะกลางทะเลสาบ", "เป็นที่ราบลุ่มแม่น้ำขนาดใหญ่"], ans: 1, exp: "แหลมสนตั้งอยู่ปลายสุดของคาบสมุทรสทิงพระ เป็นที่ราบแคบๆ ตรงข้ามฝั่งใต้ของเมืองสงขลาเชิงเขาแดง" },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ q: "3. ข้อใดคือผู้ที่พระเจ้าตากสินทรงแต่งตั้งให้เป็น 'หลวงสุวรรณคีรีสมบัติ'?", options: ["พระสงขลา (โยม)", "นายวิเถียน", "นายบุญหุ้ย", "นายเหยี่ยง แซ่เฮา"], ans: 3, exp: "พ.ศ. 2317 สมัยกรุงธนบุรี พระเจ้าตากสินทรงโปรดเกล้าฯ ให้นายเหยี่ยง แซ่เฮา เป็นหลวงสุวรรณคีรีสมบัติ ปกครองเมืองสงขลาฝั่งแหลมสน" },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ q: "4. ตระกูล ณ สงขลา ปกครองเมืองสงขลาสืบต่อกันมากี่รุ่น?", options: ["9 รุ่น", "12 รุ่น", "15 รุ่น", "18 รุ่น"], ans: 3, exp: "นับแต่นายเหยี่ยง แซ่เฮา เป็นต้นสายสกุล ตระกูล ณ สงขลา ได้สืบทอดการปกครองเมืองสงขลาต่อเนื่องมาถึง 18 รุ่น" },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ q: "5. 'ซุ้มประตูบ่อเก๋ง' สะท้อนให้เห็นถึงการอพยพเข้ามาของชนกลุ่มใด?", options: ["ชาวอาหรับ", "ชาวมลายู", "ชาวจีนฮกเกี้ยน", "ชาวยุโรป"], ans: 2, exp: "ซุ้มประตูบ่อเก๋งเป็นสถาปัตยกรรมแบบหมิ่นหนาน (จีน) สะท้อนให้เห็นการอพยพเข้ามาตั้งถิ่นฐานของชาวจีนฮกเกี้ยนในย่านแหลมสน" },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ q: "6. วัดใดที่มีการค้นพบสถาปัตยกรรมแบบพื้นเมืองภาคใต้และปัจจุบันเป็นวัดร้าง?", options: ["วัดบ่อทรัพย์", "วัดศิริวรรณาวาส", "วัดภูผาเบิก", "วัดสุวรรณคีรี"], ans: 1, exp: "วัดศิริวรรณาวาสเป็นหนึ่งในวัดโบราณย่านแหลมสนที่มีสถาปัตยกรรมแบบพื้นเมืองภาคใต้ ปัจจุบันกลายเป็นวัดร้าง" },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ q: "7. ในยุคของพระยาวิเชียรคีรี (เกี้ยนเส้ง) เมืองสงขลามีรายได้หลักจากการผูกขาดสิ่งใด?", options: ["การประมง", "อากรรังนก สุรา และบ่อนเบี้ย", "การเก็บค่าเทียบท่าเรือ", "การทำนาข้าว"], ans: 1, exp: "สมัยพระยาวิเชียรคีรี (เกี้ยนเส้ง) ตระกูล ณ สงขลา ผูกขาดผลประโยชน์ทางเศรษฐกิจ ตั้งแต่อากรรังนก สุรา และบ่อนเบี้ย" },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ q: "8. พิธีน้ำพิพัฒน์สัตยาอธิษฐาน ของข้าราชการสงขลา จัดขึ้นที่ใด?", options: ["ศาลหลักเมือง", "หน้าซุ้มประตูบ่อเก๋ง", "วัดสุวรรณคีรี (วัดออก)", "วัดบ่อทรัพย์"], ans: 2, exp: "พิธีถือน้ำสาบาน หรือน้ำพิพัฒน์สัตยาอธิษฐาน ของข้าราชการเมืองสงขลา จัดขึ้นที่วัดสุวรรณคีรี หรือวัดออก ในปี พ.ศ. 2379" },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ q: "9. ทำไมเมืองสงขลาจึงเกิดนโยบายแบ่งแยกและปกครองเมืองปัตตานีในยุคแหลมสน?", options: ["เพราะปัตตานียกทัพมารุกราน", "เพราะสงขลาเข้มแข็งจนเป็นศูนย์กลางการเมืองใหม่แทนปัตตานี", "เพราะต้องการทรัพยากรจากปัตตานี", "เพราะได้รับคำสั่งจากชาติตะวันตก"], ans: 1, exp: "เมืองสงขลาฝั่งแหลมสนเติบโตจนกลายเป็นศูนย์กลางอำนาจทางการเมืองแทนที่ปัตตานี ทำให้เกิดนโยบายแบ่งแยกและถ่วงดุลอำนาจ" },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ q: "10. ที่ตั้งเมืองสงขลาแห่งใหม่ (แห่งที่ 3) ที่ถูกย้ายไปจากแหลมสน คือพื้นที่ใด?", options: ["เขาแดง", "บ่อยาง", "เกาะยอ", "สิงหนคร"], ans: 1, exp: "เมื่อพื้นที่แหลมสนคับแคบ รัชกาลที่ 3 โปรดเกล้าฯ ให้ย้ายเมืองสงขลาไปตั้งบนสันทรายฝั่งตรงข้าม เรียกว่า บ่อยาง" }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>];</p>
-<p class="p1"><span class="Apple-converted-space">        </span>function resizeCanvas() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const container = document.getElementById('canvasContainer');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(container) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>canvas.width = container.clientWidth;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>canvas.height = container.clientHeight;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>window.addEventListener('resize', () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (mState === 'PLAYING' || mState === 'PAUSED') resizeCanvas();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p1"><span class="Apple-converted-space">        </span>function initMap() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>platforms = []; boxes = []; enemies = []; clouds = [];</p>
-<p class="p1"><span class="Apple-converted-space">            </span>availableQuestions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];</p>
-<p class="p1"><span class="Apple-converted-space">            </span>nextMapX = 0; goalSpawned = false; goal = { x: -1000, y: 0, w: 0, h: 0 };</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>// h: 1000 ทำให้พื้นดินวาดลงไปลึกๆ รองรับหน้าจอมือถือแนวยาว</p>
-<p class="p1"><span class="Apple-converted-space">            </span>platforms.push({x: 0, y: 350, w: 1000, h: 1000});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>nextMapX = 1000;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>for(let i=0; i&lt;30; i++) { clouds.push({x: Math.random()*5000, y: Math.random()*150+20, w: Math.random()*60+60, speed: Math.random()*0.2+0.1}); }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>generateNextSegment(); generateNextSegment(); generateNextSegment();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>function generateNextSegment() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let startX = nextMapX + 150;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (availableQuestions.length === 0 &amp;&amp; !goalSpawned) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>platforms.push({x: startX, y: 350, w: 2500, h: 1000});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>goal = { x: startX + 800, y: 100, w: 100, h: 250 };</p>
-<p class="p1"><span class="Apple-converted-space">                </span>goalSpawned = true;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>nextMapX = startX + 2500;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (goalSpawned) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>platforms.push({x: startX, y: 350, w: 2000, h: 1000});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>nextMapX = startX + 2000;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>let type = Math.floor(Math.random() * 3);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (type === 0) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>platforms.push({x: startX, y: 350, w: 1000, h: 1000});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>platforms.push({x: startX + 300, y: 220, w: 150, h: 30});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>boxes.push({x: startX + 350, y: 120, w: 46, h: 46, used: false, bounceY: 0});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>enemies.push({x: startX + 500, y: 306, w: 44, h: 44, vx: 2, minX: startX + 400, maxX: startX + 800});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>nextMapX = startX + 1000;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>} else if (type === 1) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>platforms.push({x: startX, y: 350, w: 1200, h: 1000});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>platforms.push({x: startX + 250, y: 240, w: 120, h: 30});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>platforms.push({x: startX + 600, y: 180, w: 120, h: 30});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>boxes.push({x: startX + 280, y: 140, w: 46, h: 46, used: false, bounceY: 0});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>boxes.push({x: startX + 630, y: 80, w: 46, h: 46, used: false, bounceY: 0});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>enemies.push({x: startX + 400, y: 306, w: 44, h: 44, vx: -1.5, minX: startX + 100, maxX: startX + 800});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>nextMapX = startX + 1200;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>platforms.push({x: startX, y: 350, w: 900, h: 1000});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>platforms.push({x: startX + 350, y: 200, w: 200, h: 30});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>boxes.push({x: startX + 425, y: 100, w: 46, h: 46, used: false, bounceY: 0});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>enemies.push({x: startX + 200, y: 306, w: 44, h: 44, vx: 1.5, minX: startX + 100, maxX: startX + 350});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>enemies.push({x: startX + 700, y: 306, w: 44, h: 44, vx: -2, minX: startX + 600, maxX: startX + 850});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>nextMapX = startX + 900;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>function startMarioGame() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('marioIntro').classList.add('hidden');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('marioResult').classList.add('hidden');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('marioGameWrapper').classList.remove('hidden');</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>resizeCanvas();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>player = { x: 50, y: 200, w: 44, h: 44, vx: 0, vy: 0, speed: 5.5, jumpPower: JUMP_POWER, grounded: false, hearts: 3, score: 0, invincibleTimer: 0, faceRight: true, jumpsUsed: 0, maxJumps: 2 };</p>
-<p class="p1"><span class="Apple-converted-space">            </span>jumpRequested = false; jumpEffects = []; jumpPressStartTime = 0; jumpHoldBoostApplied = false;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>initMap(); updateUI(); gameRunning = true; mState = 'PLAYING';</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(mReqAnimFrame) cancelAnimationFrame(mReqAnimFrame);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>gameLoop();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>function updateUI() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('uiHearts').innerText = player.hearts;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('uiScore').innerText = player.score;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('uiQuestions').innerText = (10 - availableQuestions.length) + "/10";</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>function AABB(rect1, rect2) { return rect1.x &lt; rect2.x + rect2.w &amp;&amp; rect1.x + rect1.w &gt; rect2.x &amp;&amp; rect1.y &lt; rect2.y + rect2.h &amp;&amp; rect1.y + rect1.h &gt; rect2.y; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>function gameLoop() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(!gameRunning) return;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(mState === 'PLAYING') updateGame();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>renderGame();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>mReqAnimFrame = requestAnimationFrame(gameLoop);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>function updateGame() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (player.x + 2000 &gt; nextMapX) generateNextSegment();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (keys.left) { player.vx = -player.speed; player.faceRight = false; }</p>
-<p class="p1"><span class="Apple-converted-space">            </span>else if (keys.right) { player.vx = player.speed; player.faceRight = true; }</p>
-<p class="p1"><span class="Apple-converted-space">            </span>else player.vx = 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>player.x += player.vx;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>// ตายถ้าตกเหว (ปรับให้ต่ำลงเพื่อให้รองรับความสูงมือถือ)</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(player.y &gt; 1500) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>player.hearts--; updateUI();</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(player.hearts &lt;= 0) { checkGameOver(); }</p>
-<p class="p1"><span class="Apple-converted-space">                </span>else {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>player.y = 50; player.vy = 0; player.vx = 0; player.jumpsUsed = 0; jumpHoldBoostApplied = false;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>let safePlatform = platforms.find(p =&gt; p.y === 350 &amp;&amp; p.x &lt; player.x &amp;&amp; p.x + p.w &gt; player.x - 400);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if(safePlatform) player.x = safePlatform.x + (safePlatform.w / 2);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>else player.x = camera.x + 100;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>player.invincibleTimer = 120;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>platforms.forEach(p =&gt; { if(AABB(player, p)) { if(player.vx &gt; 0) player.x = p.x - player.w; else if(player.vx &lt; 0) player.x = p.x + p.w; }});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>player.vy += GRAVITY; player.y += player.vy; player.grounded = false;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>platforms.forEach(p =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(AABB(player, p)) {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if(player.vy &gt; 0) { player.y = p.y - player.h; player.vy = 0; player.grounded = true; player.jumpsUsed = 0; jumpHoldBoostApplied = false; }</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>else if(player.vy &lt; 0) { player.y = p.y + p.h; player.vy = 0; }</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (jumpRequested) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>jumpRequested = false;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (player.grounded) {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>player.vy = JUMP_POWER; player.grounded = false; player.jumpsUsed = 1;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>} else if (player.jumpsUsed &lt; player.maxJumps) {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>player.vy = DOUBLE_JUMP_POWER; player.jumpsUsed = player.maxJumps; spawnJumpEffect(player.x + player.w/2, player.y + player.h);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (keys.up &amp;&amp; !jumpHoldBoostApplied &amp;&amp; player.jumpsUsed &lt; player.maxJumps &amp;&amp; player.vy &lt; 0) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (Date.now() - jumpPressStartTime &gt;= HOLD_JUMP_THRESHOLD) {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>player.vy = DOUBLE_JUMP_POWER; player.jumpsUsed = player.maxJumps; jumpHoldBoostApplied = true; spawnJumpEffect(player.x + player.w/2, player.y + player.h);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>boxes.forEach((b) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(b.bounceY &gt; 0) b.bounceY -= 1;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(AABB(player, b)) {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if(player.vy &gt; 0 &amp;&amp; player.y + player.h - player.vy &lt;= b.y) { player.y = b.y - player.h; player.vy = 0; player.grounded = true; player.jumpsUsed = 0; jumpHoldBoostApplied = false; }</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>else if (player.vy &lt; 0 &amp;&amp; player.y - player.vy &gt;= b.y + b.h) {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>player.y = b.y + b.h; player.vy = 0; b.bounceY = 10;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>if(!b.used) {</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>b.used = true;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>if (availableQuestions.length &gt; 0) {</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>let rIdx = Math.floor(Math.random() * availableQuestions.length);</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>currentBoxIndex = availableQuestions[rIdx];</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>availableQuestions.splice(rIdx, 1);</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>triggerQuiz(currentBoxIndex);</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>} else { if(player.vx &gt; 0) player.x = b.x - player.w; else if(player.vx &lt; 0) player.x = b.x + b.w; }</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>enemies.forEach(e =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>e.x += e.vx; if(e.x &lt;= e.minX || e.x &gt;= e.maxX) e.vx *= -1;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(player.invincibleTimer &lt;= 0 &amp;&amp; AABB(player, e)) {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>player.hearts--; player.invincibleTimer = 90; updateUI(); checkGameOver();</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(player.invincibleTimer &gt; 0) player.invincibleTimer--;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>jumpEffects.forEach(fx =&gt; { fx.life--; fx.y -= 1.2; });</p>
-<p class="p1"><span class="Apple-converted-space">            </span>jumpEffects = jumpEffects.filter(fx =&gt; fx.life &gt; 0);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (goalSpawned &amp;&amp; AABB(player, goal)) { mState = 'CLEAR'; showGameResult("จบการผจญภัย!", "text-blue-600"); }</p>
-<p class="p1"><span class="Apple-converted-space">            </span>camera.x = player.x - canvas.width / 2.5; if (camera.x &lt; 0) camera.x = 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>// คำนวณแกน Y ให้พื้นเกมอยู่สูงจากขอบล่าง Canvas เสมอ (ประมาณ 180px)</p>
-<p class="p1"><span class="Apple-converted-space">            </span>camera.y = 350 - (canvas.height - 180);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>clouds.forEach(c =&gt; { c.x -= c.speed; if(c.x + c.w &lt; camera.x) c.x = camera.x + canvas.width + Math.random()*500; });</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>function spawnJumpEffect(x, y) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>for(let i=0; i&lt;6; i++) jumpEffects.push({ x: x + (Math.random()*30-15), y: y, life: 24, r: Math.random()*3+2 });</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>function renderGame() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>ctx.clearRect(0, 0, canvas.width, canvas.height);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';</p>
-<p class="p1"><span class="Apple-converted-space">            </span>clouds.forEach(c =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.beginPath(); ctx.arc(c.x - camera.x, c.y - camera.y, c.w/2, 0, Math.PI*2);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.arc(c.x - camera.x + c.w*0.4, c.y - camera.y - c.w*0.2, c.w/2.5, 0, Math.PI*2);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.arc(c.x - camera.x + c.w*0.8, c.y - camera.y, c.w/2.2, 0, Math.PI*2); ctx.fill();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (goalSpawned) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.fillStyle = '#fbcfe8'; ctx.roundRectCustom(goal.x - camera.x, goal.y - camera.y, goal.w, goal.h, 40);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.fillStyle = '#fce7f3'; ctx.roundRectCustom(goal.x - camera.x + 10, goal.y - camera.y + 10, goal.w - 20, goal.h - 20, 30);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.fillStyle = '#be185d'; ctx.font = "900 24px Noto Sans Thai"; ctx.textAlign = "center"; ctx.fillText("เส้นชัย", goal.x - camera.x + goal.w/2, goal.y - camera.y - 15);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>platforms.forEach(p =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.fillStyle = '#d97706'; ctx.roundRectCustom(p.x - camera.x, p.y - camera.y + 15, p.w, p.h - 15, 12);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.fillStyle = '#4ade80'; ctx.roundRectCustom(p.x - camera.x, p.y - camera.y, p.w, 20, 12);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>ctx.font = "900 28px Nunito"; ctx.textAlign = "center";</p>
-<p class="p1"><span class="Apple-converted-space">            </span>boxes.forEach(b =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>let by = b.y - b.bounceY - camera.y;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.fillStyle = b.used ? '#e7e5e4' : '#fde047'; ctx.roundRectCustom(b.x - camera.x, by, b.w, b.h, 12);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.fillStyle = b.used ? '#d6d3d1' : '#fef08a'; ctx.roundRectCustom(b.x - camera.x + 4, by + 4, b.w - 8, b.h - 8, 8);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.fillStyle = b.used ? '#a8a29e' : '#ca8a04'; ctx.fillText("?", b.x - camera.x + b.w/2, by + 32);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>enemies.forEach(e =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>let ex = e.x - camera.x; let ey = e.y + (e.vx &gt; 0 &amp;&amp; Math.floor(Date.now()/150)%2===0 ? -2 : 0) - camera.y;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.fillStyle = '#fb7185';</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.roundRectCustom(ex, ey, e.w, e.h, [22, 22, 10, 10]);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.fillStyle = '#881337';</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.fillRect(ex + 10 + (e.vx&gt;0?4:0), ey + 18, 6, 6); ctx.fillRect(ex + 24 + (e.vx&gt;0?4:0), ey + 18, 6, 6);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.beginPath(); ctx.moveTo(ex + 8 + (e.vx&gt;0?4:0), ey + 12); ctx.lineTo(ex + 18 + (e.vx&gt;0?4:0), ey + 16); ctx.lineWidth = 3; ctx.strokeStyle = '#881337'; ctx.stroke();</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.beginPath(); ctx.moveTo(ex + 30 + (e.vx&gt;0?4:0), ey + 12); ctx.lineTo(ex + 20 + (e.vx&gt;0?4:0), ey + 16); ctx.stroke();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (player.invincibleTimer === 0 || Math.floor(Date.now() / 100) % 2 === 0) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>let px = player.x - camera.x; let py = player.y - camera.y;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.fillStyle = '#60a5fa'; ctx.roundRectCustom(px, py, player.w, player.h, 16);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'; ctx.roundRectCustom(px + 4, py + 4, player.w - 16, 12, 6);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>let eyeOffset = player.faceRight ? 22 : 10;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(player.vx === 0) eyeOffset = 16;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.fillStyle = '#1e3a8a';</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.beginPath(); ctx.arc(px + eyeOffset, py + 18, 4, 0, Math.PI*2); ctx.fill();</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.beginPath(); ctx.arc(px + eyeOffset + 12, py + 18, 4, 0, Math.PI*2); ctx.fill();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.fillStyle = '#fbcfe8';</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.beginPath(); ctx.arc(px + eyeOffset - 5, py + 24, 3.5, 0, Math.PI*2); ctx.fill();</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.beginPath(); ctx.arc(px + eyeOffset + 17, py + 24, 3.5, 0, Math.PI*2); ctx.fill();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (player.vx !== 0 &amp;&amp; player.grounded &amp;&amp; Math.floor(Date.now() / 100) % 2 === 0) {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>ctx.fillStyle = '#3b82f6'; ctx.roundRectCustom(px + 8, py + player.h - 2, 10, 6, 3); ctx.roundRectCustom(px + 26, py + player.h - 2, 10, 6, 3);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>jumpEffects.forEach(fx =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.globalAlpha = Math.max(fx.life / 24, 0); ctx.fillStyle = '#fde047';</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.beginPath(); ctx.arc(fx.x - camera.x, fx.y - camera.y, fx.r, 0, Math.PI*2); ctx.fill(); ctx.globalAlpha = 1;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>function triggerQuiz(idx) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>mState = 'PAUSED'; keys.left = false; keys.right = false; keys.up = false; jumpRequested = false; currentBoxIndex = idx;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let q = mQuestions[idx];</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('mQuestionText').innerText = q.q;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>// สร้าง Array ตัวเลือกแล้วสุ่มตำแหน่ง (Shuffle)</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let opts = q.options.map((opt, i) =&gt; ({ text: opt, isCorrect: (i === q.ans) }));</p>
-<p class="p1"><span class="Apple-converted-space">            </span>opts.sort(() =&gt; Math.random() - 0.5);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('mOptions').innerHTML = opts.map((opt) =&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>`&lt;button onclick="answerMarioQuiz(${opt.isCorrect})" class="w-full bg-white border-2 border-yellow-200 p-4 md:p-5 rounded-2xl text-gray-700 font-bold hover:bg-yellow-50 hover:border-yellow-400 hover:-translate-y-1 transition text-left text-lg shadow-sm"&gt;${opt.text}&lt;/button&gt;`</p>
-<p class="p1"><span class="Apple-converted-space">            </span>).join('');</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('mExplanationArea').classList.add('hidden');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('mOptions').classList.remove('hidden');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('marioQuizModal').classList.remove('hidden');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>function answerMarioQuiz(isCorrect) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let q = mQuestions[currentBoxIndex];</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let statusEl = document.getElementById('mResultStatus');</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(isCorrect) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>player.score++; player.hearts++;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>statusEl.innerHTML = `&lt;span class="text-green-500 flex justify-center items-center gap-2"&gt;&lt;i data-lucide="check-circle" class="w-8 h-8"&gt;&lt;/i&gt; ถูกต้อง! (+1 หัวใจ, +1 คะแนน)&lt;/span&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>player.score--;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>// ถ้าตอบผิด ให้ยัดคำถามข้อนี้กลับเข้ากองสุ่มใหม่ จะได้โดนถามอีกจนกว่าจะถูก</p>
-<p class="p1"><span class="Apple-converted-space">                </span>availableQuestions.push(currentBoxIndex);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>statusEl.innerHTML = `&lt;span class="text-red-500 flex justify-center items-center gap-2"&gt;&lt;i data-lucide="x-circle" class="w-8 h-8"&gt;&lt;/i&gt; ผิดครับ! ข้อนี้จะกลับมาถามใหม่นะ&lt;/span&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>updateUI(); lucide.createIcons();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('mOptions').classList.add('hidden');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('mExplanationText').innerText = q.exp;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('mExplanationArea').classList.remove('hidden');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>function resumeMarioGame() { document.getElementById('marioQuizModal').classList.add('hidden'); mState = 'PLAYING'; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>function checkGameOver() { if(player.hearts &lt;= 0) { mState = 'OVER'; showGameResult("Game Over!", "text-red-500"); } }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>function showGameResult(title, colorClass) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>gameRunning = false;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('marioResult').classList.remove('hidden');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('resultTitle').className = `text-4xl md:text-5xl font-black tracking-tight mb-3 ${colorClass}`;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('resultTitle').innerText = title;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('resultHearts').innerText = player.hearts;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('resultScore').innerText = player.score;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>saveScoreToServer(player.score);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>updateSaveStatus();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>window.addEventListener('keydown', e =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(mState !== 'PLAYING') return;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(e.code === 'ArrowLeft') keys.left = true;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(e.code === 'ArrowRight') keys.right = true;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(e.code === 'ArrowUp' &amp;&amp; !keys.up) { keys.up = true; jumpRequested = true; jumpPressStartTime = Date.now(); jumpHoldBoostApplied = false; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p1"><span class="Apple-converted-space">        </span>window.addEventListener('keyup', e =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(e.code === 'ArrowLeft') keys.left = false;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(e.code === 'ArrowRight') keys.right = false;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(e.code === 'ArrowUp') keys.up = false;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>const bindTouch = (id, key) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const el = document.getElementById(id);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>el.addEventListener('touchstart', (e) =&gt; { e.preventDefault(); if(mState==='PLAYING') keys[key] = true; });</p>
-<p class="p1"><span class="Apple-converted-space">            </span>el.addEventListener('touchend', (e) =&gt; { e.preventDefault(); keys[key] = false; });</p>
-<p class="p1"><span class="Apple-converted-space">        </span>};</p>
-<p class="p1"><span class="Apple-converted-space">        </span>bindTouch('btnLeft', 'left'); bindTouch('btnRight', 'right');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const btnJump = document.getElementById('btnJump');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>btnJump.addEventListener('touchstart', (e) =&gt; { e.preventDefault(); if(mState === 'PLAYING') { keys.up = true; jumpRequested = true; jumpPressStartTime = Date.now(); jumpHoldBoostApplied = false; } });</p>
-<p class="p1"><span class="Apple-converted-space">        </span>btnJump.addEventListener('touchend', (e) =&gt; { e.preventDefault(); keys.up = false; });</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+<body class="h-screen w-screen flex flex-col items-center bg-blue-50">
+    <!-- หน้าเริ่มเกม -->
+    <div id="marioIntro" class="absolute inset-0 z-50 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center p-4">
+        <div class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl text-center max-w-lg w-full border-4 border-blue-100 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-blue-400 to-emerald-400"></div>
+            <h1 class="text-4xl md:text-5xl font-black text-blue-600 mb-4 tracking-tight drop-shadow-sm">ตะลุยด่านแหลมสน</h1>
+            <p class="text-gray-600 mb-8 text-lg">โหม่งกล่องคำถาม ตอบให้ถูกเพื่อสะสมคะแนน<br>(ถ้าตอบผิด ต้องเล่นจนกว่าจะตอบถูกนะ!)</p>
+
+            <div class="grid grid-cols-2 gap-4 text-sm text-gray-500 mb-8 bg-blue-50 p-4 rounded-xl">
+                <div class="flex flex-col items-center"><i data-lucide="arrow-left-right" class="w-8 h-8 text-blue-400 mb-2"></i><span>เดินซ้าย/ขวา</span></div>
+                <div class="flex flex-col items-center"><i data-lucide="arrow-up-circle" class="w-8 h-8 text-blue-400 mb-2"></i><span>กระโดด (กด 2 ครั้ง = กระโดดสูง)</span></div>
+            </div>
+            <button onclick="startMarioGame()" class="w-full bg-blue-500 text-white text-2xl font-black py-4 rounded-2xl hover:bg-blue-600 hover:-translate-y-1 transition shadow-[0_4px_12px_rgba(59,130,246,0.4)]">
+                PLAY GAME
+            </button>
+        </div>
+    </div>
+    <!-- ส่วนของตัวเกมแบบเต็มหน้าจอ -->
+    <div id="marioGameWrapper" class="hidden w-full h-full flex flex-col max-w-[1200px] mx-auto bg-gradient-to-b from-[#60a5fa] to-[#e0f2fe] relative shadow-2xl">
+
+        <!-- UI แสดงสถานะมุมซ้ายบน -->
+        <div class="absolute top-4 left-4 flex gap-4 z-10 bg-white/80 backdrop-blur px-4 py-2 rounded-full shadow-sm border border-white/50 font-black text-sm md:text-lg">
+            <div class="flex items-center gap-1 text-red-500"><i data-lucide="heart" class="w-5 h-5 fill-current"></i> <span id="uiHearts">3</span></div>
+            <div class="flex items-center gap-1 text-blue-600"><i data-lucide="star" class="w-5 h-5 fill-current"></i> <span id="uiScore">0</span></div>
+            <div class="flex items-center gap-1 text-amber-500"><i data-lucide="help-circle" class="w-5 h-5 fill-current"></i> <span id="uiQuestions">0/10</span></div>
+        </div>
+        <!-- พื้นที่ Canvas สำหรับวาดเกม -->
+        <div id="canvasContainer" class="flex-grow w-full relative overflow-hidden">
+            <canvas id="gameCanvas" class="absolute inset-0 w-full h-full block"></canvas>
+        </div>
+        <!-- ปุ่มคุมบนมือถือ (ติดขอบล่าง) -->
+        <div id="marioControls" class="flex justify-between items-center px-4 md:px-8 pb-6 pt-4 shrink-0 bg-white shadow-[0_-10px_20px_rgba(0,0,0,0.1)] z-20 border-t-2 border-gray-100">
+            <div class="flex gap-3 md:gap-6">
+                <button id="btnLeft" class="mario-btn bg-gray-100 active:bg-blue-200 w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center border-b-4 border-gray-300 active:border-b-0 active:translate-y-1"><i data-lucide="arrow-left" class="w-10 h-10 md:w-12 md:h-12 text-gray-700"></i></button>
+                <button id="btnRight" class="mario-btn bg-gray-100 active:bg-blue-200 w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center border-b-4 border-gray-300 active:border-b-0 active:translate-y-1"><i data-lucide="arrow-right" class="w-10 h-10 md:w-12 md:h-12 text-gray-700"></i></button>
+            </div>
+            <button id="btnJump" class="mario-btn bg-blue-500 active:bg-blue-600 w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center border-b-8 border-blue-700 active:border-b-0 active:translate-y-2 shadow-lg"><i data-lucide="arrow-up" class="w-12 h-12 md:w-14 md:h-14 text-white"></i></button>
+        </div>
+    </div>
+    <!-- Modal คำถามระหว่างเกม -->
+    <div id="marioQuizModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 md:p-10 w-full max-w-2xl shadow-2xl transform scale-100 relative">
+            <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-yellow-400 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-4xl font-black text-yellow-800">?</div>
+            <h2 id="mQuestionText" class="text-2xl md:text-3xl font-bold text-gray-800 mb-8 mt-6 text-center leading-relaxed">คำถาม?</h2>
+
+            <div id="mOptions" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- ปุ่มตัวเลือก (จะสุ่มตำแหน่ง) -->
+            </div>
+            <div id="mExplanationArea" class="hidden text-center">
+                <div id="mResultStatus" class="text-2xl font-black mb-4"></div>
+                <div class="bg-blue-50 text-blue-800 p-6 rounded-2xl text-lg font-medium mb-6" id="mExplanationText">คำอธิบาย...</div>
+                <button onclick="resumeMarioGame()" class="bg-blue-500 text-white px-10 py-4 rounded-2xl font-black text-xl hover:bg-blue-600 transition shadow-lg w-full md:w-auto">ลุยต่อ!</button>
+            </div>
+        </div>
+    </div>
+    <!-- หน้าสรุปผลเกม -->
+    <div id="marioResult" class="hidden absolute inset-0 z-50 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center p-4">
+        <div class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl text-center max-w-lg w-full border-4 border-blue-100">
+            <h1 id="resultTitle" class="text-4xl md:text-5xl font-black tracking-tight mb-3">จบเกม!</h1>
+            <p class="text-gray-500 text-lg mb-8">เยี่ยมมาก! คุณฝ่าด่านจนถึงเส้นชัยแล้ว</p>
+
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="bg-red-50 p-6 rounded-2xl border-2 border-red-100">
+                    <i data-lucide="heart" class="w-10 h-10 text-red-500 fill-current mx-auto mb-2"></i>
+                    <div class="text-sm text-red-600 font-bold mb-1">หัวใจเหลือ</div>
+                    <div class="text-4xl font-black text-red-700" id="resultHearts">0</div>
+                </div>
+                <div class="bg-blue-50 p-6 rounded-2xl border-2 border-blue-100">
+                    <i data-lucide="star" class="w-10 h-10 text-blue-500 fill-current mx-auto mb-2"></i>
+                    <div class="text-sm text-blue-600 font-bold mb-1">คะแนนที่ได้</div>
+                    <div class="text-4xl font-black text-blue-700" id="resultScore">0</div>
+                </div>
+            </div>
+
+            <p id="saveStatus" class="text-sm text-gray-400 mb-6"></p>
+
+            <button onclick="location.reload()" class="w-full bg-gray-800 text-white text-xl font-bold py-4 rounded-2xl hover:bg-gray-900 transition">เล่นใหม่อีกครั้ง</button>
+        </div>
+    </div>
+    <script>
+        lucide.createIcons();
+
+        // ===== รับข้อมูลนักเรียนจาก URL (ส่งมาจากหน้าเว็บบทเรียนตอนกดเปิดเกม) =====
+        // และบันทึกคะแนนกลับไปที่ Google Sheet ผ่าน Apps Script API เมื่อเกมจบ (แพ้หรือชนะก็บันทึก)
+        
+        // [แก้ไขใหม่/จุดที่ต้องเปลี่ยน]: ให้คุณนำ URL ของเว็บแอปที่ได้จากการ Deploy Apps Script มาวางแทนที่ลิงก์ในเครื่องหมายคำพูดด้านล่างนี้
+        const SCORE_API_URL = "https://script.google.com/macros/s/AKfycbwAfmqJTXPhRP1WSV2_EyYoqSs0b_4C3rL5_EwW8EryTpIDkmBU6Sx4UM8TJ9ndYrGX/exec"; 
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const studentInfo = {
+            studentId: urlParams.get('studentId') || '',
+            name: urlParams.get('name') || '',
+            className: urlParams.get('className') || ''
+        };
+        const hasStudentInfo = !!(studentInfo.studentId && studentInfo.className);
+        
+        function saveScoreToServer(score) {
+            if (!hasStudentInfo) return;
+            const params = new URLSearchParams({
+                api: 'saveScore', studentId: studentInfo.studentId, name: studentInfo.name,
+                className: studentInfo.className, action: 'เล่นเกมแหลมสน', score: score
+            });
+            fetch(SCORE_API_URL + '?' + params.toString(), { method: 'GET', mode: 'no-cors' }).catch(() => {});
+        }
+        function updateSaveStatus() {
+            const el = document.getElementById('saveStatus');
+            if (!el) return;
+            if (hasStudentInfo) {
+                el.innerText = `📤 บันทึกคะแนนให้ ${studentInfo.name} (${studentInfo.className}) เรียบร้อยแล้ว`;
+            } else {
+                el.innerText = 'เล่นแบบไม่ระบุตัวตน (คะแนนจะไม่ถูกบันทึกลงชีต เข้าเกมผ่านหน้าบทเรียนเพื่อให้บันทึกคะแนนได้)';
+            }
+        }
+
+        CanvasRenderingContext2D.prototype.roundRectCustom = function (x, y, w, h, r) {
+            if (typeof r === 'undefined') r = 0;
+            if (typeof r === 'number') r = {tl: r, tr: r, br: r, bl: r};
+            else if (Array.isArray(r)) r = {tl: r[0], tr: r[1], br: r[2], bl: r[3]};
+            this.beginPath();
+            this.moveTo(x + r.tl, y);
+            this.lineTo(x + w - r.tr, y);
+            this.quadraticCurveTo(x + w, y, x + w, y + r.tr);
+            this.lineTo(x + w, y + h - r.br);
+            this.quadraticCurveTo(x + w, y + h, x + w - r.br, y + h);
+            this.lineTo(x + r.bl, y + h);
+            this.quadraticCurveTo(x, y + h, x, y + h - r.bl);
+            this.lineTo(x, y + r.tl);
+            this.quadraticCurveTo(x, y, x + r.tl, y);
+            this.closePath();
+            this.fill();
+        }
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let gameRunning = false, mReqAnimFrame, mState = 'IDLE';
+        let player, platforms, boxes, enemies, clouds;
+        let camera = { x: 0, y: 0 };
+        const keys = { left: false, right: false, up: false };
+        const GRAVITY = 0.5, JUMP_POWER = -10, DOUBLE_JUMP_POWER = -11;
+        const HOLD_JUMP_THRESHOLD = 150;
+        let jumpRequested = false, jumpEffects = [], jumpPressStartTime = 0, jumpHoldBoostApplied = false;
+
+        let availableQuestions = [], currentBoxIndex = -1;
+        let nextMapX = 0, goalSpawned = false, goal = { x: -1000, y: 0, w: 0, h: 0 };
+        const mQuestions = [
+            { q: "1. การตั้งเมืองสงขลาฝั่งแหลมสน เกิดขึ้นหลังจากเหตุการณ์ใด?", options: ["สงครามโลกครั้งที่ 2", "กองทัพอยุธยาตีกรุงธนบุรี", "สมเด็จพระนารายณ์ตีเมืองสงขลาเขาแดงแตก", "โรคระบาดครั้งใหญ่ในภาคใต้"], ans: 2, exp: "หลังเมืองสงขลาเชิงเขาแดงถูกกองทัพสมเด็จพระนารายณ์ตีแตกในปี พ.ศ. 2223 ชาวเมืองบางส่วนได้โยกย้ายมาตั้งชุมชนใหม่ที่บ้านแหลมสน" },
+            { q: "2. เมืองสงขลาฝั่งแหลมสนมีสภาพภูมิประเทศเป็นอย่างไร?", options: ["เป็นภูเขาสูงชัน", "เป็นที่ราบแคบๆ บริเวณปลายคาบสมุทร", "เป็นเกาะกลางทะเลสาบ", "เป็นที่ราบลุ่มแม่น้ำขนาดใหญ่"], ans: 1, exp: "แหลมสนตั้งอยู่ปลายสุดของคาบสมุทรสทิงพระ เป็นที่ราบแคบๆ ตรงข้ามฝั่งใต้ของเมืองสงขลาเชิงเขาแดง" },
+            { q: "3. ข้อใดคือผู้ที่พระเจ้าตากสินทรงแต่งตั้งให้เป็น 'หลวงสุวรรณคีรีสมบัติ'?", options: ["พระสงขลา (โยม)", "นายวิเถียน", "นายบุญหุ้ย", "นายเหยี่ยง แซ่เฮา"], ans: 3, exp: "พ.ศ. 2317 สมัยกรุงธนบุรี พระเจ้าตากสินทรงโปรดเกล้าฯ ให้นายเหยี่ยง แซ่เฮา เป็นหลวงสุวรรณคีรีสมบัติ ปกครองเมืองสงขลาฝั่งแหลมสน" },
+            { q: "4. ตระกูล ณ สงขลา ปกครองเมืองสงขลาสืบต่อกันมากี่รุ่น?", options: ["9 รุ่น", "12 รุ่น", "15 รุ่น", "18 รุ่น"], ans: 3, exp: "นับแต่นายเหยี่ยง แซ่เฮา เป็นต้นสายสกุล ตระกูล ณ สงขลา ได้สืบทอดการปกครองเมืองสงขลาต่อเนื่องมาถึง 18 รุ่น" },
+            { q: "5. 'ซุ้มประตูบ่อเก๋ง' สะท้อนให้เห็นถึงการอพยพเข้ามาของชนกลุ่มใด?", options: ["ชาวอาหรับ", "ชาวมลายู", "ชาวจีนฮกเกี้ยน", "ชาวยุโรป"], ans: 2, exp: "ซุ้มประตูบ่อเก๋งเป็นสถาปัตยกรรมแบบหมิ่นหนาน (จีน) สะท้อนให้เห็นการอพยพเข้ามาตั้งถิ่นฐานของชาวจีนฮกเกี้ยนในย่านแหลมสน" },
+            { q: "6. วัดใดที่มีการค้นพบสถาปัตยกรรมแบบพื้นเมืองภาคใต้และปัจจุบันเป็นวัดร้าง?", options: ["วัดบ่อทรัพย์", "วัดศิริวรรณาวาส", "วัดภูผาเบิก", "วัดสุวรรณคีรี"], ans: 1, exp: "วัดศิริวรรณาวาสเป็นหนึ่งในวัดโบราณย่านแหลมสนที่มีสถาปัตยกรรมแบบพื้นเมืองภาคใต้ ปัจจุบันกลายเป็นวัดร้าง" },
+            { q: "7. ในยุคของพระยาวิเชียรคีรี (เกี้ยนเส้ง) เมืองสงขลามีรายได้หลักจากการผูกขาดสิ่งใด?", options: ["การประมง", "อากรรังนก สุรา และบ่อนเบี้ย", "การเก็บค่าเทียบท่าเรือ", "การทำนาข้าว"], ans: 1, exp: "สมัยพระยาวิเชียรคีรี (เกี้ยนเส้ง) ตระกูล ณ สงขลา ผูกขาดผลประโยชน์ทางเศรษฐกิจ ตั้งแต่อากรรังนก สุรา และบ่อนเบี้ย" },
+            { q: "8. พิธีน้ำพิพัฒน์สัตยาอธิษฐาน ของข้าราชการสงขลา จัดขึ้นที่ใด?", options: ["ศาลหลักเมือง", "หน้าซุ้มประตูบ่อเก๋ง", "วัดสุวรรณคีรี (วัดออก)", "วัดบ่อทรัพย์"], ans: 2, exp: "พิธีถือน้ำสาบาน หรือน้ำพิพัฒน์สัตยาอธิษฐาน ของข้าราชการเมืองสงขลา จัดขึ้นที่วัดสุวรรณคีรี หรือวัดออก ในปี พ.ศ. 2379" },
+            { q: "9. ทำไมเมืองสงขลาจึงเกิดนโยบายแบ่งแยกและปกครองเมืองปัตตานีในยุคแหลมสน?", options: ["เพราะปัตตานียกทัพมารุกราน", "เพราะสงขลาเข้มแข็งจนเป็นศูนย์กลางการเมืองใหม่แทนปัตตานี", "เพราะต้องการทรัพยากรจากปัตตานี", "เพราะได้รับคำสั่งจากชาติตะวันตก"], ans: 1, exp: "เมืองสงขลาฝั่งแหลมสนเติบโตจนกลายเป็นศูนย์กลางอำนาจทางการเมืองแทนที่ปัตตานี ทำให้เกิดนโยบายแบ่งแยกและถ่วงดุลอำนาจ" },
+            { q: "10. ที่ตั้งเมืองสงขลาแห่งใหม่ (แห่งที่ 3) ที่ถูกย้ายไปจากแหลมสน คือพื้นที่ใด?", options: ["เขาแดง", "บ่อยาง", "เกาะยอ", "สิงหนคร"], ans: 1, exp: "เมื่อพื้นที่แหลมสนคับแคบ รัชกาลที่ 3 โปรดเกล้าฯ ให้ย้ายเมืองสงขลาไปตั้งบนสันทรายฝั่งตรงข้าม เรียกว่า บ่อยาง" }
+        ];
+        function resizeCanvas() {
+            const container = document.getElementById('canvasContainer');
+            if(container) {
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+            }
+        }
+        window.addEventListener('resize', () => {
+            if (mState === 'PLAYING' || mState === 'PAUSED') resizeCanvas();
+        });
+        function initMap() {
+            platforms = []; boxes = []; enemies = []; clouds = [];
+            availableQuestions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+            nextMapX = 0; goalSpawned = false; goal = { x: -1000, y: 0, w: 0, h: 0 };
+
+            // h: 1000 ทำให้พื้นดินวาดลงไปลึกๆ รองรับหน้าจอมือถือแนวยาว
+            platforms.push({x: 0, y: 350, w: 1000, h: 1000});
+            nextMapX = 1000;
+
+            for(let i=0; i<30; i++) { clouds.push({x: Math.random()*5000, y: Math.random()*150+20, w: Math.random()*60+60, speed: Math.random()*0.2+0.1}); }
+
+            generateNextSegment(); generateNextSegment(); generateNextSegment();
+        }
+        function generateNextSegment() {
+            let startX = nextMapX + 150;
+
+            if (availableQuestions.length === 0 && !goalSpawned) {
+                platforms.push({x: startX, y: 350, w: 2500, h: 1000});
+                goal = { x: startX + 800, y: 100, w: 100, h: 250 };
+                goalSpawned = true;
+                nextMapX = startX + 2500;
+                return;
+            }
+
+            if (goalSpawned) {
+                platforms.push({x: startX, y: 350, w: 2000, h: 1000});
+                nextMapX = startX + 2000;
+                return;
+            }
+
+            let type = Math.floor(Math.random() * 3);
+            if (type === 0) {
+                platforms.push({x: startX, y: 350, w: 1000, h: 1000});
+                platforms.push({x: startX + 300, y: 220, w: 150, h: 30});
+                boxes.push({x: startX + 350, y: 120, w: 46, h: 46, used: false, bounceY: 0});
+                enemies.push({x: startX + 500, y: 306, w: 44, h: 44, vx: 2, minX: startX + 400, maxX: startX + 800});
+                nextMapX = startX + 1000;
+            } else if (type === 1) {
+                platforms.push({x: startX, y: 350, w: 1200, h: 1000});
+                platforms.push({x: startX + 250, y: 240, w: 120, h: 30});
+                platforms.push({x: startX + 600, y: 180, w: 120, h: 30});
+                boxes.push({x: startX + 280, y: 140, w: 46, h: 46, used: false, bounceY: 0});
+                boxes.push({x: startX + 630, y: 80, w: 46, h: 46, used: false, bounceY: 0});
+                enemies.push({x: startX + 400, y: 306, w: 44, h: 44, vx: -1.5, minX: startX + 100, maxX: startX + 800});
+                nextMapX = startX + 1200;
+            } else {
+                platforms.push({x: startX, y: 350, w: 900, h: 1000});
+                platforms.push({x: startX + 350, y: 200, w: 200, h: 30});
+                boxes.push({x: startX + 425, y: 100, w: 46, h: 46, used: false, bounceY: 0});
+                enemies.push({x: startX + 200, y: 306, w: 44, h: 44, vx: 1.5, minX: startX + 100, maxX: startX + 350});
+                enemies.push({x: startX + 700, y: 306, w: 44, h: 44, vx: -2, minX: startX + 600, maxX: startX + 850});
+                nextMapX = startX + 900;
+            }
+        }
+        function startMarioGame() {
+            document.getElementById('marioIntro').classList.add('hidden');
+            document.getElementById('marioResult').classList.add('hidden');
+            document.getElementById('marioGameWrapper').classList.remove('hidden');
+
+            resizeCanvas();
+
+            player = { x: 50, y: 200, w: 44, h: 44, vx: 0, vy: 0, speed: 5.5, jumpPower: JUMP_POWER, grounded: false, hearts: 3, score: 0, invincibleTimer: 0, faceRight: true, jumpsUsed: 0, maxJumps: 2 };
+            jumpRequested = false; jumpEffects = []; jumpPressStartTime = 0; jumpHoldBoostApplied = false;
+
+            initMap(); updateUI(); gameRunning = true; mState = 'PLAYING';
+            if(mReqAnimFrame) cancelAnimationFrame(mReqAnimFrame);
+            gameLoop();
+        }
+        function updateUI() {
+            document.getElementById('uiHearts').innerText = player.hearts;
+            document.getElementById('uiScore').innerText = player.score;
+            document.getElementById('uiQuestions').innerText = (10 - availableQuestions.length) + "/10";
+        }
+
+        function AABB(rect1, rect2) { return rect1.x < rect2.x + rect2.w && rect1.x + rect1.w > rect2.x && rect1.y < rect2.y + rect2.h && rect1.y + rect1.h > rect2.y; }
+        function gameLoop() {
+            if(!gameRunning) return;
+            if(mState === 'PLAYING') updateGame();
+            renderGame();
+            mReqAnimFrame = requestAnimationFrame(gameLoop);
+        }
+        function updateGame() {
+            if (player.x + 2000 > nextMapX) generateNextSegment();
+            if (keys.left) { player.vx = -player.speed; player.faceRight = false; }
+            else if (keys.right) { player.vx = player.speed; player.faceRight = true; }
+            else player.vx = 0;
+            player.x += player.vx;
+
+            // ตายถ้าตกเหว (ปรับให้ต่ำลงเพื่อให้รองรับความสูงมือถือ)
+            if(player.y > 1500) {
+                player.hearts--; updateUI();
+                if(player.hearts <= 0) { checkGameOver(); }
+                else {
+                    player.y = 50; player.vy = 0; player.vx = 0; player.jumpsUsed = 0; jumpHoldBoostApplied = false;
+                    let safePlatform = platforms.find(p => p.y === 350 && p.x < player.x && p.x + p.w > player.x - 400);
+                    if(safePlatform) player.x = safePlatform.x + (safePlatform.w / 2);
+                    else player.x = camera.x + 100;
+                    player.invincibleTimer = 120;
+                }
+                return;
+            }
+            platforms.forEach(p => { if(AABB(player, p)) { if(player.vx > 0) player.x = p.x - player.w; else if(player.vx < 0) player.x = p.x + p.w; }});
+            player.vy += GRAVITY; player.y += player.vy; player.grounded = false;
+            platforms.forEach(p => {
+                if(AABB(player, p)) {
+                    if(player.vy > 0) { player.y = p.y - player.h; player.vy = 0; player.grounded = true; player.jumpsUsed = 0; jumpHoldBoostApplied = false; }
+                    else if(player.vy < 0) { player.y = p.y + p.h; player.vy = 0; }
+                }
+            });
+            if (jumpRequested) {
+                jumpRequested = false;
+                if (player.grounded) {
+                    player.vy = JUMP_POWER; player.grounded = false; player.jumpsUsed = 1;
+                } else if (player.jumpsUsed < player.maxJumps) {
+                    player.vy = DOUBLE_JUMP_POWER; player.jumpsUsed = player.maxJumps; spawnJumpEffect(player.x + player.w/2, player.y + player.h);
+                }
+            }
+            if (keys.up && !jumpHoldBoostApplied && player.jumpsUsed < player.maxJumps && player.vy < 0) {
+                if (Date.now() - jumpPressStartTime >= HOLD_JUMP_THRESHOLD) {
+                    player.vy = DOUBLE_JUMP_POWER; player.jumpsUsed = player.maxJumps; jumpHoldBoostApplied = true; spawnJumpEffect(player.x + player.w/2, player.y + player.h);
+                }
+            }
+            boxes.forEach((b) => {
+                if(b.bounceY > 0) b.bounceY -= 1;
+                if(AABB(player, b)) {
+                    if(player.vy > 0 && player.y + player.h - player.vy <= b.y) { player.y = b.y - player.h; player.vy = 0; player.grounded = true; player.jumpsUsed = 0; jumpHoldBoostApplied = false; }
+                    else if (player.vy < 0 && player.y - player.vy >= b.y + b.h) {
+                        player.y = b.y + b.h; player.vy = 0; b.bounceY = 10;
+                        if(!b.used) {
+                            b.used = true;
+                            if (availableQuestions.length > 0) {
+                                let rIdx = Math.floor(Math.random() * availableQuestions.length);
+                                currentBoxIndex = availableQuestions[rIdx];
+                                availableQuestions.splice(rIdx, 1);
+                                triggerQuiz(currentBoxIndex);
+                            }
+                        }
+                    } else { if(player.vx > 0) player.x = b.x - player.w; else if(player.vx < 0) player.x = b.x + b.w; }
+                }
+            });
+            enemies.forEach(e => {
+                e.x += e.vx; if(e.x <= e.minX || e.x >= e.maxX) e.vx *= -1;
+                if(player.invincibleTimer <= 0 && AABB(player, e)) {
+                    player.hearts--; player.invincibleTimer = 90; updateUI(); checkGameOver();
+                }
+            });
+            if(player.invincibleTimer > 0) player.invincibleTimer--;
+            jumpEffects.forEach(fx => { fx.life--; fx.y -= 1.2; });
+            jumpEffects = jumpEffects.filter(fx => fx.life > 0);
+            if (goalSpawned && AABB(player, goal)) { mState = 'CLEAR'; showGameResult("จบการผจญภัย!", "text-blue-600"); }
+            camera.x = player.x - canvas.width / 2.5; if (camera.x < 0) camera.x = 0;
+            // คำนวณแกน Y ให้พื้นเกมอยู่สูงจากขอบล่าง Canvas เสมอ (ประมาณ 180px)
+            camera.y = 350 - (canvas.height - 180);
+
+            clouds.forEach(c => { c.x -= c.speed; if(c.x + c.w < camera.x) c.x = camera.x + canvas.width + Math.random()*500; });
+        }
+        function spawnJumpEffect(x, y) {
+            for(let i=0; i<6; i++) jumpEffects.push({ x: x + (Math.random()*30-15), y: y, life: 24, r: Math.random()*3+2 });
+        }
+        function renderGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            clouds.forEach(c => {
+                ctx.beginPath(); ctx.arc(c.x - camera.x, c.y - camera.y, c.w/2, 0, Math.PI*2);
+                ctx.arc(c.x - camera.x + c.w*0.4, c.y - camera.y - c.w*0.2, c.w/2.5, 0, Math.PI*2);
+                ctx.arc(c.x - camera.x + c.w*0.8, c.y - camera.y, c.w/2.2, 0, Math.PI*2); ctx.fill();
+            });
+            if (goalSpawned) {
+                ctx.fillStyle = '#fbcfe8'; ctx.roundRectCustom(goal.x - camera.x, goal.y - camera.y, goal.w, goal.h, 40);
+                ctx.fillStyle = '#fce7f3'; ctx.roundRectCustom(goal.x - camera.x + 10, goal.y - camera.y + 10, goal.w - 20, goal.h - 20, 30);
+                ctx.fillStyle = '#be185d'; ctx.font = "900 24px Noto Sans Thai"; ctx.textAlign = "center"; ctx.fillText("เส้นชัย", goal.x - camera.x + goal.w/2, goal.y - camera.y - 15);
+            }
+            platforms.forEach(p => {
+                ctx.fillStyle = '#d97706'; ctx.roundRectCustom(p.x - camera.x, p.y - camera.y + 15, p.w, p.h - 15, 12);
+                ctx.fillStyle = '#4ade80'; ctx.roundRectCustom(p.x - camera.x, p.y - camera.y, p.w, 20, 12);
+            });
+            ctx.font = "900 28px Nunito"; ctx.textAlign = "center";
+            boxes.forEach(b => {
+                let by = b.y - b.bounceY - camera.y;
+                ctx.fillStyle = b.used ? '#e7e5e4' : '#fde047'; ctx.roundRectCustom(b.x - camera.x, by, b.w, b.h, 12);
+                ctx.fillStyle = b.used ? '#d6d3d1' : '#fef08a'; ctx.roundRectCustom(b.x - camera.x + 4, by + 4, b.w - 8, b.h - 8, 8);
+                ctx.fillStyle = b.used ? '#a8a29e' : '#ca8a04'; ctx.fillText("?", b.x - camera.x + b.w/2, by + 32);
+            });
+            enemies.forEach(e => {
+                let ex = e.x - camera.x; let ey = e.y + (e.vx > 0 && Math.floor(Date.now()/150)%2===0 ? -2 : 0) - camera.y;
+                ctx.fillStyle = '#fb7185';
+                ctx.roundRectCustom(ex, ey, e.w, e.h, [22, 22, 10, 10]);
+                ctx.fillStyle = '#881337';
+                ctx.fillRect(ex + 10 + (e.vx>0?4:0), ey + 18, 6, 6); ctx.fillRect(ex + 24 + (e.vx>0?4:0), ey + 18, 6, 6);
+                ctx.beginPath(); ctx.moveTo(ex + 8 + (e.vx>0?4:0), ey + 12); ctx.lineTo(ex + 18 + (e.vx>0?4:0), ey + 16); ctx.lineWidth = 3; ctx.strokeStyle = '#881337'; ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(ex + 30 + (e.vx>0?4:0), ey + 12); ctx.lineTo(ex + 20 + (e.vx>0?4:0), ey + 16); ctx.stroke();
+            });
+            if (player.invincibleTimer === 0 || Math.floor(Date.now() / 100) % 2 === 0) {
+                let px = player.x - camera.x; let py = player.y - camera.y;
+
+                ctx.fillStyle = '#60a5fa'; ctx.roundRectCustom(px, py, player.w, player.h, 16);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'; ctx.roundRectCustom(px + 4, py + 4, player.w - 16, 12, 6);
+
+                let eyeOffset = player.faceRight ? 22 : 10;
+                if(player.vx === 0) eyeOffset = 16;
+                ctx.fillStyle = '#1e3a8a';
+                ctx.beginPath(); ctx.arc(px + eyeOffset, py + 18, 4, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(px + eyeOffset + 12, py + 18, 4, 0, Math.PI*2); ctx.fill();
+
+                ctx.fillStyle = '#fbcfe8';
+                ctx.beginPath(); ctx.arc(px + eyeOffset - 5, py + 24, 3.5, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(px + eyeOffset + 17, py + 24, 3.5, 0, Math.PI*2); ctx.fill();
+
+                if (player.vx !== 0 && player.grounded && Math.floor(Date.now() / 100) % 2 === 0) {
+                    ctx.fillStyle = '#3b82f6'; ctx.roundRectCustom(px + 8, py + player.h - 2, 10, 6, 3); ctx.roundRectCustom(px + 26, py + player.h - 2, 10, 6, 3);
+                }
+            }
+            jumpEffects.forEach(fx => {
+                ctx.globalAlpha = Math.max(fx.life / 24, 0); ctx.fillStyle = '#fde047';
+                ctx.beginPath(); ctx.arc(fx.x - camera.x, fx.y - camera.y, fx.r, 0, Math.PI*2); ctx.fill(); ctx.globalAlpha = 1;
+            });
+        }
+        function triggerQuiz(idx) {
+            mState = 'PAUSED'; keys.left = false; keys.right = false; keys.up = false; jumpRequested = false; currentBoxIndex = idx;
+            let q = mQuestions[idx];
+
+            document.getElementById('mQuestionText').innerText = q.q;
+
+            // สร้าง Array ตัวเลือกแล้วสุ่มตำแหน่ง (Shuffle)
+            let opts = q.options.map((opt, i) => ({ text: opt, isCorrect: (i === q.ans) }));
+            opts.sort(() => Math.random() - 0.5);
+
+            document.getElementById('mOptions').innerHTML = opts.map((opt) =>
+                `<button onclick="answerMarioQuiz(${opt.isCorrect})" class="w-full bg-white border-2 border-yellow-200 p-4 md:p-5 rounded-2xl text-gray-700 font-bold hover:bg-yellow-50 hover:border-yellow-400 hover:-translate-y-1 transition text-left text-lg shadow-sm">${opt.text}</button>`
+            ).join('');
+
+            document.getElementById('mExplanationArea').classList.add('hidden');
+            document.getElementById('mOptions').classList.remove('hidden');
+            document.getElementById('marioQuizModal').classList.remove('hidden');
+        }
+        function answerMarioQuiz(isCorrect) {
+            let q = mQuestions[currentBoxIndex];
+            let statusEl = document.getElementById('mResultStatus');
+
+            if(isCorrect) {
+                player.score++; player.hearts++;
+                statusEl.innerHTML = `<span class="text-green-500 flex justify-center items-center gap-2"><i data-lucide="check-circle" class="w-8 h-8"></i> ถูกต้อง! (+1 หัวใจ, +1 คะแนน)</span>`;
+            } else {
+                player.score--;
+                // ถ้าตอบผิด ให้ยัดคำถามข้อนี้กลับเข้ากองสุ่มใหม่ จะได้โดนถามอีกจนกว่าจะถูก
+                availableQuestions.push(currentBoxIndex);
+                statusEl.innerHTML = `<span class="text-red-500 flex justify-center items-center gap-2"><i data-lucide="x-circle" class="w-8 h-8"></i> ผิดครับ! ข้อนี้จะกลับมาถามใหม่นะ</span>`;
+            }
+            updateUI(); lucide.createIcons();
+            document.getElementById('mOptions').classList.add('hidden');
+            document.getElementById('mExplanationText').innerText = q.exp;
+            document.getElementById('mExplanationArea').classList.remove('hidden');
+        }
+        function resumeMarioGame() { document.getElementById('marioQuizModal').classList.add('hidden'); mState = 'PLAYING'; }
+
+        function checkGameOver() { if(player.hearts <= 0) { mState = 'OVER'; showGameResult("Game Over!", "text-red-500"); } }
+        function showGameResult(title, colorClass) {
+            gameRunning = false;
+            document.getElementById('marioResult').classList.remove('hidden');
+            document.getElementById('resultTitle').className = `text-4xl md:text-5xl font-black tracking-tight mb-3 ${colorClass}`;
+            document.getElementById('resultTitle').innerText = title;
+            document.getElementById('resultHearts').innerText = player.hearts;
+            document.getElementById('resultScore').innerText = player.score;
+            saveScoreToServer(player.score);
+            updateSaveStatus();
+        }
+        window.addEventListener('keydown', e => {
+            if(mState !== 'PLAYING') return;
+            if(e.code === 'ArrowLeft') keys.left = true;
+            if(e.code === 'ArrowRight') keys.right = true;
+            if(e.code === 'ArrowUp' && !keys.up) { keys.up = true; jumpRequested = true; jumpPressStartTime = Date.now(); jumpHoldBoostApplied = false; }
+        });
+        window.addEventListener('keyup', e => {
+            if(e.code === 'ArrowLeft') keys.left = false;
+            if(e.code === 'ArrowRight') keys.right = false;
+            if(e.code === 'ArrowUp') keys.up = false;
+        });
+
+        const bindTouch = (id, key) => {
+            const el = document.getElementById(id);
+            el.addEventListener('touchstart', (e) => { e.preventDefault(); if(mState==='PLAYING') keys[key] = true; });
+            el.addEventListener('touchend', (e) => { e.preventDefault(); keys[key] = false; });
+        };
+        bindTouch('btnLeft', 'left'); bindTouch('btnRight', 'right');
+        const btnJump = document.getElementById('btnJump');
+        btnJump.addEventListener('touchstart', (e) => { e.preventDefault(); if(mState === 'PLAYING') { keys.up = true; jumpRequested = true; jumpPressStartTime = Date.now(); jumpHoldBoostApplied = false; } });
+        btnJump.addEventListener('touchend', (e) => { e.preventDefault(); keys.up = false; });
+
+    </script>
 </body>
 </html>
