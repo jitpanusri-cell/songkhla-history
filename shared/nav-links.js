@@ -26,9 +26,9 @@
     },
     {
       id: 'profile',
-      label: 'ตรวจสอบคะแนน',
+      label: 'คะแนน', // เปลี่ยนชื่อเป็น "คะแนน" ตามที่ต้องการ
       url: BASE + '/profile/',
-      icon: 'clipboard-list' // เปลี่ยนจาก id-card เป็น clipboard-list
+      icon: 'award' // เปลี่ยนไอคอนเป็นเหรียญรางวัล (Award)
     },
     {
       id: 'admin',
