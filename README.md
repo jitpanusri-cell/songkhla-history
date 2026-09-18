@@ -11,12 +11,12 @@
 | `kaodaeng-lesson/` | บทเรียน + แบบทดสอบ เขาแดง | https://jitpanusri-cell.github.io/songkhla-history/kaodaeng-lesson/ |
 | `laemson-lesson/` | บทเรียน + แบบทดสอบ แหลมสน | https://jitpanusri-cell.github.io/songkhla-history/laemson-lesson/ |
 | `boyang-lesson/` | บทเรียน + แบบทดสอบ บ่อยาง | https://jitpanusri-cell.github.io/songkhla-history/boyang-lesson/ |
-| `profile/` | **[ใหม่]** หน้าบัตรนักเรียนประจำตัว, อัปโหลดรูปภาพ และดูคะแนนสะสมรวม 3 ยุค | https://jitpanusri-cell.github.io/songkhla-history/profile/ |
-| `admin.html` | **[ใหม่]** ระบบจัดการข้อมูลผู้สอน (ดูคะแนนเรียงตามห้องและส่งออกเป็น Excel) | https://jitpanusri-cell.github.io/songkhla-history/admin.html |
+| `profile/` | หน้าบัตรนักเรียนประจำตัว, อัปโหลดรูปภาพ และดูคะแนนสะสมรวม 3 ยุค | https://jitpanusri-cell.github.io/songkhla-history/profile/ |
+| `admin/admin.html` | ระบบจัดการข้อมูลผู้สอน (ดูคะแนนรวมทุกห้องและส่งออกเป็น Excel) | https://jitpanusri-cell.github.io/songkhla-history/admin/admin.html |
 | `kaodaeng-game/` | เกมกิจกรรม ปืนใหญ่เล็งตอบ ของหน้าเขาแดง | https://jitpanusri-cell.github.io/songkhla-history/kaodaeng-game/ |
 | `laemson-game/` | เกมกิจกรรม ผจญภัย (มาริโอ้) ของหน้าแหลมสน | https://jitpanusri-cell.github.io/songkhla-history/laemson-game/ |
 | `boyang-lesson/67-motion-challenge.html`| เกมกล้อง 67 Motion Challenge (MediaPipe Hands) ของหน้าบ่อยาง | https://jitpanusri-cell.github.io/songkhla-history/boyang-lesson/67-motion-challenge.html |
-| `shared/supabase-api.js` | **[ใหม่]** โค้ดกลางสำหรับเชื่อมต่อ API ของ Supabase ใช้ร่วมกันทุกหน้า | ไม่มี URL — อ้างอิงผ่าน `<script src="../shared/supabase-api.js">` |
+| `shared/supabase-api.js` | โค้ดกลางสำหรับเชื่อมต่อ API ของ Supabase ใช้ร่วมกันทุกหน้า | ไม่มี URL — อ้างอิงผ่าน `<script src="../shared/supabase-api.js">` |
 | `shared/nav-links.js` | โค้ดปุ่มนำทางข้ามหน้าส่วน Footer ใช้ร่วมกันทุกหน้าบทเรียน | ไม่มี URL — อ้างอิงผ่าน `<script src="../shared/nav-links.js">` |
 
 ## ระบบหลังบ้าน (Supabase)
@@ -43,4 +43,4 @@
 
 - นักเรียนควรเข้าเกมผ่าน **หน้าบทเรียน** หรือ **ล็อกอินผ่านหน้าแรกก่อนเสมอ** เพื่อให้ระบบดึงรหัสนักเรียน/ชื่อ/ห้อง ไปเป็นตัวแปรใน URL เกมจะได้ส่งคะแนนกลับไปบันทึกลงตาราง Supabase ได้ถูกคน
 - เกม 67 Motion Challenge ของบ่อยางใช้กล้องมือถือผ่าน MediaPipe Hands ต้องเปิดผ่านโปรโตคอล **HTTPS** เสมอ (ซึ่ง GitHub Pages บังคับใช้และรองรับอยู่แล้ว)
-- ระบบส่งออกข้อมูลผู้สอน (`admin.html`) ประมวลผลและสร้างไฟล์ `.xlsx` (Excel) ในฝั่งผู้ใช้งาน (Client-side) ด้วยไลบรารี SheetJS ทำให้ผู้สอนสามารถกดดาวน์โหลดคะแนนของเด็กทุกคนได้ทันทีโดยไม่ต้องโหลดหน้าเว็บใหม่
+- ระบบส่งออกข้อมูลผู้สอน (`admin/admin.html`) ประมวลผลและสร้างไฟล์ `.xlsx` (Excel) ในฝั่งผู้ใช้งาน (Client-side) ด้วยไลบรารี SheetJS ทำให้ผู้สอนสามารถกดดาวน์โหลดคะแนนของเด็กทุกคนได้ทันทีโดยไม่ต้องโหลดหน้าเว็บใหม่
