@@ -99,8 +99,8 @@
         // ===== รับข้อมูลนักเรียนจาก URL (ส่งมาจากหน้าเว็บบทเรียนตอนกดเปิดเกม) =====
         // และบันทึกคะแนนกลับไปที่ Google Sheet ผ่าน Apps Script API เมื่อเกมจบ (แพ้หรือชนะก็บันทึก)
         
-        // [แก้ไขใหม่/จุดที่ต้องเปลี่ยน]: ให้คุณนำ URL ของเว็บแอปที่ได้จากการ Deploy Apps Script มาวางแทนที่ลิงก์ในเครื่องหมายคำพูดด้านล่างนี้
-        const SCORE_API_URL = "https://script.google.com/macros/s/AKfycbwAfmqJTXPhRP1WSV2_EyYoqSs0b_4C3rL5_EwW8EryTpIDkmBU6Sx4UM8TJ9ndYrGX/exec"; 
+        // [แก้ไขใหม่/จุดที่ต้องเปลี่ยน]: นำลิงก์ /exec ของ Apps Script ตัวเดิมมาวางในเครื่องหมายคำพูดแทน
+        const SCORE_API_URL = "ใส่ลิงก์_Web_App_ของคุณที่นี่";
         
         const urlParams = new URLSearchParams(window.location.search);
         const studentInfo = {
@@ -112,9 +112,16 @@
         
         function saveScoreToServer(score) {
             if (!hasStudentInfo) return;
+            
+            // [แก้ไขใหม่]: ตั้งค่า action ให้ตรงกับ Apps Script คือ "เล่นเกมแหลมสน" 
+            // เพื่อให้ Apps Script นำไปลงในคอลัมน์ E (COL.MAXGAME_LAEMSON) ได้ถูกต้อง
             const params = new URLSearchParams({
-                api: 'saveScore', studentId: studentInfo.studentId, name: studentInfo.name,
-                className: studentInfo.className, action: 'เล่นเกมแหลมสน', score: score
+                api: 'saveScore', 
+                studentId: studentInfo.studentId, 
+                name: studentInfo.name,
+                className: studentInfo.className, 
+                action: 'เล่นเกมแหลมสน', 
+                score: score
             });
             fetch(SCORE_API_URL + '?' + params.toString(), { method: 'GET', mode: 'no-cors' }).catch(() => {});
         }
