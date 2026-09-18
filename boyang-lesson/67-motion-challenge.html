@@ -199,6 +199,8 @@
       <div class="icon-badge" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);"><i data-lucide="party-popper" style="width:38px;height:38px;color:#10b981;"></i></div>
       <h1 class="title-xl">🎉 พิชิตสำเร็จ!</h1>
       <p class="subtitle">ตอบคำถามถูกครบทั้ง 10 ข้อ เก่งมากเลย!</p>
+      <p id="saveStatus" class="text-sm font-bold text-slate-500 mb-4"></p>
+      
       <div class="stat-box e" style="margin-bottom:20px;">
         <div class="stat-label" style="color:#059669;">เวลารวมที่ทำได้</div>
         <div id="victoryTime" class="stat-value font-nunito" style="color:#059669;">0.00s</div>
@@ -221,13 +223,15 @@
     </div>
   </div>
 
+<!-- [แก้ไขใหม่: นำเข้าไฟล์ API กลางของ Supabase] -->
+<script src="../shared/supabase-api.js"></script>
+
 <script>
 (function(){
   'use strict';
   lucide.createIcons();
 
-  // ===== เชื่อมต่อกับระบบบทเรียน (รับข้อมูลนักเรียนจาก URL แล้วส่งคะแนนกลับ Google Sheet) =====
-  const SCORE_API_URL = "https://script.google.com/macros/s/AKfycbwAfmqJTXPhRP1WSV2_EyYoqSs0b_4C3rL5_EwW8EryTpIDkmBU6Sx4UM8TJ9ndYrGX/exec";
+  // ===== เชื่อมต่อกับระบบบทเรียน (รับข้อมูลนักเรียนจาก URL แล้วส่งคะแนนกลับ Supabase) =====
   const urlParams = new URLSearchParams(window.location.search);
   const studentInfo = {
       studentId: urlParams.get('studentId') || '',
@@ -235,19 +239,35 @@
       className: urlParams.get('className') || ''
   };
   const hasStudentInfo = !!(studentInfo.studentId && studentInfo.className);
-  function saveScoreToServer(score) {
-      if (!hasStudentInfo) return;
-      const params = new URLSearchParams({
-          api: 'saveScore',
-          studentId: studentInfo.studentId,
-          name: studentInfo.name,
-          className: studentInfo.className,
-          action: 'เล่นเกมขยับมือ 67 (บ่อยาง)',
-          score: score
-      });
-      // ใช้ mode:'no-cors' เพราะ Apps Script ไม่ได้ตั้งค่า CORS header ให้อ่าน response ข้ามโดเมนได้
-      // แต่คำขอ GET ยังคงถูกประมวลผลและบันทึกลงชีตตามปกติ
-      fetch(SCORE_API_URL + '?' + params.toString(), { method: 'GET', mode: 'no-cors' }).catch(() => {});
+
+  // [แก้ไขใหม่: ใช้ API กลางในการบันทึกคะแนนเกมบ่อยาง ไปยัง Supabase]
+  async function saveScoreToServer(score) {
+      const el = document.getElementById('saveStatus');
+      if (!el) return;
+
+      if (!hasStudentInfo) {
+          el.textContent = 'เล่นแบบไม่ระบุตัวตน (คะแนนจะไม่ถูกบันทึกลงระบบ)';
+          el.className = 'text-slate-400 font-bold text-sm mb-4';
+          return;
+      }
+
+      el.innerHTML = '<span class="text-indigo-500 animate-pulse">กำลังบันทึกคะแนน...</span>';
+
+      // คะแนนเต็มของกิจกรรมนี้คือ 10 คะแนน
+      const cappedScore = Math.min(Math.round(score), 10);
+
+      try {
+          // บันทึกคะแนนลงคอลัมน์ game_bo_yang_max ผ่าน API กลาง
+          const isSaved = await apiSaveScore(studentInfo.studentId, 'game_bo_yang_max', cappedScore);
+          if(isSaved) {
+              el.innerHTML = `<span class="text-emerald-600 font-bold">✅ บันทึกสถิติใหม่ให้คุณ ${studentInfo.name} เรียบร้อยแล้ว!</span>`;
+          } else {
+              el.innerHTML = `<span class="text-slate-500 font-bold">✅ จบเกม! (คะแนนครั้งนี้น้อยกว่าหรือเท่ากับสถิติเดิม)</span>`;
+          }
+      } catch (error) {
+          console.error("Save Game Score Error:", error);
+          el.innerHTML = '<span class="text-rose-500 font-bold">❌ เกิดข้อผิดพลาดในการบันทึกคะแนน</span>';
+      }
   }
 
   // ==========================================================
@@ -313,14 +333,14 @@
   let usingFallback = false;
 
   const $ = (id) => document.getElementById(id);
-  const scoreValueEl = $('scoreValue'), timerValueEl = $('timerValue'), progressBarEl = $('progressBar'), pctLabelEl = $('pctLabel');
-  const videoEl = $('video'), canvasEl = $('overlayCanvas'), fxLayer = $('fxLayer'), zoneHintEl = $('zoneHint');
-  const startScreenEl = $('startScreen'), startBtn = $('startBtn');
-  const cameraErrorScreenEl = $('cameraErrorScreen'), cameraErrorMsgEl = $('cameraErrorMsg'), retryCamBtn = $('retryCamBtn'), fallbackBtn = $('fallbackBtn');
-  const fallbackPumpEl = $('fallbackPump'), pumpBtn = $('pumpBtn'), closePumpBtn = $('closePumpBtn');
-  const questionModalEl = $('questionModal'), questionTextEl = $('questionText'), questionOptionsEl = $('questionOptions'), qCurrentEl = $('qCurrent');
-  const victoryScreenEl = $('victoryScreen'), victoryTimeEl = $('victoryTime'), victoryRestartBtn = $('victoryRestartBtn');
-  const gameOverScreenEl = $('gameOverScreen'), goReasonEl = $('goReason'), finalScoreEl = $('finalScore'), restartBtn = $('restartBtn');
+  const scoreValueEl = $('scoreValue'), timerValueEl =$('timerValue'), progressBarEl = $('progressBar'), pctLabelEl =$('pctLabel');
+  const videoEl = $('video'), canvasEl =$('overlayCanvas'), fxLayer = $('fxLayer'), zoneHintEl =$('zoneHint');
+  const startScreenEl = $('startScreen'), startBtn =$('startBtn');
+  const cameraErrorScreenEl = $('cameraErrorScreen'), cameraErrorMsgEl =$('cameraErrorMsg'), retryCamBtn = $('retryCamBtn'), fallbackBtn =$('fallbackBtn');
+  const fallbackPumpEl = $('fallbackPump'), pumpBtn = $('pumpBtn'), closePumpBtn =$('closePumpBtn');
+  const questionModalEl = $('questionModal'), questionTextEl =$('questionText'), questionOptionsEl = $('questionOptions'), qCurrentEl =$('qCurrent');
+  const victoryScreenEl = $('victoryScreen'), victoryTimeEl = $('victoryTime'), victoryRestartBtn =$('victoryRestartBtn');
+  const gameOverScreenEl = $('gameOverScreen'), goReasonEl =$('goReason'), finalScoreEl = $('finalScore'), restartBtn =$('restartBtn');
 
   const ctx = canvasEl.getContext('2d');
 
@@ -619,7 +639,10 @@
       victoryScreenEl.classList.remove('hidden');
       // คะแนนเต็ม = จำนวนข้อทั้งหมด หักคะแนนตามจำนวนครั้งที่ตอบผิดระหว่างเล่น (ไม่ต่ำกว่า 0)
       const finalScore = Math.max(0, questions.length - mistakeCount);
+      
+      // [แก้ไขใหม่: เรียกใช้ฟังก์ชันบันทึกคะแนนลง Supabase เมื่อชนะเกม]
       saveScoreToServer(finalScore);
+      
     } else {
       goReasonEl.textContent = reason || 'จบเกม';
       finalScoreEl.textContent = score;
